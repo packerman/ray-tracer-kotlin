@@ -1,0 +1,193 @@
+package math
+
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import kotlin.math.sqrt
+
+internal class TuplesKtTest {
+
+    @Test
+    fun tupleWithWEqualsOneIsAPoint() {
+        val a = Tuple(4.3f, -4.2f, 3.1f, 1.0f)
+
+        assertEquals(4.3f, a.x)
+        assertEquals(-4.2f, a.y)
+        assertEquals(3.1f, a.z)
+        assertEquals(1.0f, a.w)
+
+        assertTrue(a.isPoint)
+        assertFalse(a.isVector)
+    }
+
+    @Test
+    fun tupleWithWEqualsZeroIsAVector() {
+        val a = Tuple(4.3f, -4.2f, 3.1f, 0.0f)
+
+        assertEquals(4.3f, a.x)
+        assertEquals(-4.2f, a.y)
+        assertEquals(3.1f, a.z)
+        assertEquals(0.0f, a.w)
+
+        assertFalse(a.isPoint)
+        assertTrue(a.isVector)
+    }
+
+    @Test
+    fun createPoint() {
+        val p = point(4f, -4f, 3f)
+        assertEquals(Tuple(4f, -4f, 3f, 1f), p)
+    }
+
+    @Test
+    fun createVector() {
+        val v = vector(4f, -4f, 3f)
+        assertEquals(Tuple(4f, -4f, 3f, 0f), v)
+    }
+
+    @Test
+    fun add() {
+        val a1 = Tuple(3f, -2f, 5f, 1f)
+        val a2 = Tuple(-2f, 3f, 1f, 0f)
+
+        assertEquals(Tuple(1f, 1f, 6f, 1f), a1 + a2)
+    }
+
+    @Test
+    fun subtractTwoPoints() {
+        val p1 = point(3f, 2f, 1f)
+        val p2 = point(5f, 6f, 7f)
+
+        assertEquals(vector(-2f, -4f, -6f), p1 - p2)
+    }
+
+    @Test
+    fun subtractVectorFromPoint() {
+        val p = point(3f, 2f, 1f)
+        val v = vector(5f, 6f, 7f)
+
+        assertEquals(point(-2f, -4f, -6f), p - v)
+    }
+
+    @Test
+    fun subtractTwoVectors() {
+        val v1 = vector(3f, 2f, 1f)
+        val v2 = vector(5f, 6f, 7f)
+
+        assertEquals(vector(-2f, -4f, -6f), v1 - v2)
+    }
+
+    @Test
+    fun subtractVectorFromZeroVector() {
+        val zero = vector(0f, 0f, 0f)
+        val v = vector(1f, -2f, -3f)
+
+        assertEquals(vector(-1f, 2f, 3f), zero - v)
+    }
+
+    @Test
+    fun negateTuple() {
+        val a = Tuple(1f, -2f, 3f, -4f)
+
+        assertEquals(Tuple(-1f, 2f, -3f, 4f), -a)
+    }
+
+    @Test
+    fun multiplyTupleByScalar() {
+        val a = Tuple(1f, -2f, 3f, -4f)
+
+        assertEquals(Tuple(3.5f, -7f, 10.5f, -14f), a * 3.5f)
+    }
+
+    @Test
+    fun multiplyTupleByFraction() {
+        val a = Tuple(1f, -2f, 3f, -4f)
+
+        assertEquals(Tuple(0.5f, -1f, 1.5f, -2f), a * 0.5f)
+    }
+
+    @Test
+    fun divideTupleByScalar() {
+        val a = Tuple(1f, -2f, 3f, -4f)
+
+        assertEquals(Tuple(0.5f, -1f, 1.5f, -2f), a / 2f)
+    }
+
+    @Test
+    fun magnitudeOfVector100() {
+        val v = vector(1f, 0f, 0f)
+        assertEquals(1f, v.length)
+    }
+
+    @Test
+    fun magnitudeOfVector010() {
+        val v = vector(0f, 1f, 0f)
+        assertEquals(1f, v.length)
+    }
+
+    @Test
+    fun magnitudeOfVector001() {
+        val v = vector(0f, 0f, 1f)
+        assertEquals(1f, v.length)
+    }
+
+    @Test
+    fun magnitudeOfVector123() {
+        val v = vector(1f, 2f, 3f)
+        assertEquals(sqrt(14f), v.length)
+    }
+
+    @Test
+    fun magnitudeOfVector_1_2_3() {
+        val v = vector(-1f, -2f, -3f)
+        assertEquals(sqrt(14f), v.length)
+    }
+
+    @Test
+    fun normalizeVector400Gives100() {
+        val v = vector(4f, 0f, 0f)
+        assertEquals(vector(1f, 0f, 0f), v.normalize())
+    }
+
+    @Test
+    fun normalizeVector123() {
+        val v = vector(1f, 2f, 3f)
+        assertTupleEquals(vector(0.26726f, 0.53452f, 0.80178f), v.normalize())
+    }
+
+    @Test
+    fun magnitudeOfNormalizedVector() {
+        val v = vector(1f, 2f, 3f)
+        val n = v.normalize()
+
+        assertEquals(1f, n.length, EPSILON)
+    }
+
+    @Test
+    fun dotProduct() {
+        val a = vector(1f, 2f, 3f)
+        val b = vector(2f, 3f, 4f)
+
+        assertEquals(20f, a dot b)
+    }
+
+    @Test
+    fun crossProduct() {
+        val a = vector(1f, 2f, 3f)
+        val b = vector(2f, 3f, 4f)
+
+        assertEquals(vector(-1f, 2f, -1f), a cross b)
+        assertEquals(vector(1f, -2f, 1f), b cross a)
+    }
+
+    companion object {
+
+        private const val EPSILON = 0.00001f
+
+        fun assertTupleEquals(expected: Tuple, actual: Tuple, delta: Float = EPSILON) {
+            assertEquals(expected.x, actual.x, delta)
+            assertEquals(expected.y, actual.y, delta)
+            assertEquals(expected.z, actual.z, delta)
+            assertEquals(expected.w, actual.w, delta)
+        }
+    }
+}
