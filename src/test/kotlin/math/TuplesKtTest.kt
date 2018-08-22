@@ -179,6 +179,46 @@ internal class TuplesKtTest {
         assertEquals(vector(1f, -2f, 1f), b cross a)
     }
 
+    @Test
+    fun createColor() {
+        val c = color(-0.5f, 0.4f, 1.7f)
+
+        assertEquals(-0.5f, c.red)
+        assertEquals(0.4f, c.green)
+        assertEquals(1.7f, c.blue)
+    }
+
+    @Test
+    fun addColors() {
+        val c1 = color(0.9f, 0.6f, 0.75f)
+        val c2 = color(0.7f, 0.1f, 0.25f)
+
+        assertTupleEquals(color(1.6f, 0.7f, 1f), c1 + c2)
+    }
+
+    @Test
+    fun subtractColors() {
+        val c1 = color(0.9f, 0.6f, 0.75f)
+        val c2 = color(0.7f, 0.1f, 0.25f)
+
+        assertTupleEquals(color(0.2f, 0.5f, 0.5f), c1 - c2)
+    }
+
+    @Test
+    fun multiplyColorByScalar() {
+        val c = color(0.2f, 0.3f, 0.4f)
+
+        assertTupleEquals(color(0.4f, 0.6f, 0.8f), c * 2f)
+    }
+
+    @Test
+    fun multiplyColors() {
+        val c1 = color(1f, 0.2f, 0.4f)
+        val c2 = color(0.9f, 1f, 0.1f)
+
+        assertTupleEquals(color(0.9f, 0.2f, 0.04f), c1 * c2)
+    }
+
     companion object {
 
         private const val EPSILON = 0.00001f
