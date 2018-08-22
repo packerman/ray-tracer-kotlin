@@ -1,22 +1,13 @@
 package examples
 
-import math.*
+import math.Point
+import math.Vector
+import math.point
+import math.vector
 
-private class Projectile(val position: Tuple, val velocity: Tuple) {
+private class Projectile(val position: Point, val velocity: Vector)
 
-    init {
-        require(position.isPoint)
-        require(velocity.isVector)
-    }
-}
-
-private class World(val gravity: Tuple, val wind: Tuple) {
-
-    init {
-        require(gravity.isVector)
-        require(wind.isVector)
-    }
-}
+private class World(val gravity: Vector, val wind: Vector)
 
 private fun tick(world: World, p: Projectile): Projectile =
         Projectile(p.position + p.velocity,

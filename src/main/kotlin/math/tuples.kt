@@ -42,6 +42,10 @@ val Tuple.isPoint: Boolean
 val Tuple.isVector: Boolean
     get() = this.w == 0f
 
+typealias Point = Tuple
+
 fun point(x: Float, y: Float, z: Float) = Tuple(x, y, z, 1.0f)
 
-fun vector(x: Float, y: Float, z: Float) = Tuple(x, y, z, 0f)
+typealias Vector = Tuple
+
+fun vector(x: Float, y: Float, z: Float) = Tuple(x, y, z, 0.0f)
