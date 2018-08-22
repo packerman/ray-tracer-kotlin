@@ -19,13 +19,14 @@ data class Tuple(val x: Float, val y: Float, val z: Float, val w: Float) {
     operator fun times(s: Float) =
             Tuple(this.x * s, this.y * s, this.z * s, this.w * s)
 
+    operator fun times(other: Tuple) =
+            Tuple(this.x * other.x, this.y * other.y, this.z * other.z, this.w * other.w)
+
     operator fun div(s: Float) =
             Tuple(this.x / s, this.y / s, this.z / s, this.w / s)
 
-    fun normalize(): Tuple {
-        val l = length
-        return Tuple(this.x / l, this.y / l, this.z / l, this.w / l)
-    }
+    fun normalize() =
+            Tuple(this.x / length, this.y / length, this.z / length, this.w / length)
 
     infix fun dot(other: Tuple): Float =
             this.x * other.x + this.y * other.y + this.z * other.z + this.w * other.w
@@ -34,6 +35,15 @@ data class Tuple(val x: Float, val y: Float, val z: Float, val w: Float) {
             vector(this.y * other.z - this.z * other.y,
                     this.z * other.x - this.x * other.z,
                     this.x * other.y - this.y * other.x)
+
+    val red
+        get() = x
+
+    val green
+        get() = y
+
+    val blue
+        get() = z
 }
 
 val Tuple.isPoint: Boolean
@@ -49,3 +59,7 @@ fun point(x: Float, y: Float, z: Float) = Tuple(x, y, z, 1.0f)
 typealias Vector = Tuple
 
 fun vector(x: Float, y: Float, z: Float) = Tuple(x, y, z, 0.0f)
+
+typealias Color = Tuple
+
+fun color(red: Float, green: Float, blue: Float) = Tuple(red, green, blue, 0.0f)
