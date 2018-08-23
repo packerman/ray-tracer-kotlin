@@ -12,4 +12,13 @@ internal class Matrix2Test {
 
         Assertions.assertEquals(2, m.size)
     }
+
+    @Test
+    fun determinant() {
+        val a = Matrix2(1f, 5f,
+                -3f, 2f)
+
+        Assertions.assertEquals(17f, a.determinant)
+    }
 }
+

@@ -1,6 +1,6 @@
 package math
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class Matrix4Test {
@@ -96,5 +96,95 @@ internal class Matrix4Test {
     @Test
     fun transposeIdentityMatrix() {
         assertEquals(Matrix4.IDENTITY, Matrix4.IDENTITY.transpose())
+    }
+
+    @Test
+    fun subMatrix() {
+        val a = Matrix4(
+                -6f, 1f, 1f, 6f,
+                -8f, 5f, 8f, 6f,
+                -1f, 0f, 8f, 2f,
+                -7f, 1f, -1f, 1f)
+
+        val subMatrix = Matrix3(
+                -6f, 1f, 6f,
+                -8f, 8f, 6f,
+                -7f, -1f, 1f)
+
+        assertEquals(subMatrix, a.subMatrix(2, 1))
+    }
+
+    @Test
+    fun determinant() {
+        val a = Matrix4(
+                -2f, -8f, 3f, 5f,
+                -3f, 1f, 7f, 3f,
+                1f, 2f, -9f, 6f,
+                -6f, 7f, 7f, -9f)
+
+        assertEquals(690f, a.cofactor(0, 0))
+        assertEquals(447f, a.cofactor(0, 1))
+        assertEquals(210f, a.cofactor(0, 2))
+        assertEquals(51f, a.cofactor(0, 3))
+        assertEquals(-4071f, a.determinant)
+    }
+
+    @Test
+    fun invertibleMatrix() {
+        val a = Matrix4(
+                6f, 4f, 4f, 4f,
+                5f, 5f, 7f, 6f,
+                4f, -9f, 3f, -7f,
+                9f, 1f, 7f, -6f)
+
+        assertTrue(a.isInvertible)
+    }
+
+    @Test
+    fun nonInvertibleMatrix() {
+        val a = Matrix4(
+                -4f, 2f, -2f, -3f,
+                9f, 6f, 2f, 6f,
+                0f, -5f, 1f, -5f,
+                0f, 0f, 0f, -0f)
+
+        assertFalse(a.isInvertible)
+    }
+
+    @Test
+    fun inverseMatrix() {
+        val a = Matrix4(
+                -5f, 2f, 6f, -8f,
+                1f, -5f, 1f, 8f,
+                7f, 7f, -6f, -7f,
+                1f, -3f, 7f, 4f)
+
+        val b = a.inverse()
+
+        assertEquals(532f, a.determinant)
+        assertEquals(-160f, a.cofactor(2, 3))
+        assertEquals(-160f / 532, b[3, 2], EPSILON)
+        assertEquals(105f, a.cofactor(3, 2))
+        assertEquals(105f / 532, b[2, 3], EPSILON)
+
+        val inverted = Matrix4(
+                0.21805f, 0.45113f, 0.24060f, -0.04511f,
+                -0.80827f, -1.45677f, -0.44361f, 0.52068f,
+                -0.07895f, -0.22368f, -0.05263f, 0.19737f,
+                -0.52256f, -0.81391f, -0.30075f, 0.30639f)
+
+        assertMatricesEquals(inverted, b, EPSILON)
+    }
+
+    companion object {
+        private const val EPSILON = 0.00001f
+
+        fun assertMatricesEquals(expected: Matrix4, actual: Matrix4, delta: Float) {
+            for (i in 0..3) {
+                for (j in 0..3) {
+                    assertEquals(expected[i, j], actual[i, j], delta)
+                }
+            }
+        }
     }
 }
