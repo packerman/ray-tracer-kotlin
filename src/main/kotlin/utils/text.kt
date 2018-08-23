@@ -1,8 +1,8 @@
 package utils
 
-class LineBreaker(val maxLineLength: Int = Int.MAX_VALUE) {
+class LineBreaker(val appendable: Appendable,
+                  val maxLineLength: Int = Int.MAX_VALUE) {
 
-    private val builder = StringBuilder()
     private var line = StringBuilder()
 
     fun append(s: String, separator: String = ""): LineBreaker {
@@ -12,7 +12,7 @@ class LineBreaker(val maxLineLength: Int = Int.MAX_VALUE) {
             line.append(s)
             return this
         } else {
-            builder.appendln(line)
+            appendable.appendln(line)
             line = StringBuilder(s)
 
         }
@@ -23,14 +23,16 @@ class LineBreaker(val maxLineLength: Int = Int.MAX_VALUE) {
             append(s, separator).newLine()
 
     fun newLine(): LineBreaker {
-        builder.appendln(line)
+        appendable.appendln(line)
         line = StringBuilder()
         return this
     }
 
-    override fun toString(): String =
-            builder.toString() + line.toString()
+    fun flush(): LineBreaker {
+        appendable.append(line)
+        line = StringBuilder()
+        return this
+    }
 }
 
-fun buildStringWithLines(maxLineLength: Int, action: LineBreaker.() -> Unit) =
-        LineBreaker(maxLineLength).apply(action).toString()
+

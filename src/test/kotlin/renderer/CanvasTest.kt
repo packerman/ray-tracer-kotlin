@@ -1,5 +1,8 @@
+package renderer
+
 import math.color
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class CanvasTest {
@@ -80,5 +83,14 @@ internal class CanvasTest {
         )
 
         assertEquals(pixelData, ppm.lines().subList(3, 7))
+    }
+
+    @Test
+    fun ppmFilesAreTerminatedByNewline() {
+        val c = Canvas(5, 3)
+
+        val ppm = c.toPpm()
+
+        assertTrue(ppm.endsWith(System.lineSeparator()))
     }
 }

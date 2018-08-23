@@ -7,83 +7,87 @@ internal class LineBreakerTest {
 
     @Test
     fun testWriteOneLine() {
-        val lb = LineBreaker()
-        assertEquals("abc", lb.append("abc").toString())
+        val b = StringBuilder()
+        LineBreaker(b)
+                .append("abc")
+                .flush()
+        assertEquals("abc", b.toString())
     }
 
     @Test
     fun testWriteManyLines() {
-        val lb = LineBreaker()
+        val b = StringBuilder()
+        LineBreaker(b)
+                .append("abc")
+                .newLine()
+                .append("def")
+                .flush()
 
         val expected = listOf(
                 "abc",
                 "def"
         )
 
-        assertEquals(expected, lb
-                .append("abc")
-                .newLine()
-                .append("def")
-                .toString().lines())
+        assertEquals(expected, b.toString().lines())
     }
 
     @Test
     fun testBreakLine() {
-        val lb = LineBreaker(6)
+        val b = StringBuilder()
+        LineBreaker(b, 6)
+                .append("abc")
+                .append(" def")
+                .flush()
 
         val expected = listOf(
                 "abc",
                 " def")
 
-        assertEquals(expected, lb
-                .append("abc")
-                .append(" def")
-                .toString()
-                .lines())
+        assertEquals(expected, b.toString().lines())
     }
 
     @Test
     fun testSeparatorWhenNoBreakLine() {
-        val lb = LineBreaker(10)
+        val b = StringBuilder()
+        LineBreaker(b, 10)
+                .append("abc")
+                .append("def", " ")
+                .flush()
 
         val expected = listOf(
                 "abc def")
 
-        assertEquals(expected, lb
-                .append("abc")
-                .append("def", " ")
-                .toString()
-                .lines())
+        assertEquals(expected, b.toString().lines())
     }
 
     @Test
     fun testNoSeparatorWhenBreakLine() {
-        val lb = LineBreaker(5)
+        val b = StringBuilder()
+        LineBreaker(b, 5)
+                .append("abc")
+                .append("def", " ")
+                .flush()
 
         val expected = listOf(
                 "abc",
                 "def")
 
-        assertEquals(expected, lb
-                .append("abc")
-                .append("def", " ")
-                .toString()
-                .lines())
+        assertEquals(expected, b.toString().lines())
     }
 
     @Test
     fun testNoSeparatorOnLineBeginning() {
-        val lb = LineBreaker(10)
+        val b = StringBuilder()
+        LineBreaker(b, 10)
+                .append("abc")
+                .newLine()
+                .append("def", " ")
+                .flush()
 
         val expected = listOf(
                 "abc",
                 "def")
 
-        assertEquals(expected, lb
-                .append("abc")
-                .newLine()
-                .append("def", " ")
-                .toString()
-                .lines())
+        assertEquals(expected, b.toString().lines())
     }
 }
