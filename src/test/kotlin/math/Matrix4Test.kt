@@ -163,9 +163,9 @@ internal class Matrix4Test {
 
         assertEquals(532f, a.determinant)
         assertEquals(-160f, a.cofactor(2, 3))
-        assertEquals(-160f / 532, b[3, 2], EPSILON)
+        assertEquals(-160f / 532, b[3, 2], epsilon)
         assertEquals(105f, a.cofactor(3, 2))
-        assertEquals(105f / 532, b[2, 3], EPSILON)
+        assertEquals(105f / 532, b[2, 3], epsilon)
 
         val inverted = Matrix4(
                 0.21805f, 0.45113f, 0.24060f, -0.04511f,
@@ -173,18 +173,26 @@ internal class Matrix4Test {
                 -0.07895f, -0.22368f, -0.05263f, 0.19737f,
                 -0.52256f, -0.81391f, -0.30075f, 0.30639f)
 
-        assertMatricesEquals(inverted, b, EPSILON)
+        assertMatrixEquals(inverted, b, epsilon)
+    }
+
+    @Test
+    fun invertIdentity() {
+        assertMatrixEquals(Matrix4.IDENTITY, Matrix4.IDENTITY.inverse(), epsilon)
+    }
+
+    @Test
+    fun multiplyByInverse() {
+        val a = Matrix4(
+                6f, 4f, 4f, 4f,
+                5f, 5f, 7f, 6f,
+                4f, -9f, 3f, -7f,
+                9f, 1f, 7f, -6f)
+
+        assertMatrixEquals(Matrix4.IDENTITY, a * a.inverse(), epsilon)
     }
 
     companion object {
-        private const val EPSILON = 0.00001f
-
-        fun assertMatricesEquals(expected: Matrix4, actual: Matrix4, delta: Float) {
-            for (i in 0..3) {
-                for (j in 0..3) {
-                    assertEquals(expected[i, j], actual[i, j], delta)
-                }
-            }
-        }
+        private const val epsilon = 0.00001f
     }
 }
