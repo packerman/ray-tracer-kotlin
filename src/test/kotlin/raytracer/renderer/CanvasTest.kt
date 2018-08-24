@@ -1,9 +1,9 @@
-package renderer
+package raytracer.renderer
 
-import math.color
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import raytracer.math.color
 
 internal class CanvasTest {
 

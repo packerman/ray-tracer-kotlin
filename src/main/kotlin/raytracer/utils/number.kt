@@ -1,4 +1,4 @@
-package utils
+package raytracer.utils
 
 fun Float.clamp(bottom: Float, top: Float) = when {
     this < bottom -> bottom

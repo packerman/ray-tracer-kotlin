@@ -1,4 +1,4 @@
-package utils
+package raytracer.utils
 
 class LineBreaker(val appendable: Appendable,
                   val maxLineLength: Int = Int.MAX_VALUE) {
