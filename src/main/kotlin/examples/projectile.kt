@@ -40,5 +40,5 @@ fun main(args: Array<String>) {
         c.writePixel(i, j, red)
     }
 
-    c.saveToFile("image.ppm")
+    c.saveToFile("projectile.ppm")
 }

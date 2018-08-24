@@ -151,7 +151,7 @@ internal class TuplesKtTest {
     @Test
     fun normalizeVector123() {
         val v = vector(1f, 2f, 3f)
-        assertTupleEquals(vector(0.26726f, 0.53452f, 0.80178f), v.normalize())
+        assertTupleEquals(vector(0.26726f, 0.53452f, 0.80178f), v.normalize(), epsilon)
     }
 
     @Test
@@ -159,7 +159,7 @@ internal class TuplesKtTest {
         val v = vector(1f, 2f, 3f)
         val n = v.normalize()
 
-        assertEquals(1f, n.length, EPSILON)
+        assertEquals(1f, n.length, epsilon)
     }
 
     @Test
@@ -193,7 +193,7 @@ internal class TuplesKtTest {
         val c1 = color(0.9f, 0.6f, 0.75f)
         val c2 = color(0.7f, 0.1f, 0.25f)
 
-        assertTupleEquals(color(1.6f, 0.7f, 1f), c1 + c2)
+        assertTupleEquals(color(1.6f, 0.7f, 1f), c1 + c2, epsilon)
     }
 
     @Test
@@ -201,14 +201,14 @@ internal class TuplesKtTest {
         val c1 = color(0.9f, 0.6f, 0.75f)
         val c2 = color(0.7f, 0.1f, 0.25f)
 
-        assertTupleEquals(color(0.2f, 0.5f, 0.5f), c1 - c2)
+        assertTupleEquals(color(0.2f, 0.5f, 0.5f), c1 - c2, epsilon)
     }
 
     @Test
     fun multiplyColorByScalar() {
         val c = color(0.2f, 0.3f, 0.4f)
 
-        assertTupleEquals(color(0.4f, 0.6f, 0.8f), c * 2f)
+        assertTupleEquals(color(0.4f, 0.6f, 0.8f), c * 2f, epsilon)
     }
 
     @Test
@@ -216,18 +216,10 @@ internal class TuplesKtTest {
         val c1 = color(1f, 0.2f, 0.4f)
         val c2 = color(0.9f, 1f, 0.1f)
 
-        assertTupleEquals(color(0.9f, 0.2f, 0.04f), c1 * c2)
+        assertTupleEquals(color(0.9f, 0.2f, 0.04f), c1 * c2, epsilon)
     }
 
     companion object {
-
-        private const val EPSILON = 0.00001f
-
-        fun assertTupleEquals(expected: Tuple, actual: Tuple, delta: Float = EPSILON) {
-            assertEquals(expected.x, actual.x, delta)
-            assertEquals(expected.y, actual.y, delta)
-            assertEquals(expected.z, actual.z, delta)
-            assertEquals(expected.w, actual.w, delta)
-        }
+        private const val epsilon = 0.00001f
     }
 }
