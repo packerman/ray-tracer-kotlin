@@ -1,16 +1,18 @@
 package raytracer.renderer
 
-import raytracer.math.Point
-import raytracer.math.Vector
-import raytracer.math.point
+import raytracer.math.*
 import kotlin.math.sqrt
 
 class Sphere {
-    fun intersects(ray: Ray): List<Intersection> {
-        val sphereToRay = ray.origin - point(0f, 0f, 0f)
+    var transform: Matrix4 = Matrix4.IDENTITY
 
-        val a = ray.direction dot ray.direction
-        val b = (ray.direction dot sphereToRay) * 2f
+    fun intersect(ray: Ray): List<Intersection> {
+        val ray2 = ray.transform(this.transform.inverse())
+
+        val sphereToRay = ray2.origin - point(0f, 0f, 0f)
+
+        val a = ray2.direction dot ray2.direction
+        val b = (ray2.direction dot sphereToRay) * 2f
         val c = (sphereToRay dot sphereToRay) - 1f
 
         val discriminant = b * b - 4f * a * c
@@ -29,6 +31,14 @@ data class Ray(val origin: Point, val direction: Vector) {
     fun position(t: Float): Point = origin + direction * t
 }
 
-class Intersection(val t: Float, val obj: Sphere)
+fun Ray.transform(m: Matrix4): Ray = Ray(m * origin, m * direction)
+
+data class Intersection(val t: Float, val obj: Sphere)
 
 fun intersections(vararg i: Intersection) = listOf(*i)
+
+fun List<Intersection>.hit(): Intersection? {
+    return this.asSequence()
+            .filter { i -> i.t > 0f }
+            .minBy(Intersection::t)
+}

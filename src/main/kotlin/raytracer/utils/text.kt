@@ -34,5 +34,3 @@ class LineBreaker(val appendable: Appendable,
         return this
     }
 }
-
-
