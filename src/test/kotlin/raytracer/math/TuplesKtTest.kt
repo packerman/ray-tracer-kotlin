@@ -219,6 +219,25 @@ internal class TuplesKtTest {
         assertTupleEquals(color(0.9f, 0.2f, 0.04f), c1 * c2, epsilon)
     }
 
+    @Test
+    fun reflectVectorApproachingAt45Degrees() {
+        val v = vector(1f, -1f, 0f)
+        val n = vector(0f, 1f, 0f)
+
+        val r = v.reflect(n)
+
+        assertEquals(vector(1f, 1f, 0f), r)
+    }
+
+    @Test
+    fun reflectVectorOffSlantedSurface() {
+        val v = vector(0f, -1f, 0f)
+        val n = vector(sqrt(2f) / 2, sqrt(2f) / 2, 0f)
+        val r = v.reflect(n)
+
+        assertTupleEquals(vector(1f, 0f, 0f), r, epsilon)
+    }
+
     companion object {
         private const val epsilon = 0.00001f
     }

@@ -65,3 +65,12 @@ fun vector(x: Float, y: Float, z: Float) = Tuple(x, y, z, 0.0f)
 typealias Color = Tuple
 
 fun color(red: Float, green: Float, blue: Float) = Tuple(red, green, blue, 0.0f)
+
+val black = color(0f, 0f, 0f)
+val white = color(1f, 1f, 1f)
+val red = color(1f, 0f, 0f)
+val green = color(0f, 1f, 0f)
+val blue = color(0f, 0f, 1f)
+
+fun Tuple.reflect(normal: Vector): Vector =
+        this - normal * 2f * this.dot(normal)
