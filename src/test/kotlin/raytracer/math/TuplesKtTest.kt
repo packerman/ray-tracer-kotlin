@@ -1,4 +1,4 @@
-package math
+package raytracer.math
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

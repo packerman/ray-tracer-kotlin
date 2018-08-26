@@ -1,9 +1,9 @@
-package renderer
+package raytracer.renderer
 
-import math.Color
-import math.color
-import utils.LineBreaker
-import utils.clamp
+import raytracer.math.Color
+import raytracer.math.color
+import raytracer.utils.LineBreaker
+import raytracer.utils.clamp
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

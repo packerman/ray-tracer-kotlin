@@ -1,4 +1,4 @@
-package math
+package raytracer.math
 
 import kotlin.math.cos
 import kotlin.math.sin
