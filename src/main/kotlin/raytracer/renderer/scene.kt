@@ -37,3 +37,16 @@ fun World.colorAt(ray: Ray): Color {
         shadeHit(this, hit)
     }
 }
+
+fun render(camera: Camera, world: World): Canvas {
+    val image = Canvas(camera.hSize, camera.vSize)
+
+    for (y in 0 until camera.vSize) {
+        for (x in 0 until camera.hSize) {
+            val ray = camera.rayForPixel(x, y)
+            val color = world.colorAt(ray)
+            image.writePixel(x, y, color)
+        }
+    }
+    return image
+}
