@@ -3,9 +3,8 @@ package raytracer.renderer
 import raytracer.math.*
 import kotlin.math.sqrt
 
-class Sphere {
-    var transform: Matrix4 = Matrix4.IDENTITY
-    var material: Material = Material()
+data class Sphere(var transform: Matrix4 = Matrix4.IDENTITY,
+                  var material: Material = Material()) {
 
     fun intersect(ray: Ray): List<Intersection> {
         val ray2 = ray.transform(this.transform.inverse())

@@ -20,3 +20,19 @@ fun List<Intersection>.hit(): Intersection? {
             .filter { i -> i.t > 0f }
             .minBy(Intersection::t)
 }
+
+data class Hit(val t: Float, val obj: Sphere,
+               val point: Point, val eye: Vector, val normal: Vector,
+               val inside: Boolean)
+
+fun prepareHit(i: Intersection, r: Ray): Hit {
+    val point = r.position(i.t)
+    val normal = i.obj.normalAt(point)
+    val eye = -r.direction
+    val inside = normal.dot(eye) < 0f
+    return Hit(t = i.t, obj = i.obj,
+            point = point,
+            eye = eye,
+            normal = if (inside) -normal else normal,
+            inside = inside)
+}

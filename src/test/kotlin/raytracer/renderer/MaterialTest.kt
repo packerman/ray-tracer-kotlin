@@ -16,5 +16,4 @@ internal class MaterialTest {
         assertEquals(0.9f, m.specular)
         assertEquals(200f, m.shininess)
     }
-
 }

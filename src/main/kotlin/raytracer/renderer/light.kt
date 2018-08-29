@@ -3,7 +3,7 @@ package raytracer.renderer
 import raytracer.math.*
 import kotlin.math.pow
 
-class PointLight(val position: Point, val intensity: Color)
+data class PointLight(val position: Point, val intensity: Color)
 
 fun lighting(material: Material, light: PointLight, position: Point, eyeVector: Vector, normalVector: Vector): Color {
     val effectiveColor = material.color * light.intensity
