@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import raytracer.math.*
 import raytracer.utils.second
+import kotlin.math.PI
 
 internal class WorldTest {
 
@@ -97,6 +98,21 @@ internal class WorldTest {
         val c = world.colorAt(ray)
 
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), c, epsilon)
+    }
+
+    @Test
+    fun render() {
+        val w = defaultWorld()
+        val c = Camera(11, 11, (PI / 2).toFloat())
+
+        val from = point(0f, 0f, -5f)
+        val to = point(0f, 0f, 0f)
+        val up = vector(0f, 1f, 0f)
+
+        c.transform = viewTransform(from, to, up)
+
+        val image = render(c, w)
+        assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
     companion object {
