@@ -187,6 +187,57 @@ internal class TransformationsKtTest {
         assertTupleEquals(point(15f, 0f, 7f), t * p)
     }
 
+    @Test
+    fun transformationMatrixForDefaultOrientation() {
+        val from = point(0f, 0f, 0f)
+        val to = point(0f, 0f, -1f)
+        val up = vector(0f, 1f, 0f)
+
+        val t = viewTransform(from, to, up)
+
+        assertEquals(Matrix4.IDENTITY, t)
+    }
+
+    @Test
+    fun viewTransformationMatrixLookingInPositiveZDirection() {
+        val from = point(0f, 0f, 0f)
+        val to = point(0f, 0f, 1f)
+        val up = vector(0f, 1f, 0f)
+
+        val t = viewTransform(from, to, up)
+
+        assertEquals(scaling(-1f, 1f, -1f), t)
+    }
+
+    @Test
+    fun viewTransformationMovesWorld() {
+        val from = point(0f, 0f, 8f)
+        val to = point(0f, 0f, 0f)
+        val up = vector(0f, 1f, 0f)
+
+        val t = viewTransform(from, to, up)
+
+        assertEquals(translation(0f, 0f, -8f), t)
+    }
+
+    @Test
+    fun arbitraryViewTransformation() {
+        val from = point(1f, 3f, 2f)
+        val to = point(4f, -2f, 8f)
+        val up = vector(1f, 1f, 0f)
+
+        val t = viewTransform(from, to, up)
+
+        val expected = Matrix4(
+                -0.50709f, 0.50709f, 0.67612f, -2.36643f,
+                0.76772f, 0.60609f, 0.12122f, -2.82843f,
+                -0.35857f, 0.59761f, -0.71714f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f)
+
+        assertMatrixEquals(expected, t, epsilon)
+    }
+
+
     companion object {
         const val epsilon = 0.00001f
     }
