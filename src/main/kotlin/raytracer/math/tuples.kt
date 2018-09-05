@@ -56,15 +56,15 @@ val Tuple.isVector: Boolean
 
 typealias Point = Tuple
 
-fun point(x: Float, y: Float, z: Float) = Tuple(x, y, z, 1.0f)
+fun point(x: Float, y: Float, z: Float): Point = Tuple(x, y, z, 1.0f)
 
 typealias Vector = Tuple
 
-fun vector(x: Float, y: Float, z: Float) = Tuple(x, y, z, 0.0f)
+fun vector(x: Float, y: Float, z: Float): Vector = Tuple(x, y, z, 0.0f)
 
 typealias Color = Tuple
 
-fun color(red: Float, green: Float, blue: Float) = Tuple(red, green, blue, 0.0f)
+fun color(red: Float, green: Float, blue: Float): Color = Tuple(red, green, blue, 0.0f)
 
 val black = color(0f, 0f, 0f)
 val white = color(1f, 1f, 1f)

@@ -58,7 +58,7 @@ internal class RayTest {
 
         val hit = prepareHit(intersection, ray)
 
-        assertEquals(point(0f, 0f, -1f), hit.point)
+        assertTupleEquals(point(0f, 0f, -1f), hit.point, epsilon)
         assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
         assertEquals(vector(0f, 0f, -1f), hit.normal)
     }
@@ -82,13 +82,13 @@ internal class RayTest {
 
         val hit = prepareHit(intersection, ray)
 
-        assertEquals(point(0f, 0f, 1f), hit.point)
+        assertTupleEquals(point(0f, 0f, 1f), hit.point, epsilon)
         assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
         assertTrue(hit.inside)
         assertTupleEquals(vector(0f, 0f, -1f), hit.normal, epsilon)
     }
 
     companion object {
-        val epsilon = 0.00001f
+        val epsilon = 0.001f
     }
 }
