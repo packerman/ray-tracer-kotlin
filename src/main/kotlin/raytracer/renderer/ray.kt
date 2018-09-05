@@ -28,10 +28,11 @@ data class Hit(val t: Float, val obj: Sphere,
 fun prepareHit(i: Intersection, r: Ray): Hit {
     val point = r.position(i.t)
     val normal = i.obj.normalAt(point)
+    val offsetPoint = point + normal * 0.0005f
     val eye = -r.direction
     val inside = normal.dot(eye) < 0f
     return Hit(t = i.t, obj = i.obj,
-            point = point,
+            point = offsetPoint,
             eye = eye,
             normal = if (inside) -normal else normal,
             inside = inside)

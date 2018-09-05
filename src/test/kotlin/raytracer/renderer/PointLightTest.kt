@@ -10,8 +10,8 @@ import kotlin.math.sqrt
 
 internal class PointLightTest {
 
-    val material = Material()
-    val position = point(0f, 0f, 0f)
+    private val material = Material()
+    private val position = point(0f, 0f, 0f)
 
     @Test
     fun createPointLight() {
@@ -77,6 +77,18 @@ internal class PointLightTest {
         val result = lighting(material, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(0.1f, 0.1f, 0.1f), result, epsilon)
+    }
+
+    @Test
+    fun lightWithSurfaceInShadow() {
+        val eyeVector = vector(0f, 0f, -1f)
+        val normalVector = vector(0f, 0f, -1f)
+        val light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f))
+        val inShadow = true
+
+        val result = lighting(material, light, position, eyeVector, normalVector, inShadow)
+
+        assertEquals(color(0.1f, 0.1f, 0.1f), result)
     }
 
     companion object {

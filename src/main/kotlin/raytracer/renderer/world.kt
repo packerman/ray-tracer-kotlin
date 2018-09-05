@@ -25,7 +25,8 @@ fun shadeHit(world: World, hit: Hit): Color =
                 requireNotNull(world.light),
                 hit.point,
                 hit.eye,
-                hit.normal)
+                hit.normal,
+                world.isShadowed(hit.point))
 
 fun World.colorAt(ray: Ray): Color {
     val intersections = intersect(ray)
@@ -49,4 +50,14 @@ fun render(camera: Camera, world: World): Canvas {
         }
     }
     return image
+}
+
+fun World.isShadowed(point: Tuple): Boolean {
+    val lightPosition = light?.position ?: return false
+    val v = lightPosition - point
+    val distance = v.length
+    val ray = Ray(point, v.normalize())
+    val ise = intersect(ray)
+    val hit = ise.hit()
+    return hit != null && hit.t < distance
 }
