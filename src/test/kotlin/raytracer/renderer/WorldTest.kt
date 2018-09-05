@@ -30,8 +30,8 @@ internal class WorldTest {
         val w = defaultWorld()
 
         assertEquals(light, w.light)
-        assertTrue(w.contains(s1))
-        assertTrue(w.contains(s2))
+        assertNotNull(w.find { s1.isSameSphere(it) })
+        assertNotNull(w.find { s2.isSameSphere(it) })
     }
 
     @Test
@@ -115,7 +115,10 @@ internal class WorldTest {
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
-    companion object {
+    private companion object {
         const val epsilon = 0.00001f
+
+        fun Sphere.isSameSphere(other: Shape): Boolean =
+                material == other.material && transform == other.transform
     }
 }
