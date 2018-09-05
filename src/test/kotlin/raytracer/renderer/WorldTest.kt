@@ -77,7 +77,36 @@ internal class WorldTest {
 
         val c = shadeHit(world, hit)
 
-        assertTupleEquals(color(0.90498f, 0.90498f, 0.90498f), c, epsilon)
+        assertTupleEquals(color(0.1f, 0.1f, 0.1f), c, epsilon)
+    }
+
+    @Test
+    fun shadeIntersectionInShadow() {
+        val s1 = Sphere()
+        val s2 = Sphere().apply {
+            transform = translation(0f, 0f, 10f)
+        }
+        val w = World(
+                light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f)),
+                objects = listOf(s1, s2))
+        val r = Ray(point(0f, 0f, 5f), vector(0f, 0f, 1f))
+        val i = Intersection(4f, s2)
+
+        val h = prepareHit(i, r)
+        val c = shadeHit(w, h)
+
+        assertEquals(color(0.1f, 0.1f, 0.1f), c)
+    }
+
+    @Test
+    fun pointIsOffset() {
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val shape = Sphere()
+        val intersection = Intersection(4f, shape)
+
+        val hit = prepareHit(intersection, ray)
+
+        assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
     }
 
     @Test
@@ -115,7 +144,39 @@ internal class WorldTest {
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
+    @Test
+    fun noShadowWhenNothingIsCollinearWithPointAndLight() {
+        val world = defaultWorld()
+        val p = point(0f, 10f, 0f)
+
+        assertFalse(world.isShadowed(p))
+    }
+
+    @Test
+    fun shadowWhenObjectIsBetweenPointAndLight() {
+        val world = defaultWorld()
+        val p = point(10f, -10f, 10f)
+
+        assertTrue(world.isShadowed(p))
+    }
+
+    @Test
+    fun noShadowWhenObjectIsBehindLight() {
+        val world = defaultWorld()
+        val p = point(-20f, 20f, -20f)
+
+        assertFalse(world.isShadowed(p))
+    }
+
+    @Test
+    fun noShadowWhenObjectIsBehindPoint() {
+        val world = defaultWorld()
+        val p = point(-2f, 2f, -2f)
+
+        assertFalse(world.isShadowed(p))
+    }
+
     companion object {
-        const val epsilon = 0.00001f
+        const val epsilon = 0.0001f
     }
 }
