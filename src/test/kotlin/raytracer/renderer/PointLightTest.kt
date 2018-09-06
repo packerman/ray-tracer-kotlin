@@ -10,7 +10,7 @@ import kotlin.math.sqrt
 
 internal class PointLightTest {
 
-    private val material = Material()
+    private val material = ColorMaterial()
     private val position = point(0f, 0f, 0f)
 
     @Test

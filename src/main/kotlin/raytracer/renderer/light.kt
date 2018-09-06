@@ -11,7 +11,7 @@ fun lighting(material: Material,
              eyeVector: Vector,
              normalVector: Vector,
              inShadow: Boolean = false): Color {
-    val effectiveColor = material.color * light.intensity
+    val effectiveColor = material.colorAt(position) * light.intensity
 
     val ambient = effectiveColor * material.ambient
     if (inShadow) {

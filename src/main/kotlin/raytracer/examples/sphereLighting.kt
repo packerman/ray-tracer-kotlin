@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     val canvas = Canvas(canvasPixels, canvasPixels)
 
     val s = Sphere()
-    s.material = Material(color = color(1f, 0.2f, 1f))
+    s.material = ColorMaterial(color = color(1f, 0.2f, 1f))
 
     val light = PointLight(point(-10f, 10f, -10f), color(1f, 1f, 1f))
 

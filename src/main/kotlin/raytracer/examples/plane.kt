@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 
     val floor = Plane().apply {
         transform = scaling(10f, 0.01f, 10f)
-        material = Material(
+        material = ColorMaterial(
                 color = color(1f, 0.9f, 0.9f),
                 specular = 0f)
     }
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
     val middle = Sphere().apply {
         transform = translation(-0.5f, 1f, 0.5f)
-        material = Material(
+        material = ColorMaterial(
                 color = color(0.1f, 1f, 0.5f),
                 diffuse = 0.7f,
                 specular = 0.3f
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 
     val right = Sphere().apply {
         transform = translation(1.5f, 0.5f, -0.5f) * scaling(0.5f, 0.5f, 0.5f)
-        material = Material(
+        material = ColorMaterial(
                 color = color(0.5f, 1f, 0.1f),
                 diffuse = 0.7f,
                 specular = 0.3f
@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
 
     val left = Sphere().apply {
         transform = translation(-1.5f, 0.33f, -0.75f) * scaling(0.33f, 0.33f, 0.33f)
-        material = Material(
+        material = ColorMaterial(
                 color = color(1f, 0.8f, 0.1f),
                 diffuse = 0.7f,
                 specular = 0.3f
