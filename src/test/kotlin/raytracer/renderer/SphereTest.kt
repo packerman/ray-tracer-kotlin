@@ -2,10 +2,13 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.*
+import raytracer.math.assertTupleEquals
+import raytracer.math.point
+import raytracer.math.vector
 import kotlin.math.sqrt
 
 internal class SphereTest {
+
     @Test
     fun rayIntersectsSphereAtTwoPoint() {
         val r = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
@@ -65,44 +68,6 @@ internal class SphereTest {
     }
 
     @Test
-    fun sphereDefaultTransformation() {
-        val s = Sphere()
-        assertEquals(Matrix4.IDENTITY, s.transform)
-    }
-
-    @Test
-    fun changeSphereTransformation() {
-        val s = Sphere()
-        val t = translation(2f, 3f, 4f)
-        s.transform = t
-        assertEquals(t, s.transform)
-    }
-
-    @Test
-    fun intersectScaledSphere() {
-        val r = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
-        val s = Sphere()
-        s.transform = scaling(2f, 2f, 2f)
-
-        val xs = s.intersect(r)
-
-        assertEquals(2, xs.size)
-        assertEquals(3f, xs[0].t)
-        assertEquals(7f, xs[1].t)
-    }
-
-    @Test
-    fun intersectTranslatedSphere() {
-        val r = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
-        val s = Sphere()
-        s.transform = translation(5f, 0f, 0f)
-
-        val xs = s.intersect(r)
-
-        assertEquals(0, xs.size)
-    }
-
-    @Test
     fun normalOnSphereAtPointOnXAxis() {
         val s = Sphere()
         val n = s.normalAt(point(1f, 0f, 0f))
@@ -142,45 +107,7 @@ internal class SphereTest {
         assertTupleEquals(n, n.normalize(), epsilon)
     }
 
-    @Test
-    fun normalOnTranslatedSphere() {
-        val s = Sphere()
-        s.transform = translation(0f, 5f, 0f)
-
-        val n = s.normalAt(point(1f, 5f, 0f))
-
-        assertTupleEquals(vector(1f, 0f, 0f), n, epsilon)
-    }
-
-    @Test
-    fun normalOnScaledSphere() {
-        val s = Sphere()
-        s.transform = scaling(1f, 0.5f, 1f)
-
-        val n = s.normalAt(point(0f, sqrt(2f) / 2, -sqrt(2f) / 2))
-
-        assertTupleEquals(vector(0f, 0.97014f, -0.24254f), n, epsilon)
-    }
-
-    @Test
-    fun sphereHasDefaultMaterial() {
-        val s = Sphere()
-        val m = s.material
-
-        assertEquals(Material(), m)
-    }
-
-    @Test
-    fun sphereMayBeAssignedMaterial() {
-        val s = Sphere()
-        val m = Material(ambient = 1f)
-
-        s.material = m
-
-        assertEquals(m, s.material)
-    }
-
-    companion object {
+    private companion object {
         const val epsilon = 0.00001f
     }
 }

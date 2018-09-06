@@ -30,8 +30,8 @@ internal class WorldTest {
         val w = defaultWorld()
 
         assertEquals(light, w.light)
-        assertTrue(w.contains(s1))
-        assertTrue(w.contains(s2))
+        assertNotNull(w.find { s1.isSameSphere(it) })
+        assertNotNull(w.find { s2.isSameSphere(it) })
     }
 
     @Test
@@ -176,7 +176,10 @@ internal class WorldTest {
         assertFalse(world.isShadowed(p))
     }
 
-    companion object {
+    private companion object {
         const val epsilon = 0.0001f
+
+        fun Sphere.isSameSphere(other: Shape): Boolean =
+                material == other.material && transform == other.transform
     }
 }
