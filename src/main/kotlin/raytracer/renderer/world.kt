@@ -2,7 +2,7 @@ package raytracer.renderer
 
 import raytracer.math.*
 
-class World(var light: PointLight? = null, objects: Collection<Sphere> = emptySet()) : Collection<Sphere> by objects {
+class World(var light: PointLight? = null, objects: Collection<Shape> = emptySet()) : Collection<Shape> by objects {
 
     fun intersect(ray: Ray): List<Intersection> =
             asSequence()

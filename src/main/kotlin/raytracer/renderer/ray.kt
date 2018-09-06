@@ -11,7 +11,7 @@ data class Ray(val origin: Point, val direction: Vector) {
 
 fun Ray.transform(m: Matrix4): Ray = Ray(m * origin, m * direction)
 
-data class Intersection(val t: Float, val obj: Sphere)
+data class Intersection(val t: Float, val obj: Shape)
 
 fun intersections(vararg i: Intersection) = listOf(*i)
 
@@ -21,7 +21,7 @@ fun List<Intersection>.hit(): Intersection? {
             .minBy(Intersection::t)
 }
 
-data class Hit(val t: Float, val obj: Sphere,
+data class Hit(val t: Float, val obj: Shape,
                val point: Point, val eye: Vector, val normal: Vector,
                val inside: Boolean)
 
