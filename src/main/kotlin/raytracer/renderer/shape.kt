@@ -1,6 +1,7 @@
 package raytracer.renderer
 
 import raytracer.math.*
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 abstract class Shape {
@@ -46,4 +47,16 @@ class Sphere : Shape() {
     override fun localNormalAt(point: Point): Vector {
         return point - point(0f, 0f, 0f)
     }
+}
+
+class Plane : Shape() {
+    override fun localIntersect(ray: Ray): List<Intersection> {
+        if (abs(ray.direction.y) < 0.0001f) {
+            return emptyList()
+        }
+        val t = -ray.origin.y / ray.direction.y
+        return listOf(Intersection(t, this))
+    }
+
+    override fun localNormalAt(point: Point) = vector(0f, 1f, 0f)
 }
