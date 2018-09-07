@@ -1,7 +1,5 @@
 package raytracer.renderer
 
-import raytracer.math.*
-
 class World(var light: PointLight? = null, objects: Collection<Shape> = emptySet()) : Collection<Shape> by objects {
 
     fun intersect(ray: Ray): List<Intersection> =
@@ -20,14 +18,13 @@ fun defaultWorld() = World(light = PointLight(position = point(-10f, 10f, -10f),
                     transform = scaling(0.5f, 0.5f, 0.5f)
                 }))
 
-fun shadeHit(world: World, hit: Hit): Color =
-        lighting(hit.obj.material,
-                hit.obj,
-                requireNotNull(world.light),
+fun World.shadeHit(hit: Hit): Color =
+        hit.shape.material.lighting(hit.shape,
+                requireNotNull(light),
                 hit.point,
                 hit.eye,
                 hit.normal,
-                world.isShadowed(hit.point))
+                isShadowed(hit.point))
 
 fun World.colorAt(ray: Ray): Color {
     val intersections = intersect(ray)
@@ -35,22 +32,9 @@ fun World.colorAt(ray: Ray): Color {
     return if (i == null) {
         black
     } else {
-        val hit = prepareHit(i, ray)
-        shadeHit(this, hit)
+        val hit = i.prepareHit(ray)
+        this.shadeHit(hit)
     }
-}
-
-fun render(camera: Camera, world: World): Canvas {
-    val image = Canvas(camera.hSize, camera.vSize)
-
-    for (y in 0 until camera.vSize) {
-        for (x in 0 until camera.hSize) {
-            val ray = camera.rayForPixel(x, y)
-            val color = world.colorAt(ray)
-            image.writePixel(x, y, color)
-        }
-    }
-    return image
 }
 
 fun World.isShadowed(point: Tuple): Boolean {

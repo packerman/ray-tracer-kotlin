@@ -1,10 +1,10 @@
 package raytracer.renderer
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import raytracer.math.point
-import raytracer.math.vector
+import raytracer.utils.assertTupleEquals
 
 internal class IntersectionTest {
 
@@ -14,7 +14,7 @@ internal class IntersectionTest {
         val i = Intersection(3.5f, s)
 
         assertEquals(3.5f, i.t)
-        assertEquals(s, i.obj)
+        assertEquals(s, i.shape)
     }
 
     @Test
@@ -38,8 +38,8 @@ internal class IntersectionTest {
         val xs = s.intersect(r)
 
         assertEquals(2, xs.size)
-        assertEquals(s, xs[0].obj)
-        assertEquals(s, xs[1].obj)
+        assertEquals(s, xs[0].shape)
+        assertEquals(s, xs[1].shape)
     }
 
     @Test
@@ -90,5 +90,59 @@ internal class IntersectionTest {
 
         val h = xs.hit()
         assertEquals(i4, h)
+    }
+
+    @Test
+    fun prepareHit() {
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val shape = Sphere()
+
+        val intersection = Intersection(4f, shape)
+
+        val hit = intersection.prepareHit(ray)
+
+        assertTupleEquals(point(0f, 0f, -1f), hit.point, epsilon)
+        assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
+        assertEquals(vector(0f, 0f, -1f), hit.normal)
+    }
+
+    @Test
+    fun intersectionOccursOnOutside() {
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val shape = Sphere()
+        val intersection = Intersection(4f, shape)
+
+        val hit = intersection.prepareHit(ray)
+
+        Assertions.assertFalse(hit.inside)
+    }
+
+    @Test
+    fun intersectionOccursInside() {
+        val ray = Ray(point(0f, 0f, 0f), vector(0f, 0f, 1f))
+        val shape = Sphere()
+        val intersection = Intersection(1f, shape)
+
+        val hit = intersection.prepareHit(ray)
+
+        assertTupleEquals(point(0f, 0f, 1f), hit.point, epsilon)
+        assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
+        Assertions.assertTrue(hit.inside)
+        assertTupleEquals(vector(0f, 0f, -1f), hit.normal, epsilon)
+    }
+
+    @Test
+    fun pointIsOffset() {
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val shape = Sphere()
+        val intersection = Intersection(4f, shape)
+
+        val hit = intersection.prepareHit(ray)
+
+        Assertions.assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
+    }
+
+    companion object {
+        val epsilon = 0.001f
     }
 }

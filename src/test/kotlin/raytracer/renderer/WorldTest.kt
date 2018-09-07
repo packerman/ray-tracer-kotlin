@@ -2,9 +2,7 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import raytracer.math.*
-import raytracer.utils.second
-import kotlin.math.PI
+import raytracer.utils.assertTupleEquals
 
 internal class WorldTest {
 
@@ -56,9 +54,9 @@ internal class WorldTest {
         val shape = world.first()
         val intersection = Intersection(4f, shape)
 
-        val hit = prepareHit(intersection, ray)
+        val hit = intersection.prepareHit(ray)
 
-        val c = shadeHit(world, hit)
+        val c = world.shadeHit(hit)
 
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), c, epsilon)
     }
@@ -70,43 +68,14 @@ internal class WorldTest {
         }
 
         val ray = Ray(point(0f, 0f, 0f), vector(0f, 0f, 1f))
-        val shape = world.second()
+        val shape = world.toList()[1]
         val intersection = Intersection(0.5f, shape)
 
-        val hit = prepareHit(intersection, ray)
+        val hit = intersection.prepareHit(ray)
 
-        val c = shadeHit(world, hit)
+        val c = world.shadeHit(hit)
 
         assertTupleEquals(color(0.1f, 0.1f, 0.1f), c, epsilon)
-    }
-
-    @Test
-    fun shadeIntersectionInShadow() {
-        val s1 = Sphere()
-        val s2 = Sphere().apply {
-            transform = translation(0f, 0f, 10f)
-        }
-        val w = World(
-                light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f)),
-                objects = listOf(s1, s2))
-        val r = Ray(point(0f, 0f, 5f), vector(0f, 0f, 1f))
-        val i = Intersection(4f, s2)
-
-        val h = prepareHit(i, r)
-        val c = shadeHit(w, h)
-
-        assertEquals(color(0.1f, 0.1f, 0.1f), c)
-    }
-
-    @Test
-    fun pointIsOffset() {
-        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
-        val shape = Sphere()
-        val intersection = Intersection(4f, shape)
-
-        val hit = prepareHit(intersection, ray)
-
-        assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
     }
 
     @Test
@@ -127,21 +96,6 @@ internal class WorldTest {
         val c = world.colorAt(ray)
 
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), c, epsilon)
-    }
-
-    @Test
-    fun render() {
-        val w = defaultWorld()
-        val c = Camera(11, 11, (PI / 2).toFloat())
-
-        val from = point(0f, 0f, -5f)
-        val to = point(0f, 0f, 0f)
-        val up = vector(0f, 1f, 0f)
-
-        c.transform = viewTransform(from, to, up)
-
-        val image = render(c, w)
-        assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
     @Test
@@ -174,6 +128,24 @@ internal class WorldTest {
         val p = point(-2f, 2f, -2f)
 
         assertFalse(world.isShadowed(p))
+    }
+
+    @Test
+    fun shadeIntersectionInShadow() {
+        val s1 = Sphere()
+        val s2 = Sphere().apply {
+            transform = translation(0f, 0f, 10f)
+        }
+        val w = World(
+                light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f)),
+                objects = listOf(s1, s2))
+        val r = Ray(point(0f, 0f, 5f), vector(0f, 0f, 1f))
+        val i = Intersection(4f, s2)
+
+        val h = i.prepareHit(r)
+        val c = w.shadeHit(h)
+
+        assertEquals(color(0.1f, 0.1f, 0.1f), c)
     }
 
     private companion object {

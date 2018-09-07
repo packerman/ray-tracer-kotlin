@@ -2,7 +2,7 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.*
+import raytracer.utils.assertTupleEquals
 import kotlin.math.PI
 import kotlin.math.sqrt
 
@@ -66,9 +66,23 @@ internal class CameraTest {
         assertTupleEquals(vector(sqrt(2f) / 2, 0f, -sqrt(2f) / 2), r.direction, epsilon)
     }
 
-    companion object {
-        const val halfPi = (PI / 2).toFloat()
-        const val epsilon = 0.00001f
+    @Test
+    fun render() {
+        val w = defaultWorld()
+        val c = Camera(11, 11, (PI / 2).toFloat())
+
+        val from = point(0f, 0f, -5f)
+        val to = point(0f, 0f, 0f)
+        val up = vector(0f, 1f, 0f)
+
+        c.transform = viewTransform(from, to, up)
+
+        val image = c.render(w)
+        assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
+    companion object {
+        const val halfPi = (PI / 2).toFloat()
+        const val epsilon = 0.0001f
+    }
 }

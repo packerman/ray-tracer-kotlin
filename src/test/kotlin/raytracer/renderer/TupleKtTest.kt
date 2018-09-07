@@ -1,10 +1,11 @@
-package raytracer.math
+package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import raytracer.utils.assertTupleEquals
 import kotlin.math.sqrt
 
-internal class TuplesKtTest {
+internal class TupleKtTest {
 
     @Test
     fun tupleWithWEqualsOneIsAPoint() {

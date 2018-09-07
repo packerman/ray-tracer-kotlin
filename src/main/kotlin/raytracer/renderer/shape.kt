@@ -1,6 +1,5 @@
 package raytracer.renderer
 
-import raytracer.math.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 

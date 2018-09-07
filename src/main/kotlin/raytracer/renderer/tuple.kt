@@ -1,4 +1,4 @@
-package raytracer.math
+package raytracer.renderer
 
 import kotlin.math.sqrt
 
