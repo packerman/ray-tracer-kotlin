@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
                 val point = ray.position(hit.t)
                 val normal = hit.obj.normalAt(point)
                 val eye = -ray.direction
-                val color = lighting(hit.obj.material, light, point, eye, normal)
+                val color = lighting(hit.obj.material, hit.obj, light, point, eye, normal)
                 canvas.writePixel(x, y, color)
             }
         }

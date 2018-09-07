@@ -10,7 +10,7 @@ interface Material {
     val specular: Float
     val shininess: Float
 
-    fun colorAt(point: Point): Color
+    fun colorAt(shape: Shape, point: Point): Color
 }
 
 data class ColorMaterial(val color: Color = color(1f, 1f, 1f),
@@ -19,7 +19,7 @@ data class ColorMaterial(val color: Color = color(1f, 1f, 1f),
                          override val specular: Float = 0.9f,
                          override val shininess: Float = 200f) : Material {
 
-    override fun colorAt(point: Point): Color = color
+    override fun colorAt(shape: Shape, point: Point): Color = color
 }
 
 data class PatternMaterial(val pattern: StripePattern,
@@ -28,5 +28,5 @@ data class PatternMaterial(val pattern: StripePattern,
                            override val specular: Float = 0.9f,
                            override val shininess: Float = 200f) : Material {
 
-    override fun colorAt(point: Point): Color = pattern.stripeAt(point)
+    override fun colorAt(shape: Shape, point: Point): Color = pattern.stripeAtObject(shape, point)
 }

@@ -6,12 +6,13 @@ import kotlin.math.pow
 data class PointLight(val position: Point, val intensity: Color)
 
 fun lighting(material: Material,
+             shape: Shape,
              light: PointLight,
              position: Point,
              eyeVector: Vector,
              normalVector: Vector,
              inShadow: Boolean = false): Color {
-    val effectiveColor = material.colorAt(position) * light.intensity
+    val effectiveColor = material.colorAt(shape, position) * light.intensity
 
     val ambient = effectiveColor * material.ambient
     if (inShadow) {

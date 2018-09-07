@@ -28,8 +28,8 @@ internal class MaterialTest {
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f))
 
-        val c1 = lighting(m, light, point(0.9f, 0f, 0f), eyeVector, normalVector, false)
-        val c2 = lighting(m, light, point(1.1f, 0f, 0f), eyeVector, normalVector, false)
+        val c1 = lighting(m, Sphere(), light, point(0.9f, 0f, 0f), eyeVector, normalVector, false)
+        val c2 = lighting(m, Sphere(), light, point(1.1f, 0f, 0f), eyeVector, normalVector, false)
 
         assertEquals(white, c1)
         assertEquals(black, c2)

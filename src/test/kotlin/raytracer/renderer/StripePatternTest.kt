@@ -2,9 +2,7 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.black
-import raytracer.math.point
-import raytracer.math.white
+import raytracer.math.*
 
 internal class StripePatternTest {
 
@@ -46,4 +44,41 @@ internal class StripePatternTest {
         assertEquals(white, pattern.stripeAt(point(-1.1f, 0f, 0f)))
     }
 
+    @Test
+    internal fun stripesWithObjectTransformation() {
+        val obj = Sphere().apply {
+            transform = scaling(2f, 2f, 2f)
+        }
+        val pattern = StripePattern(black, white)
+
+        val c = pattern.stripeAtObject(obj, point(1.5f, 0f, 0f))
+
+        assertEquals(black, c)
+    }
+
+    @Test
+    internal fun stripesWithPatternTransformation() {
+        val obj = Sphere().apply {
+            transform = scaling(2f, 2f, 2f)
+        }
+        val pattern = StripePattern(black, white)
+
+        val c = pattern.stripeAtObject(obj, point(1.5f, 0f, 0f))
+
+        assertEquals(black, c)
+    }
+
+    @Test
+    internal fun stripesWithBothObjectAndPatternTransformation() {
+        val obj = Sphere().apply {
+            transform = scaling(2f, 2f, 2f)
+        }
+        val pattern = StripePattern(black, white).apply {
+            transform = translation(0.5f, 0f, 0f)
+        }
+
+        val c = pattern.stripeAtObject(obj, point(2.5f, 0f, 0f))
+
+        assertEquals(black, c)
+    }
 }

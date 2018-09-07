@@ -29,8 +29,9 @@ internal class PointLightTest {
         val eyeVector = vector(0f, 0f, -1f)
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f))
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(1.9f, 1.9f, 1.9f), result, epsilon)
     }
@@ -40,8 +41,9 @@ internal class PointLightTest {
         val eyeVector = vector(0f, sqrt(2f) / 2, -sqrt(2f) / 2)
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f))
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(1f, 1f, 1f), result, epsilon)
     }
@@ -51,8 +53,9 @@ internal class PointLightTest {
         val eyeVector = vector(0f, 0f, -1f)
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 10f, -10f), color(1f, 1f, 1f))
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(0.7364f, 0.7364f, 0.7364f), result, epsilon)
     }
@@ -62,8 +65,9 @@ internal class PointLightTest {
         val eyeVector = vector(0f, -sqrt(2f) / 2, -sqrt(2f) / 2)
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 10f, -10f), color(1f, 1f, 1f))
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(1.6364f, 1.6364f, 1.6364f), result, epsilon)
     }
@@ -73,8 +77,9 @@ internal class PointLightTest {
         val eyeVector = vector(0f, 1f, -1f)
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 0f, 10f), color(1f, 1f, 1f))
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector)
 
         assertTupleEquals(color(0.1f, 0.1f, 0.1f), result, epsilon)
     }
@@ -85,8 +90,9 @@ internal class PointLightTest {
         val normalVector = vector(0f, 0f, -1f)
         val light = PointLight(point(0f, 0f, -10f), color(1f, 1f, 1f))
         val inShadow = true
+        val shape = Sphere()
 
-        val result = lighting(material, light, position, eyeVector, normalVector, inShadow)
+        val result = lighting(material, shape, light, position, eyeVector, normalVector, inShadow)
 
         assertEquals(color(0.1f, 0.1f, 0.1f), result)
     }

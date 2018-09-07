@@ -22,6 +22,7 @@ fun defaultWorld() = World(light = PointLight(position = point(-10f, 10f, -10f),
 
 fun shadeHit(world: World, hit: Hit): Color =
         lighting(hit.obj.material,
+                hit.obj,
                 requireNotNull(world.light),
                 hit.point,
                 hit.eye,
