@@ -1,4 +1,4 @@
-package raytracer.math
+package raytracer.renderer
 
 import kotlin.math.cos
 import kotlin.math.sin
@@ -50,15 +50,3 @@ fun Matrix4.rotateZ(r: Float) = rotationZ(r) * this
 fun Matrix4.scale(x: Float, y: Float, z: Float) = scaling(x, y, z) * this
 
 fun Matrix4.translate(x: Float, y: Float, z: Float) = translation(x, y, z) * this
-
-fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
-    val forward = (to - from).normalize()
-    val left = forward.cross(up.normalize())
-    val trueUp = left.cross(forward)
-    val orientation = Matrix4(
-            left.x, left.y, left.z, 0f,
-            trueUp.x, trueUp.y, trueUp.z, 0f,
-            -forward.x, -forward.y, -forward.z, 0f,
-            0f, 0f, 0f, 1f)
-    return orientation * translation(-from.x, -from.y, -from.z)
-}

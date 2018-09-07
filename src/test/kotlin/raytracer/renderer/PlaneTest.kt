@@ -3,8 +3,6 @@ package raytracer.renderer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import raytracer.math.point
-import raytracer.math.vector
 
 internal class PlaneTest {
 
@@ -49,7 +47,7 @@ internal class PlaneTest {
 
         assertEquals(1, xs.size)
         assertEquals(1f, xs[0].t)
-        assertEquals(p, xs[0].obj)
+        assertEquals(p, xs[0].shape)
     }
 
     @Test
@@ -61,6 +59,6 @@ internal class PlaneTest {
 
         assertEquals(1, xs.size)
         assertEquals(1f, xs[0].t)
-        assertEquals(p, xs[0].obj)
+        assertEquals(p, xs[0].shape)
     }
 }

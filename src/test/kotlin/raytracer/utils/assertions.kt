@@ -1,6 +1,8 @@
-package raytracer.math
+package raytracer.utils
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import raytracer.renderer.Matrix4
+import raytracer.renderer.Tuple
 
 fun assertTupleEquals(expected: Tuple, actual: Tuple, delta: Float) {
     assertEquals(expected.x, actual.x, delta)

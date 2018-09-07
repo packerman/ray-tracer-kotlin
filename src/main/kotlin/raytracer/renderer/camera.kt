@@ -1,9 +1,5 @@
 package raytracer.renderer
 
-import raytracer.math.Matrix4
-import raytracer.math.inverse
-import raytracer.math.point
-import raytracer.math.times
 import kotlin.math.tan
 
 class Camera(val hSize: Int, val vSize: Int, val fieldOfView: Float) {
@@ -40,4 +36,17 @@ fun Camera.rayForPixel(px: Int, py: Int): Ray {
     val origin = transform.inverse() * point(0f, 0f, 0f)
     val direction = (pixel - origin).normalize()
     return Ray(origin, direction)
+}
+
+fun Camera.render(world: World): Canvas {
+    val image = Canvas(hSize, vSize)
+
+    for (y in 0 until vSize) {
+        for (x in 0 until hSize) {
+            val ray = rayForPixel(x, y)
+            val color = world.colorAt(ray)
+            image.writePixel(x, y, color)
+        }
+    }
+    return image
 }

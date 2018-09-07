@@ -1,7 +1,5 @@
 package raytracer.examples
 
-import raytracer.math.color
-import raytracer.math.point
 import raytracer.renderer.*
 
 

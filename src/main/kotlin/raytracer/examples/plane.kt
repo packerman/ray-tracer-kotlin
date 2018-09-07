@@ -1,6 +1,5 @@
 package raytracer.examples
 
-import raytracer.math.*
 import raytracer.renderer.*
 import kotlin.math.PI
 
@@ -56,7 +55,7 @@ fun main(args: Array<String>) {
     val camera = Camera(100, 50, (PI / 3).toFloat())
     camera.transform = viewTransform(point(0f, 1.5f, -5f), point(0f, 1f, 0f), vector(0f, 1f, 0f))
 
-    val image = render(camera, world)
+    val image = camera.render(world)
 
     image.saveToFile("plane.ppm")
 }

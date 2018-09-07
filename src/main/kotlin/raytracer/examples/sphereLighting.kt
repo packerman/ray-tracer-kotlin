@@ -1,8 +1,7 @@
 package raytracer.examples
 
-import raytracer.math.color
-import raytracer.math.point
 import raytracer.renderer.*
+import raytracer.renderer.color
 
 
 fun main(args: Array<String>) {
@@ -30,9 +29,9 @@ fun main(args: Array<String>) {
             val xs = s.intersect(ray)
             xs.hit()?.let { hit ->
                 val point = ray.position(hit.t)
-                val normal = hit.obj.normalAt(point)
+                val normal = hit.shape.normalAt(point)
                 val eye = -ray.direction
-                val color = lighting(hit.obj.material, hit.obj, light, point, eye, normal)
+                val color = hit.shape.material.lighting(hit.shape, light, point, eye, normal)
                 canvas.writePixel(x, y, color)
             }
         }

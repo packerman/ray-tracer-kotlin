@@ -1,8 +1,6 @@
 package raytracer.examples
 
-import raytracer.math.*
-import raytracer.renderer.Canvas
-import raytracer.renderer.saveToFile
+import raytracer.renderer.*
 import kotlin.math.PI
 
 private val twelve = point(0f, 0f, 1f)
