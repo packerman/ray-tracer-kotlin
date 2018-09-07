@@ -80,16 +80,15 @@ internal class LineBreaker(val appendable: Appendable,
 
     fun append(s: String, separator: String = ""): LineBreaker {
         require(s.length <= maxLineLength)
-        if (line.length + separator.length + s.length <= maxLineLength) {
+        return if (line.length + separator.length + s.length <= maxLineLength) {
             if (line.isNotEmpty()) line.append(separator)
             line.append(s)
-            return this
+            this
         } else {
             appendable.appendln(line)
             line = StringBuilder(s)
-
+            this
         }
-        return this
     }
 
     fun appendln(s: String, separator: String = ""): LineBreaker =
