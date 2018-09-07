@@ -1,8 +1,7 @@
 package raytracer.renderer
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.*
 
 internal class RayTest {
 
@@ -47,48 +46,5 @@ internal class RayTest {
 
         assertEquals(point(2f, 6f, 12f), r2.origin)
         assertEquals(vector(0f, 3f, 0f), r2.direction)
-    }
-
-    @Test
-    fun prepareHit() {
-        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
-        val shape = Sphere()
-
-        val intersection = Intersection(4f, shape)
-
-        val hit = prepareHit(intersection, ray)
-
-        assertTupleEquals(point(0f, 0f, -1f), hit.point, epsilon)
-        assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
-        assertEquals(vector(0f, 0f, -1f), hit.normal)
-    }
-
-    @Test
-    fun intersectionOccursOnOutside() {
-        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
-        val shape = Sphere()
-        val intersection = Intersection(4f, shape)
-
-        val hit = prepareHit(intersection, ray)
-
-        assertFalse(hit.inside)
-    }
-
-    @Test
-    fun intersectionOccursInside() {
-        val ray = Ray(point(0f, 0f, 0f), vector(0f, 0f, 1f))
-        val shape = Sphere()
-        val intersection = Intersection(1f, shape)
-
-        val hit = prepareHit(intersection, ray)
-
-        assertTupleEquals(point(0f, 0f, 1f), hit.point, epsilon)
-        assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
-        assertTrue(hit.inside)
-        assertTupleEquals(vector(0f, 0f, -1f), hit.normal, epsilon)
-    }
-
-    companion object {
-        val epsilon = 0.001f
     }
 }

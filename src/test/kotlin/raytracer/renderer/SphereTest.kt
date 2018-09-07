@@ -2,9 +2,7 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.assertTupleEquals
-import raytracer.math.point
-import raytracer.math.vector
+import raytracer.utils.assertTupleEquals
 import kotlin.math.sqrt
 
 internal class SphereTest {

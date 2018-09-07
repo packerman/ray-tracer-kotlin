@@ -1,9 +1,5 @@
 package raytracer.renderer
 
-import raytracer.math.Color
-import raytracer.math.color
-import raytracer.utils.LineBreaker
-import raytracer.utils.clamp
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -68,5 +64,45 @@ private fun Canvas.writeToAppendable(appendable: Appendable) {
             }
             newLine()
         }
+    }
+}
+
+private fun Float.clamp(bottom: Float, top: Float) = when {
+    this < bottom -> bottom
+    this > top -> top
+    else -> this
+}
+
+internal class LineBreaker(val appendable: Appendable,
+                           val maxLineLength: Int = Int.MAX_VALUE) {
+
+    private var line = StringBuilder()
+
+    fun append(s: String, separator: String = ""): LineBreaker {
+        require(s.length <= maxLineLength)
+        return if (line.length + separator.length + s.length <= maxLineLength) {
+            if (line.isNotEmpty()) line.append(separator)
+            line.append(s)
+            this
+        } else {
+            appendable.appendln(line)
+            line = StringBuilder(s)
+            this
+        }
+    }
+
+    fun appendln(s: String, separator: String = ""): LineBreaker =
+            append(s, separator).newLine()
+
+    fun newLine(): LineBreaker {
+        appendable.appendln(line)
+        line = StringBuilder()
+        return this
+    }
+
+    fun flush(): LineBreaker {
+        appendable.append(line)
+        line = StringBuilder()
+        return this
     }
 }

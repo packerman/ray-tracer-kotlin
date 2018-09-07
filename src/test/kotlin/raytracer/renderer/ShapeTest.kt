@@ -2,24 +2,12 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import raytracer.math.*
+import raytracer.utils.assertTupleEquals
 import kotlin.math.sqrt
 
 internal class ShapeTest {
 
     private var savedRay: Ray? = null
-
-    private fun testShape() = object : Shape() {
-
-        override fun localIntersect(ray: Ray): List<Intersection> {
-            savedRay = ray
-            return emptyList()
-        }
-
-        override fun localNormalAt(point: Point): Vector {
-            return point - point(0f, 0f, 0f)
-        }
-    }
 
     @Test
     fun defaultTransformation() {
@@ -97,7 +85,19 @@ internal class ShapeTest {
         assertTupleEquals(vector(0f, 0.97014f, -0.24254f), n, epsilon)
     }
 
+    private fun testShape() = object : Shape() {
+
+        override fun localIntersect(ray: Ray): List<Intersection> {
+            savedRay = ray
+            return emptyList()
+        }
+
+        override fun localNormalAt(point: Point): Vector =
+                point - point(0f, 0f, 0f)
+    }
+
     private companion object {
+
         const val epsilon = 0.00001f
     }
 }

@@ -1,4 +1,4 @@
-package raytracer.math
+package raytracer.renderer
 
 import java.util.*
 
@@ -100,6 +100,18 @@ fun Matrix4.minor(row: Int, column: Int): Float =
 
 fun Matrix4.cofactor(row: Int, column: Int): Float =
         cofactorSign(row, column) * minor(row, column)
+
+fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
+    val forward = (to - from).normalize()
+    val left = forward.cross(up.normalize())
+    val trueUp = left.cross(forward)
+    val orientation = Matrix4(
+            left.x, left.y, left.z, 0f,
+            trueUp.x, trueUp.y, trueUp.z, 0f,
+            -forward.x, -forward.y, -forward.z, 0f,
+            0f, 0f, 0f, 1f)
+    return orientation * translation(-from.x, -from.y, -from.z)
+}
 
 data class Matrix3 internal constructor(private val matrix: FloatArray) {
 

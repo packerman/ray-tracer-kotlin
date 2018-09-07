@@ -1,8 +1,6 @@
 package raytracer.examples
 
-import raytracer.math.*
-import raytracer.renderer.Canvas
-import raytracer.renderer.saveToFile
+import raytracer.renderer.*
 
 private class Projectile(val position: Point, val velocity: Vector)
 
