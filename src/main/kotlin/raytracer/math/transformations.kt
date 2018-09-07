@@ -39,7 +39,7 @@ fun shearing(xToY: Float, xToZ: Float, yToX: Float, yToZ: Float, zToX: Float, zT
                 zToX, zToY, 1f, 0f,
                 0f, 0f, 0f, 1f)
 
-fun identity() = Matrix4.IDENTITY
+fun identity() = Matrix4.identity
 
 fun Matrix4.rotateX(r: Float) = rotationX(r) * this
 

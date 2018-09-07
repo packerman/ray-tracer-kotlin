@@ -21,7 +21,7 @@ internal class WorldTest {
         val light = PointLight(point(-10f, 10f, -10f),
                 color(1f, 1f, 1f))
         val s1 = Sphere().apply {
-            material = Material(color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
+            material = ColorMaterial(color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
         }
         val s2 = Sphere().apply {
             transform = scaling(0.5f, 0.5f, 0.5f)

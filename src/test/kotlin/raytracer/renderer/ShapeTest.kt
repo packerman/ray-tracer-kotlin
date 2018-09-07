@@ -24,7 +24,7 @@ internal class ShapeTest {
     @Test
     fun defaultTransformation() {
         val s = testShape()
-        assertEquals(Matrix4.IDENTITY, s.transform)
+        assertEquals(Matrix4.identity, s.transform)
     }
 
     @Test
@@ -40,13 +40,13 @@ internal class ShapeTest {
         val s = testShape()
         val m = s.material
 
-        assertEquals(Material(), m)
+        assertEquals(ColorMaterial(), m)
     }
 
     @Test
     fun assignMaterial() {
         val s = testShape()
-        val m = Material(ambient = 1f)
+        val m = ColorMaterial(ambient = 1f)
 
         s.material = m
 

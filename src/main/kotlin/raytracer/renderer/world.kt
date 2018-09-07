@@ -14,7 +14,7 @@ class World(var light: PointLight? = null, objects: Collection<Shape> = emptySet
 fun defaultWorld() = World(light = PointLight(position = point(-10f, 10f, -10f), intensity = color(1f, 1f, 1f)),
         objects = setOf(
                 Sphere().apply {
-                    material = Material(color = color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
+                    material = ColorMaterial(color = color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
                 },
                 Sphere().apply {
                     transform = scaling(0.5f, 0.5f, 0.5f)
@@ -22,6 +22,7 @@ fun defaultWorld() = World(light = PointLight(position = point(-10f, 10f, -10f),
 
 fun shadeHit(world: World, hit: Hit): Color =
         lighting(hit.obj.material,
+                hit.obj,
                 requireNotNull(world.light),
                 hit.point,
                 hit.eye,
