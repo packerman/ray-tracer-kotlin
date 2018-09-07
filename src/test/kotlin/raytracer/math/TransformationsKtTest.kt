@@ -51,7 +51,7 @@ internal class TransformationsKtTest {
     @Test
     fun scaleInverseVector() {
         val transform = scaling(2f, 3f, 4f)
-        val inv = transform.inverse();
+        val inv = transform.inverse()
         val p = vector(-4f, 6f, 8f)
 
         assertEquals(vector(-2f, 2f, 2f), inv * p)
@@ -195,7 +195,7 @@ internal class TransformationsKtTest {
 
         val t = viewTransform(from, to, up)
 
-        assertEquals(Matrix4.IDENTITY, t)
+        assertEquals(Matrix4.identity, t)
     }
 
     @Test

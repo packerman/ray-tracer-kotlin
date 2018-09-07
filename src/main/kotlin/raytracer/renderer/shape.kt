@@ -5,7 +5,7 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 abstract class Shape {
-    var transform: Matrix4 = Matrix4.IDENTITY
+    var transform: Matrix4 = Matrix4.identity
     var material: Material = ColorMaterial()
 
     fun intersect(ray: Ray): List<Intersection> {

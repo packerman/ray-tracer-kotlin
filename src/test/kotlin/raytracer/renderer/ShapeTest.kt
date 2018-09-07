@@ -24,7 +24,7 @@ internal class ShapeTest {
     @Test
     fun defaultTransformation() {
         val s = testShape()
-        assertEquals(Matrix4.IDENTITY, s.transform)
+        assertEquals(Matrix4.identity, s.transform)
     }
 
     @Test

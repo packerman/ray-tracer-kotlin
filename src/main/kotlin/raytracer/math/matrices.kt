@@ -41,7 +41,7 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
     override fun hashCode(): Int = Arrays.hashCode(matrix)
 
     companion object {
-        val IDENTITY = Matrix4(
+        val identity = Matrix4(
                 1f, 0f, 0f, 0f,
                 0f, 1f, 0f, 0f,
                 0f, 0f, 1f, 0f,

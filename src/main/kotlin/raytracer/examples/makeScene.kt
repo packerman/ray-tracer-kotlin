@@ -3,6 +3,7 @@ package raytracer.examples
 import raytracer.math.*
 import raytracer.renderer.*
 import kotlin.math.PI
+import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
 
@@ -61,10 +62,12 @@ fun main(args: Array<String>) {
             objects = setOf(floor, leftWall, rightWall,
                     middle, right, left))
 
-    val camera = Camera(100, 50, (PI / 3).toFloat())
+    val camera = Camera(1200, 600, (PI / 3).toFloat())
     camera.transform = viewTransform(point(0f, 1.5f, -5f), point(0f, 1f, 0f), vector(0f, 1f, 0f))
 
-    val image = render(camera, world)
-
-    image.saveToFile("makeScene.ppm")
+    val timeElapsed = measureTimeMillis {
+        val image = render(camera, world)
+        image.saveToFile("makeScene.ppm")
+    }
+    println("Elapsed time: ${timeElapsed / 1000f}s")
 }

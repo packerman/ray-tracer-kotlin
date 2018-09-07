@@ -18,7 +18,7 @@ internal class CameraTest {
         assertEquals(160, c.hSize)
         assertEquals(120, c.vSize)
         assertEquals(halfPi, c.fieldOfView)
-        assertEquals(Matrix4.IDENTITY, c.transform)
+        assertEquals(Matrix4.identity, c.transform)
     }
 
     @Test
