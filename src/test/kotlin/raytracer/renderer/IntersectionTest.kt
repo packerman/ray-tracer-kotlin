@@ -1,8 +1,6 @@
 package raytracer.renderer
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
 
@@ -114,7 +112,7 @@ internal class IntersectionTest {
 
         val hit = intersection.prepareHit(ray)
 
-        Assertions.assertFalse(hit.inside)
+        assertFalse(hit.inside)
     }
 
     @Test
@@ -127,7 +125,7 @@ internal class IntersectionTest {
 
         assertTupleEquals(point(0f, 0f, 1f), hit.point, epsilon)
         assertTupleEquals(vector(0f, 0f, -1f), hit.eye, epsilon)
-        Assertions.assertTrue(hit.inside)
+        assertTrue(hit.inside)
         assertTupleEquals(vector(0f, 0f, -1f), hit.normal, epsilon)
     }
 
@@ -139,7 +137,7 @@ internal class IntersectionTest {
 
         val hit = intersection.prepareHit(ray)
 
-        Assertions.assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
+        assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
     }
 
     companion object {

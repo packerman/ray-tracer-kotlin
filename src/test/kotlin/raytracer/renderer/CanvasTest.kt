@@ -1,6 +1,7 @@
 package raytracer.renderer
 
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -13,13 +14,13 @@ internal class CanvasTest {
         fun createCanvas() {
             val c = Canvas(10, 20)
 
-            Assertions.assertEquals(10, c.width)
-            Assertions.assertEquals(20, c.height)
+            assertEquals(10, c.width)
+            assertEquals(20, c.height)
 
-            Assertions.assertEquals(10 * 20, c.pixels().toList().size)
+            assertEquals(10 * 20, c.pixels().toList().size)
 
             c.pixels().forEach { pixel ->
-                Assertions.assertEquals(color(0f, 0f, 0f), pixel)
+                assertEquals(color(0f, 0f, 0f), pixel)
             }
         }
 
@@ -29,7 +30,7 @@ internal class CanvasTest {
             val red = color(1f, 0f, 0f)
 
             c.writePixel(2, 3, red)
-            Assertions.assertEquals(red, c.pixelAt(2, 3))
+            assertEquals(red, c.pixelAt(2, 3))
         }
 
         @Test
@@ -41,7 +42,7 @@ internal class CanvasTest {
             val header = listOf("P3",
                     "5 3",
                     "255")
-            Assertions.assertEquals(header, ppm.lines().take(3))
+            assertEquals(header, ppm.lines().take(3))
         }
 
         @Test
@@ -63,7 +64,7 @@ internal class CanvasTest {
                     "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"
             )
 
-            Assertions.assertEquals(pixelData, ppm.lines().subList(3, 6))
+            assertEquals(pixelData, ppm.lines().subList(3, 6))
         }
 
         @Test
@@ -84,7 +85,7 @@ internal class CanvasTest {
                     "153 255 204 153 255 204 153 255 204 153 255 204 153"
             )
 
-            Assertions.assertEquals(pixelData, ppm.lines().subList(3, 7))
+            assertEquals(pixelData, ppm.lines().subList(3, 7))
         }
 
         @Test
@@ -93,7 +94,7 @@ internal class CanvasTest {
 
             val ppm = c.toPpm()
 
-            Assertions.assertTrue(ppm.endsWith(System.lineSeparator()))
+            assertTrue(ppm.endsWith(System.lineSeparator()))
         }
     }
 
@@ -106,7 +107,7 @@ internal class CanvasTest {
             LineBreaker(b)
                     .append("abc")
                     .flush()
-            Assertions.assertEquals("abc", b.toString())
+            assertEquals("abc", b.toString())
         }
 
         @Test
@@ -123,7 +124,7 @@ internal class CanvasTest {
                     "def"
             )
 
-            Assertions.assertEquals(expected, b.toString().lines())
+            assertEquals(expected, b.toString().lines())
         }
 
         @Test
@@ -138,7 +139,7 @@ internal class CanvasTest {
                     "abc",
                     " def")
 
-            Assertions.assertEquals(expected, b.toString().lines())
+            assertEquals(expected, b.toString().lines())
         }
 
         @Test
@@ -152,7 +153,7 @@ internal class CanvasTest {
             val expected = listOf(
                     "abc def")
 
-            Assertions.assertEquals(expected, b.toString().lines())
+            assertEquals(expected, b.toString().lines())
         }
 
         @Test
@@ -167,7 +168,7 @@ internal class CanvasTest {
                     "abc",
                     "def")
 
-            Assertions.assertEquals(expected, b.toString().lines())
+            assertEquals(expected, b.toString().lines())
         }
 
         @Test
@@ -183,7 +184,7 @@ internal class CanvasTest {
                     "abc",
                     "def")
 
-            Assertions.assertEquals(expected, b.toString().lines())
+            assertEquals(expected, b.toString().lines())
         }
     }
 }

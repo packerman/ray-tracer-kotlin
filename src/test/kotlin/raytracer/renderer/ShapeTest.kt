@@ -92,9 +92,8 @@ internal class ShapeTest {
             return emptyList()
         }
 
-        override fun localNormalAt(point: Point): Vector {
-            return point - point(0f, 0f, 0f)
-        }
+        override fun localNormalAt(point: Point): Vector =
+                point - point(0f, 0f, 0f)
     }
 
     private companion object {
