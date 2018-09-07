@@ -65,14 +65,14 @@ internal class Matrix4Test {
                 2f, 4f, 8f, 16f,
                 4f, 8f, 16f, 32f)
 
-        assertEquals(a, a * Matrix4.IDENTITY)
+        assertEquals(a, a * Matrix4.identity)
     }
 
     @Test
     fun multiplyTupleByIdentity() {
         val a = Tuple(1f, 2f, 3f, 4f)
 
-        assertEquals(a, Matrix4.IDENTITY * a)
+        assertEquals(a, Matrix4.identity * a)
     }
 
     @Test
@@ -95,7 +95,7 @@ internal class Matrix4Test {
 
     @Test
     fun transposeIdentityMatrix() {
-        assertEquals(Matrix4.IDENTITY, Matrix4.IDENTITY.transpose())
+        assertEquals(Matrix4.identity, Matrix4.identity.transpose())
     }
 
     @Test
@@ -178,7 +178,7 @@ internal class Matrix4Test {
 
     @Test
     fun invertIdentity() {
-        assertMatrixEquals(Matrix4.IDENTITY, Matrix4.IDENTITY.inverse(), epsilon)
+        assertMatrixEquals(Matrix4.identity, Matrix4.identity.inverse(), epsilon)
     }
 
     @Test
@@ -189,7 +189,7 @@ internal class Matrix4Test {
                 4f, -9f, 3f, -7f,
                 9f, 1f, 7f, -6f)
 
-        assertMatrixEquals(Matrix4.IDENTITY, a * a.inverse(), epsilon)
+        assertMatrixEquals(Matrix4.identity, a * a.inverse(), epsilon)
     }
 
     companion object {

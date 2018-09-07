@@ -7,7 +7,7 @@ import raytracer.math.times
 import kotlin.math.tan
 
 class Camera(val hSize: Int, val vSize: Int, val fieldOfView: Float) {
-    var transform: Matrix4 = Matrix4.IDENTITY
+    var transform: Matrix4 = Matrix4.identity
 
     val pixelSize: Float
     val halfWidth: Float
