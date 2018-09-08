@@ -74,16 +74,11 @@ fun Matrix4.inverse(): Matrix4 {
 }
 
 fun Matrix4.subMatrix(row: Int, column: Int): Matrix3 {
-    val matrix = FloatArray(9)
-    var k = 0
-    for (i in 0..3) {
-        for (j in 0..3) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
+    return object : Matrix3() {
+        override fun get(i: Int, j: Int): Float {
+            return this@subMatrix[if (i < row) i else i + 1, if (j < column) j else j + 1]
         }
     }
-    return Matrix3(matrix)
 }
 
 val Matrix4.isInvertible: Boolean
@@ -113,47 +108,59 @@ fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
     return orientation * translation(-from.x, -from.y, -from.z)
 }
 
-data class Matrix3 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float, m02: Float,
-                m10: Float, m11: Float, m12: Float,
-                m20: Float, m21: Float, m22: Float) : this(floatArrayOf(
-            m00, m01, m02,
-            m10, m11, m12,
-            m20, m21, m22))
+abstract class Matrix3 {
 
     val size = 3
 
-    operator fun get(i: Int, j: Int): Float =
-            matrix[3 * i + j]
+    abstract operator fun get(i: Int, j: Int): Float
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is Matrix3) return false
 
-        other as Matrix3
-
-        return Arrays.equals(matrix, other.matrix)
+        for (i in 0..2) {
+            for (j in 0..2) {
+                if (this[i, j] != other[i, j]) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
+    override fun hashCode(): Int = Objects.hash(
+            this[0, 1], this[0, 1], this[0, 2],
+            this[1, 1], this[1, 1], this[1, 2],
+            this[2, 1], this[2, 1], this[2, 2]
+    )
+
+    override fun toString(): String {
+        return "Matrix3(${this[0, 0]}, ${this[0, 1]}, ${this[0, 2]}, ${this[1, 0]}, ${this[1, 1]}, ${this[1, 2]}, ${this[2, 0]}, ${this[2, 1]}, ${this[2, 2]})"
+    }
+
+    companion object {
+        operator fun invoke(m00: Float, m01: Float, m02: Float,
+                            m10: Float, m11: Float, m12: Float,
+                            m20: Float, m21: Float, m22: Float) = object : Matrix3() {
+
+            override fun get(i: Int, j: Int): Float {
+                return array[3 * i + j]
+            }
+
+            private val array = floatArrayOf(
+                    m00, m01, m02,
+                    m10, m11, m12,
+                    m20, m21, m22)
+        }
     }
 }
 
 fun Matrix3.subMatrix(row: Int, column: Int): Matrix2 {
-    val matrix = FloatArray(4)
-    var k = 0
-    for (i in 0..2) {
-        for (j in 0..2) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
+    return object : Matrix2() {
+        override fun get(i: Int, j: Int): Float {
+            return this@subMatrix[if (i < row) i else i + 1, if (j < column) j else j + 1]
         }
     }
-    return Matrix2(matrix)
 }
 
 val Matrix3.determinant: Float
@@ -167,36 +174,50 @@ fun Matrix3.minor(row: Int, column: Int): Float =
 fun Matrix3.cofactor(row: Int, column: Int): Float =
         cofactorSign(row, column) * minor(row, column)
 
-data class Matrix2 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float,
-                m10: Float, m11: Float) : this(floatArrayOf(
-            m00, m01,
-            m10, m11))
+abstract class Matrix2 {
 
     val size = 2
 
-    operator fun get(i: Int, j: Int): Float =
-            matrix[2 * i + j]
-
-    val determinant: Float
-        get() = matrix[0] * matrix[3] - matrix[1] * matrix[2]
+    abstract operator fun get(i: Int, j: Int): Float
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is Matrix2) return false
 
-        other as Matrix2
-
-        return Arrays.equals(matrix, other.matrix)
+        for (i in 0..1) {
+            for (j in 0..1) {
+                if (this[i, j] != other[i, j]) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
+    override fun hashCode(): Int = Objects.hash(
+            this[0, 1], this[0, 1],
+            this[1, 1], this[1, 1])
+
+    override fun toString(): String {
+        return "Matrix2(${this[0, 0]}, ${this[0, 1]}, ${this[1, 0]}, ${this[1, 1]})"
+    }
+
+    companion object {
+        operator fun invoke(m00: Float, m01: Float,
+                            m10: Float, m11: Float) = object : Matrix2() {
+
+            override operator fun get(i: Int, j: Int): Float =
+                    array[2 * i + j]
+
+            private val array = floatArrayOf(
+                    m00, m01,
+                    m10, m11)
+        }
     }
 }
+
+val Matrix2.determinant: Float
+    get() = this[0, 0] * this[1, 1] - this[0, 1] * this[1, 0]
 
 private fun cofactorSign(row: Int, column: Int): Int =
         if ((row + column) % 2 == 0) 1 else -1
