@@ -65,14 +65,26 @@ internal class PatternTest {
     }
 
     @Nested
+    internal inner class SolidPatternTest {
+
+        @Test
+        internal fun solidPatternAlwaysReturnsTheSameColor() {
+            val pattern = SolidPattern(white)
+
+            assertEquals(white, pattern.patternAt(point(1f, 2f, 3f)))
+            assertEquals(white, pattern.patternAt(point(4.5f, 5.5f, 6.5f)))
+        }
+    }
+
+    @Nested
     internal inner class StripePatternTest {
 
         @Test
         internal fun createStripePattern() {
             val pattern = StripePattern(white, black)
 
-            assertEquals(white, pattern.a)
-            assertEquals(black, pattern.b)
+            assertEquals(SolidPattern(white), pattern.a)
+            assertEquals(SolidPattern(black), pattern.b)
         }
 
         @Test
