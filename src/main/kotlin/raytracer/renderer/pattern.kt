@@ -16,26 +16,39 @@ abstract class Pattern {
     }
 }
 
-class StripePattern(val a: Color, val b: Color) : Pattern() {
+data class SolidPattern(val color: Color) : Pattern() {
 
-    override fun patternAt(point: Point): Color =
-            if (floor(point.x).toInt() % 2 == 0) a else b
+    override fun patternAt(point: Point): Color = color
 }
 
-class GradientPattern(val a: Color, val b: Color) : Pattern() {
+data class StripePattern(val a: Pattern, val b: Pattern) : Pattern() {
+
+    constructor(a: Color, b: Color) : this(SolidPattern(a), SolidPattern(b))
 
     override fun patternAt(point: Point): Color =
-            a + (b - a) * (point.x - floor(point.x))
+            if (floor(point.x).toInt() % 2 == 0) a.patternAt(point) else b.patternAt(point)
 }
 
-class RingPattern(val a: Color, val b: Color) : Pattern() {
+data class GradientPattern(val a: Pattern, val b: Pattern) : Pattern() {
+
+    constructor(a: Color, b: Color) : this(SolidPattern(a), SolidPattern(b))
 
     override fun patternAt(point: Point): Color =
-            if (floor(sqrt(point.x * point.x + point.z * point.z)).toInt() % 2 == 0) a else b
+            a.patternAt(point) + (b.patternAt(point) - a.patternAt(point)) * (point.x - floor(point.x))
 }
 
-class CheckerPattern(val a: Color, val b: Color) : Pattern() {
+data class RingPattern(val a: Pattern, val b: Pattern) : Pattern() {
+
+    constructor(a: Color, b: Color) : this(SolidPattern(a), SolidPattern(b))
 
     override fun patternAt(point: Point): Color =
-            if ((floor(point.x) + floor(point.y) + floor(point.z)).toInt() % 2 == 0) a else b
+            if (floor(sqrt(point.x * point.x + point.z * point.z)).toInt() % 2 == 0) a.patternAt(point) else b.patternAt(point)
+}
+
+data class CheckerPattern(val a: Pattern, val b: Pattern) : Pattern() {
+
+    constructor(a: Color, b: Color) : this(SolidPattern(a), SolidPattern(b))
+
+    override fun patternAt(point: Point): Color =
+            if ((floor(point.x) + floor(point.y) + floor(point.z)).toInt() % 2 == 0) a.patternAt(point) else b.patternAt(point)
 }
