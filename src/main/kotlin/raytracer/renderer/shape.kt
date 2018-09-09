@@ -5,7 +5,7 @@ import kotlin.math.sqrt
 
 abstract class Shape {
     var transform: Matrix4 = Matrix4.identity
-    var material: Material = ColorMaterial()
+    var material: Material = Material()
 
     fun intersect(ray: Ray): List<Intersection> {
         val localRay = ray.transform(transform.inverse())

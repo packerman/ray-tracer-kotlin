@@ -2,13 +2,19 @@ package raytracer.renderer
 
 import kotlin.math.pow
 
-interface Material {
-    val ambient: Float
-    val diffuse: Float
-    val specular: Float
-    val shininess: Float
+data class Material(val pattern: Pattern,
+                    val ambient: Float = 0.1f,
+                    val diffuse: Float = 0.9f,
+                    val specular: Float = 0.9f,
+                    val shininess: Float = 200f) {
 
-    fun colorAt(shape: Shape, point: Point): Color
+    constructor(color: Color = color(1f, 1f, 1f),
+                ambient: Float = 0.1f,
+                diffuse: Float = 0.9f,
+                specular: Float = 0.9f,
+                shininess: Float = 200f) : this(SolidPattern(color), ambient, diffuse, specular, shininess)
+
+    fun colorAt(shape: Shape, point: Point): Color = pattern.patternAtShape(shape, point)
 }
 
 fun Material.lighting(shape: Shape,
@@ -38,22 +44,4 @@ fun Material.lighting(shape: Shape,
     val specular = if (lightDotNormal < 0f) black else specularLightning()
 
     return ambient + diffuse + specular
-}
-
-data class ColorMaterial(val color: Color = color(1f, 1f, 1f),
-                         override val ambient: Float = 0.1f,
-                         override val diffuse: Float = 0.9f,
-                         override val specular: Float = 0.9f,
-                         override val shininess: Float = 200f) : Material {
-
-    override fun colorAt(shape: Shape, point: Point): Color = color
-}
-
-data class PatternMaterial(val pattern: Pattern,
-                           override val ambient: Float = 0.1f,
-                           override val diffuse: Float = 0.9f,
-                           override val specular: Float = 0.9f,
-                           override val shininess: Float = 200f) : Material {
-
-    override fun colorAt(shape: Shape, point: Point): Color = pattern.patternAtShape(shape, point)
 }

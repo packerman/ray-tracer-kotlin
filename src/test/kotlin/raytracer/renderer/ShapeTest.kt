@@ -28,13 +28,13 @@ internal class ShapeTest {
         val s = testShape()
         val m = s.material
 
-        assertEquals(ColorMaterial(), m)
+        assertEquals(Material(), m)
     }
 
     @Test
     fun assignMaterial() {
         val s = testShape()
-        val m = ColorMaterial(ambient = 1f)
+        val m = Material(ambient = 1f)
 
         s.material = m
 

@@ -19,7 +19,7 @@ internal class WorldTest {
         val light = PointLight(point(-10f, 10f, -10f),
                 color(1f, 1f, 1f))
         val s1 = Sphere().apply {
-            material = ColorMaterial(color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
+            material = Material(color(0.8f, 1.0f, 0.6f), diffuse = 0.7f, specular = 0.2f)
         }
         val s2 = Sphere().apply {
             transform = scaling(0.5f, 0.5f, 0.5f)
@@ -28,8 +28,8 @@ internal class WorldTest {
         val w = defaultWorld()
 
         assertEquals(light, w.light)
-        assertNotNull(w.find { s1.isSameSphere(it) })
-        assertNotNull(w.find { s2.isSameSphere(it) })
+        assertNotNull(w.contains(s1))
+        assertNotNull(w.contains(s2))
     }
 
     @Test
@@ -149,9 +149,7 @@ internal class WorldTest {
     }
 
     private companion object {
-        const val epsilon = 0.0001f
 
-        fun Sphere.isSameSphere(other: Shape): Boolean =
-                material == other.material && transform == other.transform
+        const val epsilon = 0.0001f
     }
 }

@@ -7,14 +7,14 @@ import kotlin.math.sqrt
 
 internal class MaterialTest {
 
-    private val material = ColorMaterial()
+    private val material = Material()
     private val position = point(0f, 0f, 0f)
 
     @Test
     fun defaultMaterial() {
-        val m = ColorMaterial()
+        val m = Material()
 
-        assertEquals(color(1f, 1f, 1f), m.color)
+        assertEquals(SolidPattern(color(1f, 1f, 1f)), m.pattern)
         assertEquals(0.1f, m.ambient)
         assertEquals(0.9f, m.diffuse)
         assertEquals(0.9f, m.specular)
@@ -96,7 +96,7 @@ internal class MaterialTest {
 
     @Test
     fun lightingWithPatternApplied() {
-        val m = PatternMaterial(
+        val m = Material(
                 pattern = StripePattern(white, black),
                 ambient = 1f,
                 diffuse = 0f,
@@ -113,7 +113,7 @@ internal class MaterialTest {
         assertEquals(black, c2)
     }
 
-    companion object {
+    private companion object {
         val epsilon = 0.0001f
     }
 }
