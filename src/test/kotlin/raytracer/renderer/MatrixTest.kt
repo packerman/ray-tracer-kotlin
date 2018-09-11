@@ -184,6 +184,58 @@ internal class MatrixTest {
         }
 
         @Test
+        internal fun inverseOfAnotherMatrix() {
+            val a = Matrix4(
+                    8f, -5f, 9f, 2f,
+                    7f, 5f, 6f, 1f,
+                    -6f, 0f, 9f, 6f,
+                    -3f, 0f, -9f, -4f)
+
+            val inverse = Matrix4(
+                    -0.15385f, -0.15385f, -0.28205f, -0.53846f,
+                    -0.07692f, 0.12308f, 0.02564f, 0.03077f,
+                    0.35897f, 0.35897f, 0.43590f, 0.92308f,
+                    -0.69231f, -0.69231f, -0.76923f, -1.92308f)
+
+            assertMatrixEquals(inverse, a.inverse(), epsilon)
+        }
+
+        @Test
+        internal fun inverseOfThirdMatrix() {
+            val a = Matrix4(
+                    9f, 3f, 0f, 9f,
+                    -5f, -2f, -6f, -3f,
+                    -4f, 9f, 6f, 4f,
+                    -7f, 6f, 6f, 2f)
+
+            val inverse = Matrix4(
+                    -0.04074f, -0.07778f, 0.14444f, -0.22222f,
+                    -0.07778f, 0.03333f, 0.36667f, -0.33333f,
+                    -0.02901f, -0.14630f, -0.10926f, 0.12963f,
+                    0.17778f, 0.06667f, -0.26667f, 0.33333f)
+
+            assertMatrixEquals(inverse, a.inverse(), epsilon)
+        }
+
+        @Test
+        internal fun multiplyProductByItsInverse() {
+            val a = Matrix4(
+                    3f, -9f, 7f, 3f,
+                    3f, -8f, 2f, -9f,
+                    -4f, 4f, 4f, 1f,
+                    -6f, 5f, -1f, 1f)
+            val b = Matrix4(
+                    8f, 2f, 2f, 2f,
+                    3f, -1f, 7f, 0f,
+                    7f, 0f, 5f, 4f,
+                    6f, -2f, 0f, 5f)
+
+            val c = a * b
+
+            assertMatrixEquals(a, c * b.inverse(), epsilon)
+        }
+
+        @Test
         fun invertIdentity() {
             assertMatrixEquals(Matrix4.identity, Matrix4.identity.inverse(), epsilon)
         }
