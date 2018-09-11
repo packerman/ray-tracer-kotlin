@@ -106,22 +106,6 @@ internal class MatrixTest {
         }
 
         @Test
-        fun subMatrix() {
-            val a = Matrix4(
-                    -6f, 1f, 1f, 6f,
-                    -8f, 5f, 8f, 6f,
-                    -1f, 0f, 8f, 2f,
-                    -7f, 1f, -1f, 1f)
-
-            val subMatrix = Matrix3(
-                    -6f, 1f, 6f,
-                    -8f, 8f, 6f,
-                    -7f, -1f, 1f)
-
-            assertEquals(subMatrix, a.subMatrix(2, 1))
-        }
-
-        @Test
         fun determinant() {
             val a = Matrix4(
                     -2f, -8f, 3f, 5f,
@@ -129,10 +113,6 @@ internal class MatrixTest {
                     1f, 2f, -9f, 6f,
                     -6f, 7f, 7f, -9f)
 
-            assertEquals(690f, a.cofactor(0, 0))
-            assertEquals(447f, a.cofactor(0, 1))
-            assertEquals(210f, a.cofactor(0, 2))
-            assertEquals(51f, a.cofactor(0, 3))
             assertEquals(-4071f, a.determinant)
         }
 
@@ -169,9 +149,7 @@ internal class MatrixTest {
             val b = a.inverse()
 
             assertEquals(532f, a.determinant)
-            assertEquals(-160f, a.cofactor(2, 3))
             assertEquals(-160f / 532, b[3, 2], epsilon)
-            assertEquals(105f, a.cofactor(3, 2))
             assertEquals(105f / 532, b[2, 3], epsilon)
 
             val inverted = Matrix4(
@@ -303,91 +281,6 @@ internal class MatrixTest {
                     0.0f, 0.0f, 0.0f, 1.0f)
 
             assertMatrixEquals(expected, t, epsilon)
-        }
-    }
-
-    @Nested
-    internal inner class Matrix3Test {
-
-        @Test
-        fun createMatrix() {
-            val m = Matrix3(-3f, -5f, 0f,
-                    1f, -2f, -7f,
-                    0f, 1f, 1f)
-
-            assertEquals(3, m.size)
-        }
-
-        @Test
-        fun subMatrix() {
-            val a = Matrix3(1f, 5f, 0f,
-                    -3f, 2f, 7f,
-                    0f, 6f, -3f)
-
-            val subMatrix = Matrix2(
-                    -3f, 2f,
-                    0f, 6f)
-
-            assertEquals(subMatrix, a.subMatrix(0, 2))
-        }
-
-        @Test
-        fun minor() {
-            val a = Matrix3(
-                    3f, 5f, 0f,
-                    2f, -1f, -7f,
-                    6f, -1f, 5f)
-
-            val b = a.subMatrix(1, 0)
-
-            assertEquals(25f, b.determinant)
-            assertEquals(25f, a.minor(1, 0))
-        }
-
-        @Test
-        fun cofactor() {
-            val a = Matrix3(
-                    3f, 5f, 0f,
-                    2f, -1f, -7f,
-                    6f, -1f, 5f)
-
-            assertEquals(-12f, a.minor(0, 0))
-            assertEquals(-12f, a.cofactor(0, 0))
-            assertEquals(25f, a.minor(1, 0))
-            assertEquals(-25f, a.cofactor(1, 0))
-        }
-
-        @Test
-        fun determinant() {
-            val a = Matrix3(
-                    1f, 2f, 6f,
-                    -5f, 8f, -4f,
-                    2f, 6f, 4f)
-
-            assertEquals(56f, a.cofactor(0, 0))
-            assertEquals(12f, a.cofactor(0, 1))
-            assertEquals(-46f, a.cofactor(0, 2))
-            assertEquals(-196f, a.determinant)
-        }
-    }
-
-    @Nested
-    internal inner class Matrix2Test {
-
-        @Test
-        fun createMatrix() {
-            val m = Matrix2(-3f, -5f,
-                    1f, -2f)
-
-            assertEquals(2, m.size)
-        }
-
-        @Test
-        fun determinant() {
-            val a = Matrix2(1f, 5f,
-                    -3f, 2f)
-
-            assertEquals(17f, a.determinant)
         }
     }
 

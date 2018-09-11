@@ -1,9 +1,11 @@
 package raytracer.renderer
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.system.measureTimeMillis
 
+@Disabled
 class MatrixPerformanceTest {
 
     private val random = Random()

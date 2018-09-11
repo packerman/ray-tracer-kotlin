@@ -2,7 +2,7 @@ package raytracer.renderer
 
 import java.util.*
 
-data class Matrix4 internal constructor(private val matrix: FloatArray) {
+data class Matrix4 internal constructor(private val m: FloatArray) {
 
     constructor(m00: Float, m01: Float, m02: Float, m03: Float,
                 m10: Float, m11: Float, m12: Float, m13: Float,
@@ -22,12 +22,42 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
     constructor() : this(FloatArray(16))
 
     operator fun get(i: Int, j: Int): Float =
-            matrix[4 * i + j]
+            m[4 * i + j]
 
     operator fun div(d: Float): Matrix4 =
             Matrix4 { row, column ->
                 this[row, column] / d
             }
+
+    val determinant: Float
+        get() = m[3] * m[6] * m[9] * m[12] - m[2] * m[7] * m[9] * m[12] - m[3] * m[5] * m[10] * m[12] + m[1] * m[7] * m[10] * m[12] +
+                m[2] * m[5] * m[11] * m[12] - m[1] * m[6] * m[11] * m[12] - m[3] * m[6] * m[8] * m[13] + m[2] * m[7] * m[8] * m[13] +
+                m[3] * m[4] * m[10] * m[13] - m[0] * m[7] * m[10] * m[13] - m[2] * m[4] * m[11] * m[13] + m[0] * m[6] * m[11] * m[13] +
+                m[3] * m[5] * m[8] * m[14] - m[1] * m[7] * m[8] * m[14] - m[3] * m[4] * m[9] * m[14] + m[0] * m[7] * m[9] * m[14] +
+                m[1] * m[4] * m[11] * m[14] - m[0] * m[5] * m[11] * m[14] - m[2] * m[5] * m[8] * m[15] + m[1] * m[6] * m[8] * m[15] +
+                m[2] * m[4] * m[9] * m[15] - m[0] * m[6] * m[9] * m[15] - m[1] * m[4] * m[10] * m[15] + m[0] * m[5] * m[10] * m[15]
+
+    fun inverse(): Matrix4 {
+        val detInv = 1f / determinant
+        return Matrix4(
+                (m[6] * m[11] * m[13] - m[7] * m[10] * m[13] + m[7] * m[9] * m[14] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] + m[5] * m[10] * m[15]) * detInv,
+                (m[3] * m[10] * m[13] - m[2] * m[11] * m[13] - m[3] * m[9] * m[14] + m[1] * m[11] * m[14] + m[2] * m[9] * m[15] - m[1] * m[10] * m[15]) * detInv,
+                (m[2] * m[7] * m[13] - m[3] * m[6] * m[13] + m[3] * m[5] * m[14] - m[1] * m[7] * m[14] - m[2] * m[5] * m[15] + m[1] * m[6] * m[15]) * detInv,
+                (m[3] * m[6] * m[9] - m[2] * m[7] * m[9] - m[3] * m[5] * m[10] + m[1] * m[7] * m[10] + m[2] * m[5] * m[11] - m[1] * m[6] * m[11]) * detInv,
+                (m[7] * m[10] * m[12] - m[6] * m[11] * m[12] - m[7] * m[8] * m[14] + m[4] * m[11] * m[14] + m[6] * m[8] * m[15] - m[4] * m[10] * m[15]) * detInv,
+                (m[2] * m[11] * m[12] - m[3] * m[10] * m[12] + m[3] * m[8] * m[14] - m[0] * m[11] * m[14] - m[2] * m[8] * m[15] + m[0] * m[10] * m[15]) * detInv,
+                (m[3] * m[6] * m[12] - m[2] * m[7] * m[12] - m[3] * m[4] * m[14] + m[0] * m[7] * m[14] + m[2] * m[4] * m[15] - m[0] * m[6] * m[15]) * detInv,
+                (m[2] * m[7] * m[8] - m[3] * m[6] * m[8] + m[3] * m[4] * m[10] - m[0] * m[7] * m[10] - m[2] * m[4] * m[11] + m[0] * m[6] * m[11]) * detInv,
+                (m[5] * m[11] * m[12] - m[7] * m[9] * m[12] + m[7] * m[8] * m[13] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] + m[4] * m[9] * m[15]) * detInv,
+                (m[3] * m[9] * m[12] - m[1] * m[11] * m[12] - m[3] * m[8] * m[13] + m[0] * m[11] * m[13] + m[1] * m[8] * m[15] - m[0] * m[9] * m[15]) * detInv,
+                (m[1] * m[7] * m[12] - m[3] * m[5] * m[12] + m[3] * m[4] * m[13] - m[0] * m[7] * m[13] - m[1] * m[4] * m[15] + m[0] * m[5] * m[15]) * detInv,
+                (m[3] * m[5] * m[8] - m[1] * m[7] * m[8] - m[3] * m[4] * m[9] + m[0] * m[7] * m[9] + m[1] * m[4] * m[11] - m[0] * m[5] * m[11]) * detInv,
+                (m[6] * m[9] * m[12] - m[5] * m[10] * m[12] - m[6] * m[8] * m[13] + m[4] * m[10] * m[13] + m[5] * m[8] * m[14] - m[4] * m[9] * m[14]) * detInv,
+                (m[1] * m[10] * m[12] - m[2] * m[9] * m[12] + m[2] * m[8] * m[13] - m[0] * m[10] * m[13] - m[1] * m[8] * m[14] + m[0] * m[9] * m[14]) * detInv,
+                (m[2] * m[5] * m[12] - m[1] * m[6] * m[12] - m[2] * m[4] * m[13] + m[0] * m[6] * m[13] + m[1] * m[4] * m[14] - m[0] * m[5] * m[14]) * detInv,
+                (m[1] * m[6] * m[8] - m[2] * m[5] * m[8] + m[2] * m[4] * m[9] - m[0] * m[6] * m[9] - m[1] * m[4] * m[10] + m[0] * m[5] * m[10]) * detInv
+        )
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,10 +65,10 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
 
         other as Matrix4
 
-        return Arrays.equals(matrix, other.matrix)
+        return Arrays.equals(m, other.m)
     }
 
-    override fun hashCode(): Int = Arrays.hashCode(matrix)
+    override fun hashCode(): Int = Arrays.hashCode(m)
 
     companion object {
         val identity = Matrix4(
@@ -67,39 +97,8 @@ fun Matrix4.transpose() =
                 this[0, 2], this[1, 2], this[2, 2], this[3, 2],
                 this[0, 3], this[1, 3], this[2, 3], this[3, 3])
 
-fun Matrix4.inverse(): Matrix4 {
-    return Matrix4 { row, column ->
-        this.cofactor(row, column)
-    }.transpose() / determinant
-}
-
-fun Matrix4.subMatrix(row: Int, column: Int): Matrix3 {
-    val matrix = FloatArray(9)
-    var k = 0
-    for (i in 0..3) {
-        for (j in 0..3) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
-        }
-    }
-    return Matrix3(matrix)
-}
-
 val Matrix4.isInvertible: Boolean
     get() = this.determinant != 0f
-
-val Matrix4.determinant: Float
-    get() = this[0, 0] * cofactor(0, 0) +
-            this[0, 1] * cofactor(0, 1) +
-            this[0, 2] * cofactor(0, 2) +
-            this[0, 3] * cofactor(0, 3)
-
-fun Matrix4.minor(row: Int, column: Int): Float =
-        subMatrix(row, column).determinant
-
-fun Matrix4.cofactor(row: Int, column: Int): Float =
-        cofactorSign(row, column) * minor(row, column)
 
 fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
     val forward = (to - from).normalize()
@@ -112,91 +111,3 @@ fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
             0f, 0f, 0f, 1f)
     return orientation * translation(-from.x, -from.y, -from.z)
 }
-
-data class Matrix3 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float, m02: Float,
-                m10: Float, m11: Float, m12: Float,
-                m20: Float, m21: Float, m22: Float) : this(floatArrayOf(
-            m00, m01, m02,
-            m10, m11, m12,
-            m20, m21, m22))
-
-    val size = 3
-
-    operator fun get(i: Int, j: Int): Float =
-            matrix[3 * i + j]
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Matrix3
-
-        return Arrays.equals(matrix, other.matrix)
-    }
-
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
-    }
-}
-
-fun Matrix3.subMatrix(row: Int, column: Int): Matrix2 {
-    val matrix = FloatArray(4)
-    var k = 0
-    for (i in 0..2) {
-        for (j in 0..2) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
-        }
-    }
-    return Matrix2(matrix)
-}
-
-val Matrix3.determinant: Float
-    get() = this[0, 0] * cofactor(0, 0) +
-            this[0, 1] * cofactor(0, 1) +
-            this[0, 2] * cofactor(0, 2)
-
-fun Matrix3.minor(row: Int, column: Int): Float =
-        subMatrix(row, column).determinant
-
-fun Matrix3.cofactor(row: Int, column: Int): Float =
-        cofactorSign(row, column) * minor(row, column)
-
-data class Matrix2 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float,
-                m10: Float, m11: Float) : this(floatArrayOf(
-            m00, m01,
-            m10, m11))
-
-    val size = 2
-
-    operator fun get(i: Int, j: Int): Float =
-            matrix[2 * i + j]
-
-    val determinant: Float
-        get() = matrix[0] * matrix[3] - matrix[1] * matrix[2]
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Matrix2
-
-        return Arrays.equals(matrix, other.matrix)
-    }
-
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
-    }
-}
-
-private fun cofactorSign(row: Int, column: Int): Int =
-        if ((row + column) % 2 == 0) 1 else -1
