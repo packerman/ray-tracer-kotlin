@@ -13,21 +13,69 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
             m20, m21, m22, m23,
             m30, m31, m32, m33))
 
-    constructor(f: (Int, Int) -> Float) : this(floatArrayOf(
-            f(0, 0), f(0, 1), f(0, 2), f(0, 3),
-            f(1, 0), f(1, 1), f(1, 2), f(1, 3),
-            f(2, 0), f(2, 1), f(2, 2), f(2, 3),
-            f(3, 0), f(3, 1), f(3, 2), f(3, 3)))
-
     constructor() : this(FloatArray(16))
 
     operator fun get(i: Int, j: Int): Float =
             matrix[4 * i + j]
 
-    operator fun div(d: Float): Matrix4 =
-            Matrix4 { row, column ->
-                this[row, column] / d
-            }
+    operator fun times(other: Matrix4) =
+            Matrix4(this.matrix[0] * other.matrix[0] + this.matrix[1] * other.matrix[4] + this.matrix[2] * other.matrix[8] + this.matrix[3] * other.matrix[12],
+                    this.matrix[0] * other.matrix[1] + this.matrix[1] * other.matrix[5] + this.matrix[2] * other.matrix[9] + this.matrix[3] * other.matrix[13],
+                    this.matrix[0] * other.matrix[2] + this.matrix[1] * other.matrix[6] + this.matrix[2] * other.matrix[10] + this.matrix[3] * other.matrix[14],
+                    this.matrix[0] * other.matrix[3] + this.matrix[1] * other.matrix[7] + this.matrix[2] * other.matrix[11] + this.matrix[3] * other.matrix[15],
+                    this.matrix[4] * other.matrix[0] + this.matrix[5] * other.matrix[4] + this.matrix[6] * other.matrix[8] + this.matrix[7] * other.matrix[12],
+                    this.matrix[4] * other.matrix[1] + this.matrix[5] * other.matrix[5] + this.matrix[6] * other.matrix[9] + this.matrix[7] * other.matrix[13],
+                    this.matrix[4] * other.matrix[2] + this.matrix[5] * other.matrix[6] + this.matrix[6] * other.matrix[10] + this.matrix[7] * other.matrix[14],
+                    this.matrix[4] * other.matrix[3] + this.matrix[5] * other.matrix[7] + this.matrix[6] * other.matrix[11] + this.matrix[7] * other.matrix[15],
+                    this.matrix[8] * other.matrix[0] + this.matrix[9] * other.matrix[4] + this.matrix[10] * other.matrix[8] + this.matrix[11] * other.matrix[12],
+                    this.matrix[8] * other.matrix[1] + this.matrix[9] * other.matrix[5] + this.matrix[10] * other.matrix[9] + this.matrix[11] * other.matrix[13],
+                    this.matrix[8] * other.matrix[2] + this.matrix[9] * other.matrix[6] + this.matrix[10] * other.matrix[10] + this.matrix[11] * other.matrix[14],
+                    this.matrix[8] * other.matrix[3] + this.matrix[9] * other.matrix[7] + this.matrix[10] * other.matrix[11] + this.matrix[11] * other.matrix[15],
+                    this.matrix[12] * other.matrix[0] + this.matrix[13] * other.matrix[4] + this.matrix[14] * other.matrix[8] + this.matrix[15] * other.matrix[12],
+                    this.matrix[12] * other.matrix[1] + this.matrix[13] * other.matrix[5] + this.matrix[14] * other.matrix[9] + this.matrix[15] * other.matrix[13],
+                    this.matrix[12] * other.matrix[2] + this.matrix[13] * other.matrix[6] + this.matrix[14] * other.matrix[10] + this.matrix[15] * other.matrix[14],
+                    this.matrix[12] * other.matrix[3] + this.matrix[13] * other.matrix[7] + this.matrix[14] * other.matrix[11] + this.matrix[15] * other.matrix[15])
+
+    operator fun times(tuple: Tuple) = Tuple(this.matrix[0] * tuple.x + this.matrix[1] * tuple.y + this.matrix[2] * tuple.z + this.matrix[3] * tuple.w,
+            this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z + this.matrix[7] * tuple.w,
+            this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z + this.matrix[11] * tuple.w,
+            this.matrix[12] * tuple.x + this.matrix[13] * tuple.y + this.matrix[14] * tuple.z + this.matrix[15] * tuple.w)
+
+    val determinant: Float
+        get() = matrix[3] * matrix[6] * matrix[9] * matrix[12] - matrix[2] * matrix[7] * matrix[9] * matrix[12] - matrix[3] * matrix[5] * matrix[10] * matrix[12] + matrix[1] * matrix[7] * matrix[10] * matrix[12] +
+                matrix[2] * matrix[5] * matrix[11] * matrix[12] - matrix[1] * matrix[6] * matrix[11] * matrix[12] - matrix[3] * matrix[6] * matrix[8] * matrix[13] + matrix[2] * matrix[7] * matrix[8] * matrix[13] +
+                matrix[3] * matrix[4] * matrix[10] * matrix[13] - matrix[0] * matrix[7] * matrix[10] * matrix[13] - matrix[2] * matrix[4] * matrix[11] * matrix[13] + matrix[0] * matrix[6] * matrix[11] * matrix[13] +
+                matrix[3] * matrix[5] * matrix[8] * matrix[14] - matrix[1] * matrix[7] * matrix[8] * matrix[14] - matrix[3] * matrix[4] * matrix[9] * matrix[14] + matrix[0] * matrix[7] * matrix[9] * matrix[14] +
+                matrix[1] * matrix[4] * matrix[11] * matrix[14] - matrix[0] * matrix[5] * matrix[11] * matrix[14] - matrix[2] * matrix[5] * matrix[8] * matrix[15] + matrix[1] * matrix[6] * matrix[8] * matrix[15] +
+                matrix[2] * matrix[4] * matrix[9] * matrix[15] - matrix[0] * matrix[6] * matrix[9] * matrix[15] - matrix[1] * matrix[4] * matrix[10] * matrix[15] + matrix[0] * matrix[5] * matrix[10] * matrix[15]
+
+    val inverse: Matrix4
+        get() {
+            val detInv = 1f / determinant
+            return Matrix4((matrix[6] * matrix[11] * matrix[13] - matrix[7] * matrix[10] * matrix[13] + matrix[7] * matrix[9] * matrix[14] - matrix[5] * matrix[11] * matrix[14] - matrix[6] * matrix[9] * matrix[15] + matrix[5] * matrix[10] * matrix[15]) * detInv,
+                    (matrix[3] * matrix[10] * matrix[13] - matrix[2] * matrix[11] * matrix[13] - matrix[3] * matrix[9] * matrix[14] + matrix[1] * matrix[11] * matrix[14] + matrix[2] * matrix[9] * matrix[15] - matrix[1] * matrix[10] * matrix[15]) * detInv,
+                    (matrix[2] * matrix[7] * matrix[13] - matrix[3] * matrix[6] * matrix[13] + matrix[3] * matrix[5] * matrix[14] - matrix[1] * matrix[7] * matrix[14] - matrix[2] * matrix[5] * matrix[15] + matrix[1] * matrix[6] * matrix[15]) * detInv,
+                    (matrix[3] * matrix[6] * matrix[9] - matrix[2] * matrix[7] * matrix[9] - matrix[3] * matrix[5] * matrix[10] + matrix[1] * matrix[7] * matrix[10] + matrix[2] * matrix[5] * matrix[11] - matrix[1] * matrix[6] * matrix[11]) * detInv,
+                    (matrix[7] * matrix[10] * matrix[12] - matrix[6] * matrix[11] * matrix[12] - matrix[7] * matrix[8] * matrix[14] + matrix[4] * matrix[11] * matrix[14] + matrix[6] * matrix[8] * matrix[15] - matrix[4] * matrix[10] * matrix[15]) * detInv,
+                    (matrix[2] * matrix[11] * matrix[12] - matrix[3] * matrix[10] * matrix[12] + matrix[3] * matrix[8] * matrix[14] - matrix[0] * matrix[11] * matrix[14] - matrix[2] * matrix[8] * matrix[15] + matrix[0] * matrix[10] * matrix[15]) * detInv,
+                    (matrix[3] * matrix[6] * matrix[12] - matrix[2] * matrix[7] * matrix[12] - matrix[3] * matrix[4] * matrix[14] + matrix[0] * matrix[7] * matrix[14] + matrix[2] * matrix[4] * matrix[15] - matrix[0] * matrix[6] * matrix[15]) * detInv,
+                    (matrix[2] * matrix[7] * matrix[8] - matrix[3] * matrix[6] * matrix[8] + matrix[3] * matrix[4] * matrix[10] - matrix[0] * matrix[7] * matrix[10] - matrix[2] * matrix[4] * matrix[11] + matrix[0] * matrix[6] * matrix[11]) * detInv,
+                    (matrix[5] * matrix[11] * matrix[12] - matrix[7] * matrix[9] * matrix[12] + matrix[7] * matrix[8] * matrix[13] - matrix[4] * matrix[11] * matrix[13] - matrix[5] * matrix[8] * matrix[15] + matrix[4] * matrix[9] * matrix[15]) * detInv,
+                    (matrix[3] * matrix[9] * matrix[12] - matrix[1] * matrix[11] * matrix[12] - matrix[3] * matrix[8] * matrix[13] + matrix[0] * matrix[11] * matrix[13] + matrix[1] * matrix[8] * matrix[15] - matrix[0] * matrix[9] * matrix[15]) * detInv,
+                    (matrix[1] * matrix[7] * matrix[12] - matrix[3] * matrix[5] * matrix[12] + matrix[3] * matrix[4] * matrix[13] - matrix[0] * matrix[7] * matrix[13] - matrix[1] * matrix[4] * matrix[15] + matrix[0] * matrix[5] * matrix[15]) * detInv,
+                    (matrix[3] * matrix[5] * matrix[8] - matrix[1] * matrix[7] * matrix[8] - matrix[3] * matrix[4] * matrix[9] + matrix[0] * matrix[7] * matrix[9] + matrix[1] * matrix[4] * matrix[11] - matrix[0] * matrix[5] * matrix[11]) * detInv,
+                    (matrix[6] * matrix[9] * matrix[12] - matrix[5] * matrix[10] * matrix[12] - matrix[6] * matrix[8] * matrix[13] + matrix[4] * matrix[10] * matrix[13] + matrix[5] * matrix[8] * matrix[14] - matrix[4] * matrix[9] * matrix[14]) * detInv,
+                    (matrix[1] * matrix[10] * matrix[12] - matrix[2] * matrix[9] * matrix[12] + matrix[2] * matrix[8] * matrix[13] - matrix[0] * matrix[10] * matrix[13] - matrix[1] * matrix[8] * matrix[14] + matrix[0] * matrix[9] * matrix[14]) * detInv,
+                    (matrix[2] * matrix[5] * matrix[12] - matrix[1] * matrix[6] * matrix[12] - matrix[2] * matrix[4] * matrix[13] + matrix[0] * matrix[6] * matrix[13] + matrix[1] * matrix[4] * matrix[14] - matrix[0] * matrix[5] * matrix[14]) * detInv,
+                    (matrix[1] * matrix[6] * matrix[8] - matrix[2] * matrix[5] * matrix[8] + matrix[2] * matrix[4] * matrix[9] - matrix[0] * matrix[6] * matrix[9] - matrix[1] * matrix[4] * matrix[10] + matrix[0] * matrix[5] * matrix[10]) * detInv)
+        }
+
+    val transpose: Matrix4
+        get() =
+            Matrix4(this.matrix[0], this.matrix[4], this.matrix[8], this.matrix[12],
+                    this.matrix[1], this.matrix[5], this.matrix[9], this.matrix[13],
+                    this.matrix[2], this.matrix[6], this.matrix[10], this.matrix[14],
+                    this.matrix[3], this.matrix[7], this.matrix[11], this.matrix[15])
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -49,57 +97,8 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
     }
 }
 
-operator fun Matrix4.times(other: Matrix4) =
-        Matrix4 { row, column ->
-            this[row, 0] * other[0, column] +
-                    this[row, 1] * other[1, column] +
-                    this[row, 2] * other[2, column] +
-                    this[row, 3] * other[3, column]
-        }
-
-operator fun Matrix4.times(tuple: Tuple) = Tuple { i ->
-    this[i, 0] * tuple.x + this[i, 1] * tuple.y + this[i, 2] * tuple.z + this[i, 3] * tuple.w
-}
-
-fun Matrix4.transpose() =
-        Matrix4(this[0, 0], this[1, 0], this[2, 0], this[3, 0],
-                this[0, 1], this[1, 1], this[2, 1], this[3, 1],
-                this[0, 2], this[1, 2], this[2, 2], this[3, 2],
-                this[0, 3], this[1, 3], this[2, 3], this[3, 3])
-
-fun Matrix4.inverse(): Matrix4 {
-    return Matrix4 { row, column ->
-        this.cofactor(row, column)
-    }.transpose() / determinant
-}
-
-fun Matrix4.subMatrix(row: Int, column: Int): Matrix3 {
-    val matrix = FloatArray(9)
-    var k = 0
-    for (i in 0..3) {
-        for (j in 0..3) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
-        }
-    }
-    return Matrix3(matrix)
-}
-
 val Matrix4.isInvertible: Boolean
     get() = this.determinant != 0f
-
-val Matrix4.determinant: Float
-    get() = this[0, 0] * cofactor(0, 0) +
-            this[0, 1] * cofactor(0, 1) +
-            this[0, 2] * cofactor(0, 2) +
-            this[0, 3] * cofactor(0, 3)
-
-fun Matrix4.minor(row: Int, column: Int): Float =
-        subMatrix(row, column).determinant
-
-fun Matrix4.cofactor(row: Int, column: Int): Float =
-        cofactorSign(row, column) * minor(row, column)
 
 fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
     val forward = (to - from).normalize()
@@ -112,91 +111,3 @@ fun viewTransform(from: Point, to: Point, up: Vector): Matrix4 {
             0f, 0f, 0f, 1f)
     return orientation * translation(-from.x, -from.y, -from.z)
 }
-
-data class Matrix3 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float, m02: Float,
-                m10: Float, m11: Float, m12: Float,
-                m20: Float, m21: Float, m22: Float) : this(floatArrayOf(
-            m00, m01, m02,
-            m10, m11, m12,
-            m20, m21, m22))
-
-    val size = 3
-
-    operator fun get(i: Int, j: Int): Float =
-            matrix[3 * i + j]
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Matrix3
-
-        return Arrays.equals(matrix, other.matrix)
-    }
-
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
-    }
-}
-
-fun Matrix3.subMatrix(row: Int, column: Int): Matrix2 {
-    val matrix = FloatArray(4)
-    var k = 0
-    for (i in 0..2) {
-        for (j in 0..2) {
-            if (i != row && j != column) {
-                matrix[k++] = this[i, j]
-            }
-        }
-    }
-    return Matrix2(matrix)
-}
-
-val Matrix3.determinant: Float
-    get() = this[0, 0] * cofactor(0, 0) +
-            this[0, 1] * cofactor(0, 1) +
-            this[0, 2] * cofactor(0, 2)
-
-fun Matrix3.minor(row: Int, column: Int): Float =
-        subMatrix(row, column).determinant
-
-fun Matrix3.cofactor(row: Int, column: Int): Float =
-        cofactorSign(row, column) * minor(row, column)
-
-data class Matrix2 internal constructor(private val matrix: FloatArray) {
-
-    constructor(m00: Float, m01: Float,
-                m10: Float, m11: Float) : this(floatArrayOf(
-            m00, m01,
-            m10, m11))
-
-    val size = 2
-
-    operator fun get(i: Int, j: Int): Float =
-            matrix[2 * i + j]
-
-    val determinant: Float
-        get() = matrix[0] * matrix[3] - matrix[1] * matrix[2]
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Matrix2
-
-        return Arrays.equals(matrix, other.matrix)
-    }
-
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(matrix)
-        result = 31 * result + size
-        return result
-    }
-}
-
-private fun cofactorSign(row: Int, column: Int): Int =
-        if ((row + column) % 2 == 0) 1 else -1

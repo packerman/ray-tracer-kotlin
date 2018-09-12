@@ -19,7 +19,7 @@ internal class TransformationKtTest {
     @Test
     fun inverseOfTranslation() {
         val transform = translation(5f, -3f, 2f)
-        val inv = transform.inverse()
+        val inv = transform.inverse
         val p = point(-3f, 4f, 5f)
 
         assertEquals(point(-8f, 7f, 3f), inv * p)
@@ -52,7 +52,7 @@ internal class TransformationKtTest {
     @Test
     fun scaleInverseVector() {
         val transform = scaling(2f, 3f, 4f)
-        val inv = transform.inverse()
+        val inv = transform.inverse
         val p = vector(-4f, 6f, 8f)
 
         assertEquals(vector(-2f, 2f, 2f), inv * p)
@@ -80,7 +80,7 @@ internal class TransformationKtTest {
     fun rotateXInverse() {
         val p = point(0f, 1f, 0f)
         val halfQuarter = rotationX((PI / 4).toFloat())
-        val inv = halfQuarter.inverse()
+        val inv = halfQuarter.inverse
 
         assertTupleEquals(point(0f, sqrt(2f) / 2, -sqrt(2f) / 2), inv * p, epsilon)
     }

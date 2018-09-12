@@ -4,8 +4,6 @@ import kotlin.math.sqrt
 
 data class Tuple(val x: Float, val y: Float, val z: Float, val w: Float) {
 
-    constructor(f: (Int) -> Float) : this(f(0), f(1), f(2), f(3))
-
     val length: Float
         get() = sqrt(x * x + y * y + z * z + w * w)
 

@@ -32,8 +32,8 @@ fun Camera.rayForPixel(px: Int, py: Int): Ray {
     val worldX = halfWidth - xOffset
     val worldY = halfHeight - yOffset
 
-    val pixel = transform.inverse() * point(worldX, worldY, -1f)
-    val origin = transform.inverse() * point(0f, 0f, 0f)
+    val pixel = transform.inverse * point(worldX, worldY, -1f)
+    val origin = transform.inverse * point(0f, 0f, 0f)
     val direction = (pixel - origin).normalize()
     return Ray(origin, direction)
 }
