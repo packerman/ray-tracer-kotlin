@@ -97,12 +97,12 @@ internal class MatrixTest {
                     0f, 8f, 3f, 8f
             )
 
-            assertEquals(transposed, a.transpose())
+            assertEquals(transposed, a.transpose)
         }
 
         @Test
         fun transposeIdentityMatrix() {
-            assertEquals(Matrix4.identity, Matrix4.identity.transpose())
+            assertEquals(Matrix4.identity, Matrix4.identity.transpose)
         }
 
         @Test
@@ -146,7 +146,7 @@ internal class MatrixTest {
                     7f, 7f, -6f, -7f,
                     1f, -3f, 7f, 4f)
 
-            val b = a.inverse()
+            val b = a.inverse
 
             assertEquals(532f, a.determinant)
             assertEquals(-160f / 532, b[3, 2], epsilon)
@@ -175,7 +175,7 @@ internal class MatrixTest {
                     0.35897f, 0.35897f, 0.43590f, 0.92308f,
                     -0.69231f, -0.69231f, -0.76923f, -1.92308f)
 
-            assertMatrixEquals(inverse, a.inverse(), epsilon)
+            assertMatrixEquals(inverse, a.inverse, epsilon)
         }
 
         @Test
@@ -192,7 +192,7 @@ internal class MatrixTest {
                     -0.02901f, -0.14630f, -0.10926f, 0.12963f,
                     0.17778f, 0.06667f, -0.26667f, 0.33333f)
 
-            assertMatrixEquals(inverse, a.inverse(), epsilon)
+            assertMatrixEquals(inverse, a.inverse, epsilon)
         }
 
         @Test
@@ -210,12 +210,12 @@ internal class MatrixTest {
 
             val c = a * b
 
-            assertMatrixEquals(a, c * b.inverse(), epsilon)
+            assertMatrixEquals(a, c * b.inverse, epsilon)
         }
 
         @Test
         fun invertIdentity() {
-            assertMatrixEquals(Matrix4.identity, Matrix4.identity.inverse(), epsilon)
+            assertMatrixEquals(Matrix4.identity, Matrix4.identity.inverse, epsilon)
         }
 
         @Test
@@ -226,7 +226,7 @@ internal class MatrixTest {
                     4f, -9f, 3f, -7f,
                     9f, 1f, 7f, -6f)
 
-            assertMatrixEquals(Matrix4.identity, a * a.inverse(), epsilon)
+            assertMatrixEquals(Matrix4.identity, a * a.inverse, epsilon)
         }
     }
 

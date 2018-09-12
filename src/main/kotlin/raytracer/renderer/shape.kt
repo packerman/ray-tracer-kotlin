@@ -8,16 +8,16 @@ abstract class Shape {
     var material: Material = ColorMaterial()
 
     fun intersect(ray: Ray): List<Intersection> {
-        val localRay = ray.transform(transform.inverse())
+        val localRay = ray.transform(transform.inverse)
         return localIntersect(localRay)
     }
 
     protected abstract fun localIntersect(ray: Ray): List<Intersection>
 
     fun normalAt(point: Point): Vector {
-        val localPoint = transform.inverse() * point
+        val localPoint = transform.inverse * point
         val localNormal = localNormalAt(localPoint)
-        val worldNormal = transform.inverse().transpose() * localNormal
+        val worldNormal = transform.inverse.transpose * localNormal
         return worldNormal.normalize()
     }
 

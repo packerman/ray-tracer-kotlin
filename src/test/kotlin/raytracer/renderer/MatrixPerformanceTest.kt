@@ -16,7 +16,7 @@ class MatrixPerformanceTest {
             val n = 1000000
             val matrices = (1..n).map { random.nextMatrix(-1f, 1f) }
             val timeMillis = measureTimeMillis {
-                val inverts = matrices.map { m -> m.inverse() }
+                val inverts = matrices.map(Matrix4::inverse)
                 println("Number of matrices: " + inverts.size)
             }
             println("Total time: $timeMillis ms")
