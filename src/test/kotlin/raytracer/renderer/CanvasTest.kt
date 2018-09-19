@@ -34,6 +34,24 @@ internal class CanvasTest {
         }
 
         @Test
+        fun copyPixels() {
+            val c1 = Canvas(10, 20)
+            val c2 = Canvas(5, 10)
+            for (j in 0 until c2.height) {
+                for (i in 0 until c2.width) {
+                    c2.writePixel(i, j, red)
+                }
+            }
+
+            c1.copyPixels(5, 10, c2)
+
+            assertEquals(black, c1.pixelAt(2, 5))
+            assertEquals(red, c1.pixelAt(7, 15))
+            assertEquals(black, c1.pixelAt(2, 15))
+            assertEquals(black, c1.pixelAt(7, 5))
+        }
+
+        @Test
         fun ppmHeader() {
             val c = Canvas(5, 3)
 

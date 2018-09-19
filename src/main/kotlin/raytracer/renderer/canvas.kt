@@ -31,6 +31,14 @@ class Canvas(val width: Int, val height: Int) {
     }
 
     fun pixelAt(i: Int, j: Int): Color = pixels[j][i]
+
+    fun copyPixels(iOffset: Int, jOffset: Int, source: Canvas) {
+        for (j in 0 until source.height) {
+            for (i in 0 until source.width) {
+                pixels[jOffset + j][iOffset + i] = source.pixels[j][i]
+            }
+        }
+    }
 }
 
 fun Canvas.toPpm(): String {

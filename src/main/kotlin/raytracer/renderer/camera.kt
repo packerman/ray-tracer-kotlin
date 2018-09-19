@@ -1,8 +1,15 @@
 package raytracer.renderer
 
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.newFixedThreadPoolContext
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
+import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.tan
+import kotlin.system.measureTimeMillis
 
 class Camera(val hSize: Int, val vSize: Int, val fieldOfView: Float) {
+
     var transform: Matrix4 = Matrix4.identity
 
     val pixelSize: Float
@@ -38,15 +45,51 @@ fun Camera.rayForPixel(px: Int, py: Int): Ray {
     return Ray(origin, direction)
 }
 
-fun Camera.render(world: World): Canvas {
-    val image = Canvas(hSize, vSize)
+fun Camera.render(world: World, parallelism: Int = 1): Canvas = runBlocking {
+    withContext(newFixedThreadPoolContext(parallelism + 1, "render")) {
+        val image = Canvas(hSize, vSize)
 
-    for (y in 0 until vSize) {
-        for (x in 0 until hSize) {
-            val ray = rayForPixel(x, y)
-            val color = world.colorAt(ray)
-            image.writePixel(x, y, color)
+        renderTasks(parallelism)
+                .map { renderTask ->
+                    async {
+                        println(" " + Thread.currentThread().name + " " + renderTask)
+                        render(world, renderTask)
+                    }
+                }
+                .map { it.await() }
+                .forEach { renderResult -> image.copyPixels(renderResult.xOffset, renderResult.yOffset, renderResult.canvas) }
+
+        image
+    }
+}
+
+data class RenderTask(val xOffset: Int, val yOffset: Int, val width: Int, val height: Int)
+
+data class RenderResult(val xOffset: Int, val yOffset: Int, val canvas: Canvas)
+
+fun Camera.render(world: World, renderTask: RenderTask): RenderResult {
+    val image = Canvas(renderTask.width, renderTask.height)
+
+    val elapsedTime = measureTimeMillis {
+        for (y in 0 until renderTask.height) {
+            for (x in 0 until renderTask.width) {
+                val ray = rayForPixel(renderTask.xOffset + x, renderTask.yOffset + y)
+                val color = world.colorAt(ray)
+                image.writePixel(x, y, color)
+            }
         }
     }
-    return image
+    println(" " + Thread.currentThread().name + " " + renderTask.height * renderTask.width * 1000f / elapsedTime)
+    return RenderResult(renderTask.xOffset, renderTask.yOffset, image)
+}
+
+fun Camera.renderTasks(n: Int): List<RenderTask> {
+    require(n > 0)
+    val height = vSize / n
+    return buildSequence {
+        for (i in 0..n - 2) {
+            yield(RenderTask(0, i * height, hSize, height))
+        }
+        yield(RenderTask(0, (n - 1) * height, hSize, vSize - (n - 1) * height))
+    }.toList()
 }
