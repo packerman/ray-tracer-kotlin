@@ -1,6 +1,9 @@
 package raytracer.renderer
 
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
 import kotlin.math.PI
@@ -81,8 +84,56 @@ internal class CameraTest {
         assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), image.pixelAt(5, 5), epsilon)
     }
 
+    @Test
+    fun renderTask() {
+        val w = defaultWorld()
+        val c = Camera(21, 21, (PI / 2).toFloat())
+
+        val from = point(0f, 0f, -5f)
+        val to = point(0f, 0f, 0f)
+        val up = vector(0f, 1f, 0f)
+
+        c.transform = viewTransform(from, to, up)
+
+        val renderResult = c.render(w, RenderTask(5, 5, 11, 11))
+        assertEquals(5, renderResult.xOffset)
+        assertEquals(5, renderResult.yOffset)
+        assertTupleEquals(color(0.38066f, 0.47583f, 0.2855f), renderResult.canvas.pixelAt(5, 5), epsilon)
+    }
+
+    @Test
+    fun renderTasks() {
+        val c = Camera(20, 10, 1f)
+        val renderTasks = c.renderTasks(4).toSet()
+
+        assertThat(renderTasks, hasSize(4))
+        assertThat(renderTasks, containsInAnyOrder(
+                RenderTask(0, 0, 20, 2),
+                RenderTask(0, 2, 20, 2),
+                RenderTask(0, 4, 20, 2),
+                RenderTask(0, 6, 20, 4)))
+    }
+
+    @Test
+    fun onlyOneRenderTask() {
+        val c = Camera(10, 10, 1f)
+        val renderTasks = c.renderTasks(1).toSet()
+
+        assertThat(renderTasks, hasSize(1))
+        assertThat(renderTasks, contains(
+                RenderTask(0, 0, 10, 10)))
+    }
+
+    @Test
+    fun numberOfTasksHaveToBePositive() {
+        val c = Camera(10, 10, 1f)
+
+        assertThrows(IllegalArgumentException::class.java) { c.renderTasks(0) }
+        assertThrows(IllegalArgumentException::class.java) { c.renderTasks(-1) }
+    }
+
     companion object {
-        const val halfPi = (PI / 2).toFloat()
+        val halfPi = (PI / 2).toFloat()
         const val epsilon = 0.0001f
     }
 }
