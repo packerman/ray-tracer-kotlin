@@ -17,7 +17,7 @@ abstract class Shape {
     fun normalAt(point: Point): Vector {
         val localPoint = transform.inverse * point
         val localNormal = localNormalAt(localPoint)
-        val worldNormal = transform.inverse.transpose * localNormal
+        val worldNormal = transform.inverse.transpose.times3x3(localNormal)
         return worldNormal.normalize()
     }
 

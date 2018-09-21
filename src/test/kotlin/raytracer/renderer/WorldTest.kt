@@ -3,6 +3,8 @@ package raytracer.renderer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
+import java.time.Duration
+import kotlin.math.sqrt
 
 internal class WorldTest {
 
@@ -148,8 +150,103 @@ internal class WorldTest {
         assertEquals(color(0.1f, 0.1f, 0.1f), c)
     }
 
+    @Test
+    fun reflectedColorForNonReflectiveMaterial() {
+        val world = defaultWorld()
+        val ray = Ray(point(0f, 0f, 0f), vector(0f, 0f, 1f))
+        val shape = world[1]
+        shape.material = shape.material.copy(ambient = 1f)
+        val intersection = Intersection(1f, shape)
+
+        val hit = intersection.prepareHit(ray)
+        val col = world.reflectedColor(hit)
+
+        assertEquals(color(0f, 0f, 0f), col)
+    }
+
+    @Test
+    fun reflectiveColorForReflectiveMaterial() {
+        val shape = Plane().apply {
+            material = material.copy(reflective = 0.5f)
+            transform = translation(0f, -1f, 0f)
+        }
+        val world = with(defaultWorld()) {
+            World(light = light,
+                    objects = this + shape)
+        }
+
+        val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
+        val intersection = Intersection(sqrt(2f), shape)
+
+        val hit = intersection.prepareHit(ray)
+        val col = world.reflectedColor(hit)
+
+        assertTupleEquals(color(0.19032f, 0.2379f, 0.14274f), col, epsilon)
+    }
+
+    @Test
+    fun shadeHitWithReflectiveMaterial() {
+        val shape = Plane().apply {
+            material = material.copy(reflective = 0.5f)
+            transform = translation(0f, -1f, 0f)
+        }
+        val world = with(defaultWorld()) {
+            World(light = light,
+                    objects = this + shape)
+        }
+
+        val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
+        val intersection = Intersection(sqrt(2f), shape)
+
+        val hit = intersection.prepareHit(ray)
+        val col = world.shadeHit(hit)
+
+        assertTupleEquals(color(0.87677f, 0.92436f, 0.82918f), col, epsilon)
+    }
+
+    @Test
+    fun colorAtWithMutuallyReflectiveSurfaces() {
+        val lower = Plane().apply {
+            material = material.copy(reflective = 1f)
+            transform = translation(0f, -1f, 0f)
+        }
+
+        val upper = Plane().apply {
+            material = material.copy(reflective = 1f)
+            transform = translation(0f, 1f, 0f) * scaling(1f, -1f, 1f)
+        }
+        val world = World(
+                light = PointLight(position = point(-10f, 10f, -10f), intensity = color(1f, 1f, 1f)),
+                objects = listOf(lower, upper))
+        val ray = Ray(point(0f, 0f, 0f), vector(0f, 1f, 0f))
+
+        assertTimeout(Duration.ofSeconds(1)) {
+            world.colorAt(ray)
+        }
+    }
+
+    @Test
+    fun reflectedColorAtMaximumRecursiveDepth() {
+        val shape = Plane().apply {
+            material = material.copy(reflective = 0.5f)
+            transform = translation(0f, -1f, 0f)
+        }
+        val world = with(defaultWorld()) {
+            World(light = light,
+                    objects = this + shape)
+        }
+
+        val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
+        val intersection = Intersection(sqrt(2f), shape)
+
+        val hit = intersection.prepareHit(ray)
+        val col = world.reflectedColor(hit, 0)
+
+        assertEquals(color(0f, 0f, 0f), col)
+    }
+
     private companion object {
 
-        const val epsilon = 0.0001f
+        const val epsilon = 0.001f
     }
 }

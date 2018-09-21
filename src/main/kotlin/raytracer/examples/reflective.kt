@@ -6,14 +6,14 @@ import kotlin.math.PI
 fun main(args: Array<String>) {
 
     val floor = Plane().apply {
-        transform = scaling(10f, 0.01f, 10f)
         material = Material(
-                color = color(1f, 0.9f, 0.9f),
+                pattern = CheckerPattern(color(1f, 0.9f, 0.9f), color(0f, 0.1f, 0.1f)),
+                reflective = 0.5f,
                 specular = 0f)
     }
 
     val wall = Plane().apply {
-        transform = translation(0f, 0f, 20f) *
+        transform = translation(0f, 0f, 10f) *
                 rotationX((PI / 2).toFloat())
         material = floor.material
     }
@@ -23,7 +23,8 @@ fun main(args: Array<String>) {
         material = Material(
                 color = color(0.1f, 1f, 0.5f),
                 diffuse = 0.7f,
-                specular = 0.3f
+                specular = 0.3f,
+                reflective = 0.5f
         )
     }
 
@@ -32,7 +33,8 @@ fun main(args: Array<String>) {
         material = Material(
                 color = color(0.5f, 1f, 0.1f),
                 diffuse = 0.7f,
-                specular = 0.3f
+                specular = 0.3f,
+                reflective = 0.75f
         )
     }
 
@@ -52,10 +54,10 @@ fun main(args: Array<String>) {
             objects = listOf(floor, wall,
                     middle, right, left))
 
-    val camera = Camera(800, 400, (PI / 3).toFloat())
+    val camera = Camera(1200, 600, (PI / 3).toFloat())
     camera.transform = viewTransform(point(0f, 1.5f, -5f), point(0f, 1f, 0f), vector(0f, 1f, 0f))
 
     val image = camera.render(world)
 
-    image.saveToFile("plane.ppm")
+    image.saveToFile("reflective.ppm")
 }

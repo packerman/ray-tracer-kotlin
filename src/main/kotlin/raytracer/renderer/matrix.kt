@@ -41,6 +41,11 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
             this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z + this.matrix[11] * tuple.w,
             this.matrix[12] * tuple.x + this.matrix[13] * tuple.y + this.matrix[14] * tuple.z + this.matrix[15] * tuple.w)
 
+    fun times3x3(tuple: Tuple) = Tuple(this.matrix[0] * tuple.x + this.matrix[1] * tuple.y + this.matrix[2] * tuple.z,
+            this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z,
+            this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z,
+            0f)
+
     val determinant: Float
         get() = matrix[3] * matrix[6] * matrix[9] * matrix[12] - matrix[2] * matrix[7] * matrix[9] * matrix[12] - matrix[3] * matrix[5] * matrix[10] * matrix[12] + matrix[1] * matrix[7] * matrix[10] * matrix[12] +
                 matrix[2] * matrix[5] * matrix[11] * matrix[12] - matrix[1] * matrix[6] * matrix[11] * matrix[12] - matrix[3] * matrix[6] * matrix[8] * matrix[13] + matrix[2] * matrix[7] * matrix[8] * matrix[13] +

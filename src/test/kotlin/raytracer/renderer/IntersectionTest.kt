@@ -3,6 +3,7 @@ package raytracer.renderer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
+import kotlin.math.sqrt
 
 internal class IntersectionTest {
 
@@ -140,7 +141,16 @@ internal class IntersectionTest {
         assertTrue(hit.point.z > -1.1f && hit.point.z < -1f) { "Actual value: ${hit.point.z}" }
     }
 
-    companion object {
+    @Test
+    internal fun precomputeReflectionVector() {
+        val shape = Plane()
+        val ray = Ray(point(0f, 1f, -1f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
+        val intersection = Intersection(sqrt(2f), shape)
+        val hit = intersection.prepareHit(ray)
+        assertEquals(vector(0f, sqrt(2f) / 2, sqrt(2f) / 2), hit.reflect)
+    }
+
+    private companion object {
         val epsilon = 0.001f
     }
 }

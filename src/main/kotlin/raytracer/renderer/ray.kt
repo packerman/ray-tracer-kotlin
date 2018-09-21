@@ -18,17 +18,19 @@ fun List<Intersection>.hit(): Intersection? {
 
 data class Hit(val t: Float, val shape: Shape,
                val point: Point, val eye: Vector, val normal: Vector,
-               val inside: Boolean)
+               val inside: Boolean,
+               val reflect: Vector)
 
-fun Intersection.prepareHit(r: Ray): Hit {
-    val point = r.position(t)
+fun Intersection.prepareHit(ray: Ray): Hit {
+    val point = ray.position(t)
     val normal = shape.normalAt(point)
     val offsetPoint = point + normal * 0.0005f
-    val eye = -r.direction
+    val eye = -ray.direction
     val inside = normal.dot(eye) < 0f
     return Hit(t = t, shape = shape,
             point = offsetPoint,
             eye = eye,
             normal = if (inside) -normal else normal,
-            inside = inside)
+            inside = inside,
+            reflect = ray.direction.reflect(normal))
 }

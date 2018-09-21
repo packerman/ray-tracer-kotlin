@@ -6,13 +6,16 @@ data class Material(val pattern: Pattern,
                     val ambient: Float = 0.1f,
                     val diffuse: Float = 0.9f,
                     val specular: Float = 0.9f,
-                    val shininess: Float = 200f) {
+                    val shininess: Float = 200f,
+                    val reflective: Float = 0f) {
+
 
     constructor(color: Color = color(1f, 1f, 1f),
                 ambient: Float = 0.1f,
                 diffuse: Float = 0.9f,
                 specular: Float = 0.9f,
-                shininess: Float = 200f) : this(SolidPattern(color), ambient, diffuse, specular, shininess)
+                shininess: Float = 200f,
+                reflective: Float = 0f) : this(SolidPattern(color), ambient, diffuse, specular, shininess, reflective)
 
     fun colorAt(shape: Shape, point: Point): Color = pattern.patternAtShape(shape, point)
 }

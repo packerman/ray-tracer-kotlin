@@ -49,9 +49,7 @@ suspend fun Camera.render(world: World, parallelism: Int = 1): Canvas = coroutin
     val image = Canvas(hSize, vSize)
 
     renderTasks(parallelism)
-            .map { renderTask ->
-                async { render(world, renderTask) }
-            }
+            .map { renderTask -> async { render(world, renderTask) } }
             .map { it.await() }
             .forEach { renderResult -> image.copyPixels(renderResult.xOffset, renderResult.yOffset, renderResult.canvas) }
 
