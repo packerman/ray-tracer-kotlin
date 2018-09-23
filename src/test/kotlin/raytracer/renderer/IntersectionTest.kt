@@ -210,6 +210,42 @@ internal class IntersectionTest {
         assertThat(hit.underPoint.z, allOf(greaterThan(-1f), lessThan(-0.9f)))
     }
 
+    @Test
+    fun approximationUnderTotalInternalReflection() {
+        val shape = glassSphere()
+        val ray = Ray(point(0f, 0f, sqrt(2f) / 2), vector(0f, 1f, 0f))
+        val xs = listOf(Intersection(-sqrt(2f) / 2, shape), Intersection(sqrt(2f) / 2, shape))
+
+        val hit = xs[1].prepareHit(ray, xs)
+        val reflectance = hit.schlick()
+
+        assertEquals(1f, reflectance)
+    }
+
+    @Test
+    fun approximationWithPerpendicularViewingAngle() {
+        val shape = glassSphere()
+        val ray = Ray(point(0f, 0f, 0f), vector(0f, 1f, 0f))
+        val xs = listOf(Intersection(-1f, shape), Intersection(1f, shape))
+
+        val hit = xs[1].prepareHit(ray, xs)
+        val reflectance = hit.schlick()
+
+        assertEquals(0.04f, reflectance, epsilon)
+    }
+
+    @Test
+    fun approximationWithSmallAngleAndN2GreaterThanN1() {
+        val shape = glassSphere()
+        val ray = Ray(point(0f, 0.99f, -2f), vector(0f, 0f, 1f))
+        val xs = listOf(Intersection(1.8589f, shape))
+
+        val hit = xs[0].prepareHit(ray, xs)
+        val reflectance = hit.schlick()
+
+        assertEquals(0.48873f, reflectance, epsilon)
+    }
+
     private companion object {
         val epsilon = 0.001f
     }

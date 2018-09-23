@@ -339,6 +339,32 @@ internal class WorldTest {
         assertTupleEquals(color(0.93642f, 0.68642f, 0.68642f), c, epsilon)
     }
 
+    @Test
+    internal fun shadeHitWithReflectiveTransparentMaterial() {
+        val floor = Plane().apply {
+            transform = translation(0f, -1f, 0f)
+            material = material.copy(reflective = 0.5f,
+                    transparency = 0.5f,
+                    refractiveIndex = 1.5f)
+        }
+        val ball = Sphere().apply {
+            transform = translation(0f, -3.5f, -0.5f)
+            material = material.copy(pattern = SolidPattern(color(1f, 0f, 0f)),
+                    ambient = 0.5f)
+        }
+        val world = with(defaultWorld()) {
+            World(light, this + listOf(floor, ball))
+        }
+        val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
+        val xs = listOf(Intersection(sqrt(2f), floor))
+
+        val hit = xs[0].prepareHit(ray, xs)
+        val c = world.shadeHit(hit)
+
+        assertTupleEquals(color(0.93391f, 0.69643f, 0.69243f), c, epsilon)
+    }
+
+
     private companion object {
 
         const val epsilon = 0.001f
