@@ -1,5 +1,7 @@
 package raytracer.renderer
 
+import java.util.*
+
 data class Ray(val origin: Point, val direction: Vector) {
     fun position(t: Float): Point = origin + direction * t
 }
@@ -19,18 +21,47 @@ fun List<Intersection>.hit(): Intersection? {
 data class Hit(val t: Float, val shape: Shape,
                val point: Point, val eye: Vector, val normal: Vector,
                val inside: Boolean,
-               val reflect: Vector)
+               val reflect: Vector,
+               val n1: Float, val n2: Float, val underPoint: Point)
 
-fun Intersection.prepareHit(ray: Ray): Hit {
+fun Intersection.prepareHit(ray: Ray, xs: List<Intersection> = listOf(this)): Hit {
     val point = ray.position(t)
     val normal = shape.normalAt(point)
-    val offsetPoint = point + normal * 0.0005f
     val eye = -ray.direction
     val inside = normal.dot(eye) < 0f
+
+    var n1 = 1f
+    var n2 = 1f
+    val containers = LinkedList<Shape>()
+
+    for (i in xs) {
+        if (this === i) {
+            if (!containers.isEmpty()) {
+                n1 = containers.last.material.refractiveIndex
+            }
+        }
+
+        if (!containers.removeLastOccurrence(i.shape)) {
+            containers.add(i.shape)
+        }
+
+        if (this === i) {
+            if (!containers.isEmpty()) {
+                n2 = containers.last.material.refractiveIndex
+            }
+            break
+        }
+    }
+
+    val n = if (inside) -normal else normal
+
     return Hit(t = t, shape = shape,
-            point = offsetPoint,
+            point = point + n * 0.0005f,
             eye = eye,
-            normal = if (inside) -normal else normal,
+            normal = n,
             inside = inside,
-            reflect = ray.direction.reflect(normal))
+            reflect = ray.direction.reflect(normal),
+            n1 = n1,
+            n2 = n2,
+            underPoint = point - n * 0.0005f)
 }

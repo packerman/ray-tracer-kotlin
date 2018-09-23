@@ -43,7 +43,8 @@ fun main(args: Array<String>) {
         material = Material(
                 color = color(1f, 0.8f, 0.1f),
                 diffuse = 0.7f,
-                specular = 0.3f
+                specular = 0.3f,
+                reflective = 1f
         )
     }
 

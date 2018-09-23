@@ -1,8 +1,16 @@
 package raytracer.renderer
 
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import raytracer.utils.assertTupleEquals
+import java.util.stream.Stream
 import kotlin.math.sqrt
 
 internal class IntersectionTest {
@@ -148,6 +156,58 @@ internal class IntersectionTest {
         val intersection = Intersection(sqrt(2f), shape)
         val hit = intersection.prepareHit(ray)
         assertEquals(vector(0f, sqrt(2f) / 2, sqrt(2f) / 2), hit.reflect)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(RefractiveIndexAtVariousIntersections::class)
+    fun refractiveIndexAtVariousIntersections(index: Int, n1: Float, n2: Float) {
+        val a = glassSphere().apply {
+            transform = scaling(2f, 2f, 2f)
+            material = material.copy(refractiveIndex = 1.5f)
+        }
+        val b = glassSphere().apply {
+            transform = translation(0f, 0f, -0.25f)
+            material = material.copy(refractiveIndex = 2.0f)
+        }
+        val c = glassSphere().apply {
+            transform = translation(0f, 0f, 0.25f)
+            material = material.copy(refractiveIndex = 2.5f)
+        }
+        val ray = Ray(point(0f, 0f, -4f), vector(0f, 0f, 1f))
+        val xs = intersections(Intersection(2f, a),
+                Intersection(2.75f, b),
+                Intersection(3.25f, c),
+                Intersection(4.75f, b),
+                Intersection(5.25f, c),
+                Intersection(6f, a))
+
+        val hit = xs[index].prepareHit(ray, xs)
+
+        assertEquals(n1, hit.n1)
+        assertEquals(n2, hit.n2)
+    }
+
+    class RefractiveIndexAtVariousIntersections : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext): Stream<Arguments> = Stream.of(
+                Arguments.of(0, 1f, 1.5f),
+                Arguments.of(1, 1.5f, 2f),
+                Arguments.of(2, 2f, 2.5f),
+                Arguments.of(3, 2.5f, 2.5f),
+                Arguments.of(4, 2.5f, 1.5f),
+                Arguments.of(5, 1.5f, 1f)
+        )
+    }
+
+    @Test
+    fun underPointIsOffsetBelowSurface() {
+        val shape = glassSphere()
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val intersection = Intersection(4f, shape)
+        val xs = raytracer.renderer.intersections(intersection)
+
+        val hit = intersection.prepareHit(ray, xs)
+
+        assertThat(hit.underPoint.z, allOf(greaterThan(-1f), lessThan(-0.9f)))
     }
 
     private companion object {

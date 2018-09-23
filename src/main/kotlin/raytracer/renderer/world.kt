@@ -1,5 +1,7 @@
 package raytracer.renderer
 
+import kotlin.math.sqrt
+
 class World(var light: PointLight? = null, objects: List<Shape> = emptyList()) : List<Shape> by objects {
 
     fun intersect(ray: Ray): List<Intersection> =
@@ -32,7 +34,9 @@ fun World.shadeHit(hit: Hit, remaining: Int = maxRecursiveDepth): Color {
 
     val reflected = reflectedColor(hit, remaining)
 
-    return surface + reflected
+    //val refracted = refractedColor(hit, remaining)
+
+    return surface + reflected //+ refracted
 }
 
 fun World.colorAt(ray: Ray, remaining: Int = maxRecursiveDepth): Color {
@@ -41,7 +45,7 @@ fun World.colorAt(ray: Ray, remaining: Int = maxRecursiveDepth): Color {
     return if (i == null) {
         black
     } else {
-        val hit = i.prepareHit(ray)
+        val hit = i.prepareHit(ray, intersections)
         this.shadeHit(hit, remaining)
     }
 }
@@ -66,4 +70,23 @@ fun World.reflectedColor(hit: Hit, remaining: Int = maxRecursiveDepth): Color {
     val reflectRay = Ray(hit.point, hit.reflect)
     val color = colorAt(reflectRay, remaining - 1)
     return color * hit.shape.material.reflective
+}
+
+fun World.refractedColor(hit: Hit, remaining: Int): Color {
+    if (remaining < 1) {
+        return black
+    }
+    if (hit.shape.material.transparency == 0f) {
+        return black
+    }
+    val nRatio = hit.n1 / hit.n2
+    val cos_i = hit.eye dot hit.normal
+    val sin2_t = nRatio * nRatio * (1 - cos_i * cos_i)
+    if (sin2_t > 1f) {
+        return black
+    }
+    val cos_t = sqrt(1f - sin2_t)
+    val direction = hit.normal * (nRatio * cos_i - cos_t) - hit.eye * nRatio
+    val refractedRay = Ray(hit.underPoint, direction)
+    return colorAt(refractedRay, remaining - 1) * hit.shape.material.transparency
 }

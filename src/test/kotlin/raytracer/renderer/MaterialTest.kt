@@ -119,6 +119,13 @@ internal class MaterialTest {
         assertEquals(0f, m.reflective)
     }
 
+    @Test
+    internal fun transparencyAndRefractiveIndexForDefaultMaterial() {
+        val m = Material()
+        assertEquals(0f, m.transparency)
+        assertEquals(1f, m.refractiveIndex)
+    }
+
     private companion object {
         val epsilon = 0.0001f
     }

@@ -3,21 +3,34 @@ package raytracer.renderer
 import kotlin.math.pow
 
 data class Material(val pattern: Pattern,
-                    val ambient: Float = 0.1f,
-                    val diffuse: Float = 0.9f,
-                    val specular: Float = 0.9f,
-                    val shininess: Float = 200f,
-                    val reflective: Float = 0f) {
-
+                    val ambient: Float = defaultAmbient,
+                    val diffuse: Float = defaultDiffuse,
+                    val specular: Float = defaultSpecular,
+                    val shininess: Float = defaultShininess,
+                    val reflective: Float = defaultReflective,
+                    val transparency: Float = defaultTransparency,
+                    val refractiveIndex: Float = defaultRefractiveIndex) {
 
     constructor(color: Color = color(1f, 1f, 1f),
-                ambient: Float = 0.1f,
-                diffuse: Float = 0.9f,
-                specular: Float = 0.9f,
-                shininess: Float = 200f,
-                reflective: Float = 0f) : this(SolidPattern(color), ambient, diffuse, specular, shininess, reflective)
+                ambient: Float = defaultAmbient,
+                diffuse: Float = defaultDiffuse,
+                specular: Float = defaultSpecular,
+                shininess: Float = defaultShininess,
+                reflective: Float = defaultReflective,
+                transparency: Float = defaultTransparency,
+                refractiveIndex: Float = defaultRefractiveIndex) : this(SolidPattern(color), ambient, diffuse, specular, shininess, reflective, transparency, refractiveIndex)
 
     fun colorAt(shape: Shape, point: Point): Color = pattern.patternAtShape(shape, point)
+
+    companion object {
+        const val defaultAmbient = 0.1f
+        const val defaultDiffuse = 0.9f
+        const val defaultSpecular = 0.9f
+        const val defaultShininess = 200f
+        const val defaultReflective = 0f
+        const val defaultTransparency = 0f
+        const val defaultRefractiveIndex = 1f
+    }
 }
 
 fun Material.lighting(shape: Shape,
@@ -47,4 +60,12 @@ fun Material.lighting(shape: Shape,
     val specular = if (lightDotNormal < 0f) black else specularLightning()
 
     return ambient + diffuse + specular
+}
+
+object RefractiveIndex {
+    const val vacuum = 1f
+    const val air = 1.00029f
+    const val water = 1.333f
+    const val glass = 1.52f
+    const val diamond = 2.417f
 }

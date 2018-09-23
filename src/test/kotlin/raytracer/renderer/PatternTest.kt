@@ -177,7 +177,7 @@ internal class PatternTest {
         }
     }
 
-    private companion object {
+    companion object {
 
         fun testPattern(): Pattern {
             return object : Pattern() {

@@ -2,6 +2,7 @@ package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import raytracer.renderer.PatternTest.Companion.testPattern
 import raytracer.utils.assertTupleEquals
 import java.time.Duration
 import kotlin.math.sqrt
@@ -77,7 +78,7 @@ internal class WorldTest {
 
         val c = world.shadeHit(hit)
 
-        assertTupleEquals(color(0.1f, 0.1f, 0.1f), c, epsilon)
+        assertTupleEquals(color(0.90498f, 0.90498f, 0.90498f), c, epsilon)
     }
 
     @Test
@@ -243,6 +244,75 @@ internal class WorldTest {
         val col = world.reflectedColor(hit, 0)
 
         assertEquals(color(0f, 0f, 0f), col)
+    }
+
+    @Test
+    fun refractedColorWithOpaqueSurface() {
+        val world = defaultWorld()
+        val shape = world[0]
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val xs = intersections(Intersection(4f, shape), Intersection(6f, shape))
+
+        val hit = xs[0].prepareHit(ray, xs)
+
+        val c = world.refractedColor(hit, 5)
+
+        assertEquals(color(0f, 0f, 0f), c)
+    }
+
+    @Test
+    fun refractedColorAtMaximumRecursiveDepth() {
+        val world = defaultWorld()
+        val shape = world[0].apply {
+            material = material.copy(transparency = 1f, refractiveIndex = 1.5f)
+        }
+        val ray = Ray(point(0f, 0f, -5f), vector(0f, 0f, 1f))
+        val xs = intersections(Intersection(4f, shape), Intersection(6f, shape))
+
+        val hit = xs[0].prepareHit(ray, xs)
+
+        val c = world.refractedColor(hit, 0)
+
+        assertEquals(color(0f, 0f, 0f), c)
+    }
+
+    @Test
+    internal fun refractedColorUnderTotalInternalReflection() {
+        val world = defaultWorld()
+        val shape = world[0].apply {
+            material = material.copy(transparency = 1f, refractiveIndex = 1.5f)
+        }
+        val ray = Ray(point(0f, 0f, sqrt(2f) / 2), vector(0f, 1f, 0f))
+        val xs = intersections(Intersection(-sqrt(2f) / 2, shape), Intersection(sqrt(2f) / 2, shape))
+
+        val hit = xs[1].prepareHit(ray, xs)
+
+        val c = world.refractedColor(hit, 5)
+
+        assertEquals(color(0f, 0f, 0f), c)
+    }
+
+    @Test
+    fun refractedColorWithRefractedRay() {
+        val world = defaultWorld()
+        val a = world[0].apply {
+            material = material.copy(ambient = 1f,
+                    pattern = testPattern())
+        }
+        val b = world[1].apply {
+            material = material.copy(transparency = 1f,
+                    refractiveIndex = 1.5f)
+        }
+        val ray = Ray(point(0f, 0f, 0.1f), vector(0f, 1f, 0f))
+        val xs = intersections(Intersection(-0.9899f, a),
+                Intersection(-0.4899f, b),
+                Intersection(0.4899f, b),
+                Intersection(0.9899f, a))
+
+        val hit = xs[2].prepareHit(ray, xs)
+        val c = world.refractedColor(hit, 5)
+
+        assertTupleEquals(color(0f, 0.99878f, 0.04724f), c, epsilon)
     }
 
     private companion object {

@@ -48,6 +48,11 @@ class Sphere : Shape() {
     }
 }
 
+fun glassSphere(): Sphere =
+        Sphere().apply {
+            material = Material(transparency = 1f, refractiveIndex = 1.5f)
+        }
+
 class Plane : Shape() {
     override fun localIntersect(ray: Ray): List<Intersection> {
         if (abs(ray.direction.y) < 0.0001f) {
