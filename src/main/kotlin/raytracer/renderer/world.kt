@@ -34,9 +34,9 @@ fun World.shadeHit(hit: Hit, remaining: Int = maxRecursiveDepth): Color {
 
     val reflected = reflectedColor(hit, remaining)
 
-    //val refracted = refractedColor(hit, remaining)
+    val refracted = refractedColor(hit, remaining)
 
-    return surface + reflected //+ refracted
+    return surface + reflected + refracted
 }
 
 fun World.colorAt(ray: Ray, remaining: Int = maxRecursiveDepth): Color {
