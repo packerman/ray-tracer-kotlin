@@ -17,7 +17,7 @@ abstract class Shape {
     fun normalAt(point: Point): Vector {
         val localPoint = transform.inverse * point
         val localNormal = localNormalAt(localPoint)
-        val worldNormal = transform.inverse.transpose * localNormal
+        val worldNormal = transform.inverse.transpose.times3x3(localNormal)
         return worldNormal.normalize()
     }
 
@@ -47,6 +47,11 @@ class Sphere : Shape() {
         return point - point(0f, 0f, 0f)
     }
 }
+
+fun glassSphere(): Sphere =
+        Sphere().apply {
+            material = Material(transparency = 1f, refractiveIndex = 1.5f)
+        }
 
 class Plane : Shape() {
     override fun localIntersect(ray: Ray): List<Intersection> {

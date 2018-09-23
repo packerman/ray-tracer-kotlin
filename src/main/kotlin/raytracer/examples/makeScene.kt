@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
             light = PointLight(
                     point(-10f, 10f, -10f), color(1f, 1f, 1f)
             ),
-            objects = setOf(floor, leftWall, rightWall,
+            objects = listOf(floor, leftWall, rightWall,
                     middle, right, left))
 
     val camera = Camera(1200, 600, (PI / 3).toFloat())

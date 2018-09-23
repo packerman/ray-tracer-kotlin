@@ -105,6 +105,14 @@ internal class SphereTest {
         assertTupleEquals(n, n.normalize(), epsilon)
     }
 
+    @Test
+    fun helperForProducingSphereWithGlassyMaterial() {
+        val s = glassSphere()
+        assertEquals(Matrix4.identity, s.transform)
+        assertEquals(1f, s.material.transparency)
+        assertEquals(1.5f, s.material.refractiveIndex)
+    }
+
     private companion object {
         const val epsilon = 0.00001f
     }
