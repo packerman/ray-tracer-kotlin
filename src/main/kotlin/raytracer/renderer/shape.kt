@@ -64,3 +64,32 @@ class Plane : Shape() {
 
     override fun localNormalAt(point: Point) = vector(0f, 1f, 0f)
 }
+
+class Cube : Shape() {
+    override fun localIntersect(ray: Ray): List<Intersection> {
+        val (xTMin, xTMax) = checkAxis(ray.origin.x, ray.direction.x)
+        val (yTMin, yTMax) = checkAxis(ray.origin.y, ray.direction.y)
+        val (zTMin, zTMax) = checkAxis(ray.origin.z, ray.direction.z)
+
+        val tMin = maxOf(xTMin, yTMin, zTMin)
+        val tMax = minOf(xTMax, yTMax, zTMax)
+
+        return if (tMin > tMax) emptyList() else listOf(Intersection(tMin, this), Intersection(tMax, this))
+    }
+
+    private fun checkAxis(origin: Float, direction: Float): Pair<Float, Float> {
+        val tMin = (-1f - origin) / direction
+        val tMax = (1f - origin) / direction
+
+        return if (tMin > tMax) Pair(tMax, tMin) else Pair(tMin, tMax)
+    }
+
+    override fun localNormalAt(point: Point): Vector {
+        val maxC = maxOf(abs(point.x), abs(point.y), abs(point.z))
+        return when (maxC) {
+            abs(point.x) -> vector(point.x, 0f, 0f)
+            abs(point.y) -> vector(0f, point.y, 0f)
+            else -> vector(0f, 0f, point.z)
+        }
+    }
+}
