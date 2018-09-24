@@ -239,6 +239,51 @@ internal class TupleKtTest {
         assertTupleEquals(vector(1f, 0f, 0f), r, epsilon)
     }
 
+    @Test
+    fun tupleBuilderWithDefaultValue() {
+        val tb = TupleBuilder()
+
+        assertEquals(Tuple(0f, 0f, 0f, 0f), tb.build())
+    }
+
+    @Test
+    fun tupleBuilderInitialValue() {
+        val t = Tuple(1f, 2f, 3f, 4f)
+        val tb = TupleBuilder(t)
+
+        assertEquals(t, tb.build())
+    }
+
+    @Test
+    fun canAddTupleBuilder() {
+        val tb = TupleBuilder()
+
+        tb += Tuple(1f, 2f, 3f, 4f)
+        tb += Tuple(5f, 6f, 7f, 8f)
+
+        assertEquals(Tuple(6f, 8f, 10f, 12f), tb.build())
+    }
+
+    @Test
+    fun sumAllTupleBuilder() {
+        val tb = TupleBuilder()
+
+        tb.sumAll(Tuple(1f, 2f, 3f, 4f), Tuple(5f, 6f, 7f, 8f))
+
+        assertEquals(Tuple(6f, 8f, 10f, 12f), tb.build())
+    }
+
+    @Test
+    fun sumAllThreeTupleBuilder() {
+        val tb = TupleBuilder()
+
+        tb.sumAll(Tuple(1f, 2f, 3f, 4f),
+                Tuple(5f, 6f, 7f, 8f),
+                Tuple(10f, 11f, 12f, 13f))
+
+        assertEquals(Tuple(16f, 19f, 22f, 25f), tb.build())
+    }
+
     companion object {
         private const val epsilon = 0.00001f
     }

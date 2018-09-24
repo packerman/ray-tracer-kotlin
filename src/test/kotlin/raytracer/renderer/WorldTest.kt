@@ -14,7 +14,7 @@ internal class WorldTest {
         val w = World()
 
         assertTrue(w.isEmpty())
-        assertNull(w.light)
+        assertTrue(w.lights.isEmpty())
     }
 
     @Test
@@ -30,7 +30,7 @@ internal class WorldTest {
 
         val w = defaultWorld()
 
-        assertEquals(light, w.light)
+        assertEquals(listOf(light), w.lights)
         assertNotNull(w.contains(s1))
         assertNotNull(w.contains(s2))
     }
@@ -67,7 +67,7 @@ internal class WorldTest {
     @Test
     fun shadeIntersectionFromTheInside() {
         val world = defaultWorld().apply {
-            light = PointLight(point(0f, 0.25f, 0f), color(1f, 1f, 1f))
+            lights = listOf(PointLight(point(0f, 0.25f, 0f), color(1f, 1f, 1f)))
         }
 
         val ray = Ray(point(0f, 0f, 0f), vector(0f, 0f, 1f))
@@ -106,7 +106,7 @@ internal class WorldTest {
         val world = defaultWorld()
         val p = point(0f, 10f, 0f)
 
-        assertFalse(world.isShadowed(p))
+        assertFalse(world.isShadowed(p, world.lights[0]))
     }
 
     @Test
@@ -114,7 +114,7 @@ internal class WorldTest {
         val world = defaultWorld()
         val p = point(10f, -10f, 10f)
 
-        assertTrue(world.isShadowed(p))
+        assertTrue(world.isShadowed(p, world.lights[0]))
     }
 
     @Test
@@ -122,7 +122,7 @@ internal class WorldTest {
         val world = defaultWorld()
         val p = point(-20f, 20f, -20f)
 
-        assertFalse(world.isShadowed(p))
+        assertFalse(world.isShadowed(p, world.lights[0]))
     }
 
     @Test
@@ -130,7 +130,7 @@ internal class WorldTest {
         val world = defaultWorld()
         val p = point(-2f, 2f, -2f)
 
-        assertFalse(world.isShadowed(p))
+        assertFalse(world.isShadowed(p, world.lights[0]))
     }
 
     @Test
@@ -172,7 +172,7 @@ internal class WorldTest {
             transform = translation(0f, -1f, 0f)
         }
         val world = with(defaultWorld()) {
-            World(light = light,
+            World(lights = lights,
                     objects = this + shape)
         }
 
@@ -192,7 +192,7 @@ internal class WorldTest {
             transform = translation(0f, -1f, 0f)
         }
         val world = with(defaultWorld()) {
-            World(light = light,
+            World(lights = lights,
                     objects = this + shape)
         }
 
@@ -233,7 +233,7 @@ internal class WorldTest {
             transform = translation(0f, -1f, 0f)
         }
         val world = with(defaultWorld()) {
-            World(light = light,
+            World(lights = lights,
                     objects = this + shape)
         }
 
@@ -328,7 +328,7 @@ internal class WorldTest {
                     ambient = 0.5f)
         }
         val world = with(defaultWorld()) {
-            World(light, this + listOf(floor, ball))
+            World(lights, this + listOf(floor, ball))
         }
         val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
         val xs = listOf(Intersection(sqrt(2f), floor))
@@ -353,7 +353,7 @@ internal class WorldTest {
                     ambient = 0.5f)
         }
         val world = with(defaultWorld()) {
-            World(light, this + listOf(floor, ball))
+            World(lights, this + listOf(floor, ball))
         }
         val ray = Ray(point(0f, 0f, -3f), vector(0f, -sqrt(2f) / 2, sqrt(2f) / 2))
         val xs = listOf(Intersection(sqrt(2f), floor))

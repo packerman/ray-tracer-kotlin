@@ -46,6 +46,8 @@ fun Camera.rayForPixel(px: Int, py: Int): Ray {
 }
 
 suspend fun Camera.render(world: World, parallelism: Int = 1): Canvas = coroutineScope {
+    require(world.lights.isNotEmpty())
+
     val image = Canvas(hSize, vSize)
 
     renderTasks(parallelism)

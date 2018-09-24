@@ -2,7 +2,9 @@ package raytracer.renderer
 
 import kotlin.math.sqrt
 
-class World(var light: PointLight? = null, objects: List<Shape> = emptyList()) : List<Shape> by objects {
+class World(var lights: List<PointLight> = emptyList(), objects: List<Shape> = emptyList()) : List<Shape> by objects {
+
+    constructor(light: PointLight, objects: List<Shape> = emptyList()) : this(listOf(light), objects)
 
     fun intersect(ray: Ray): List<Intersection> =
             asSequence()
@@ -23,14 +25,18 @@ fun defaultWorld() = World(light = PointLight(position = point(-10f, 10f, -10f),
 private const val maxRecursiveDepth = 5
 
 fun World.shadeHit(hit: Hit, remaining: Int = maxRecursiveDepth): Color {
-    val shadowed = isShadowed(hit.point)
+    val resultColor = TupleBuilder(black)
 
-    val surface = hit.shape.material.lighting(hit.shape,
-            requireNotNull(light),
-            hit.point,
-            hit.eye,
-            hit.normal,
-            shadowed)
+    for (light in lights) {
+        val shadowed = isShadowed(hit.point, light)
+
+        resultColor += hit.shape.material.lighting(hit.shape,
+                light,
+                hit.point,
+                hit.eye,
+                hit.normal,
+                shadowed)
+    }
 
     val reflected = reflectedColor(hit, remaining)
 
@@ -39,10 +45,13 @@ fun World.shadeHit(hit: Hit, remaining: Int = maxRecursiveDepth): Color {
     val material = hit.shape.material
     if (material.reflective > 0f && material.transparency > 0f) {
         val reflectance = hit.schlick()
-        return surface + reflected * reflectance + refracted * (1f - reflectance)
+        resultColor += reflected * reflectance
+        resultColor += refracted * (1f - reflectance)
     } else {
-        return surface + reflected + refracted
+        resultColor += reflected
+        resultColor += refracted
     }
+    return resultColor.build()
 }
 
 fun World.colorAt(ray: Ray, remaining: Int = maxRecursiveDepth): Color {
@@ -56,8 +65,8 @@ fun World.colorAt(ray: Ray, remaining: Int = maxRecursiveDepth): Color {
     }
 }
 
-fun World.isShadowed(point: Tuple): Boolean {
-    val lightPosition = light?.position ?: return false
+fun World.isShadowed(point: Tuple, light: PointLight): Boolean {
+    val lightPosition = light.position
     val v = lightPosition - point
     val distance = v.length
     val ray = Ray(point, v.normalize())
