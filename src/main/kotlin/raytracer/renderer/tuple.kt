@@ -72,3 +72,36 @@ val blue = color(0f, 0f, 1f)
 
 fun Tuple.reflect(normal: Vector): Vector =
         this - normal * 2f * this.dot(normal)
+
+class TupleBuilder(private var x: Float,
+                   private var y: Float,
+                   private var z: Float,
+                   private var w: Float) {
+
+    constructor() : this(0f, 0f, 0f, 0f)
+
+    constructor(tuple: Tuple) : this(tuple.x, tuple.y, tuple.z, tuple.w)
+
+    operator fun plusAssign(tuple: Tuple) {
+        x += tuple.x
+        y += tuple.y
+        z += tuple.z
+        w += tuple.w
+    }
+
+    fun build(): Tuple = Tuple(x, y, z, w)
+
+    fun sumAll(tuple1: Tuple, tuple2: Tuple) {
+        x += tuple1.x + tuple2.x
+        y += tuple1.y + tuple2.y
+        z += tuple1.z + tuple2.z
+        w += tuple1.w + tuple2.w
+    }
+
+    fun sumAll(tuple1: Tuple, tuple2: Tuple, tuple3: Tuple) {
+        x += tuple1.x + tuple2.x + tuple3.x
+        y += tuple1.y + tuple2.y + tuple3.y
+        z += tuple1.z + tuple2.z + tuple3.z
+        w += tuple1.w + tuple2.w + tuple3.w
+    }
+}

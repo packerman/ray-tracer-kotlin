@@ -60,7 +60,6 @@ internal class CubeTest {
         val normalAt = cube.normalAt(point)
 
         assertEquals(normal, normalAt)
-
     }
 
     class NormalOnSurfaceOfCube : ArgumentsProvider {
@@ -72,7 +71,6 @@ internal class CubeTest {
                 Arguments.of(point(-0.6f, 0.3f, 1f), vector(0f, 0f, 1f)),
                 Arguments.of(point(0.4f, 0.4f, -1f), vector(0f, 0f, -1f)),
                 Arguments.of(point(1f, 1f, 1f), vector(1f, 0f, 0f)),
-                Arguments.of(point(-1f, -1f, -1f), vector(-1f, 0f, 0f))
-        )
+                Arguments.of(point(-1f, -1f, -1f), vector(-1f, 0f, 0f)))
     }
 }
