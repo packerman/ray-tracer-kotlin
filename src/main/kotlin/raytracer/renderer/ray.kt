@@ -36,15 +36,17 @@ fun Intersection.prepareHit(ray: Ray, xs: List<Intersection> = listOf(this)): Hi
 
     val (n1, n2) = findRefractiveIndex(xs)
 
+    val offset = 0.0009f
+
     return Hit(t = t, shape = shape,
-            point = point + normal * 0.0005f,
+            point = point + normal * offset,
             eye = eye,
             normal = normal,
             inside = inside,
             reflect = ray.direction.reflect(normalAtPoint),
             n1 = n1,
             n2 = n2,
-            underPoint = point - normal * 0.0005f)
+            underPoint = point - normal * offset)
 }
 
 private fun Intersection.findRefractiveIndex(xs: List<Intersection>): Pair<Float, Float> {
