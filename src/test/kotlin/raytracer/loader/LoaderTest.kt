@@ -30,7 +30,7 @@ internal class LoaderTest {
 
         val loaded = load.loadFromString(yamlString)
 
-        val scene = loadScene(loaded)
+        val scene = Loader().loadScene(loaded)
 
         assertThat(scene.cameras, hasSize(1))
         val camera = scene.cameras[0]
@@ -64,7 +64,7 @@ internal class LoaderTest {
 
         val loaded = load.loadFromString(yamlString)
 
-        val scene = loadScene(loaded)
+        val scene = Loader().loadScene(loaded)
 
         assertThat(scene.world.lights, hasSize(2))
 
@@ -100,7 +100,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = loadScene(loaded)
+        val scene = Loader().loadScene(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -141,7 +141,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = loadScene(loaded)
+        val scene = Loader().loadScene(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -182,7 +182,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = loadScene(loaded)
+        val scene = Loader().loadScene(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -202,5 +202,88 @@ internal class LoaderTest {
 
         assertEquals(expectedMaterial, plane.material)
         assertEquals(expectedTransform, plane.transform)
+    }
+
+    @Test
+    fun canDefineMaterials() {
+        val yamlString = """
+            |- define: white-material
+            |  value:
+            |    color: [1, 1, 1]
+            |    diffuse: 0.7
+            |    ambient: 0.1
+            |    specular: 0.0
+            |    reflective: 0.1
+            |
+            |- add: cube
+            |  material: white-material
+        """.trimMargin()
+
+        val settings = LoadSettingsBuilder()
+                .build()
+        val load = Load(settings)
+        val loaded = load.loadFromString(yamlString)
+        val scene = Loader().loadScene(loaded)
+
+        assertThat(scene.world, hasSize(1))
+
+        assertThat(scene.world[0], instanceOf(Cube::class.java))
+
+        val plane = scene.world[0] as Cube
+
+        val expectedMaterial = Material(
+                color = color(1f, 1f, 1f),
+                ambient = 0.1f,
+                diffuse = 0.7f,
+                specular = 0f,
+                reflective = 0.1f
+        )
+
+        assertEquals(expectedMaterial, plane.material)
+        assertEquals(Matrix4.identity, plane.transform)
+    }
+
+    @Test
+    fun canExtendMaterialDefinition() {
+        val yamlString = """
+            |- define: white-material
+            |  value:
+            |    color: [1, 1, 1]
+            |    diffuse: 0.7
+            |    ambient: 0.1
+            |    specular: 0.0
+            |    reflective: 0.1
+            |
+            |- define: blue-material
+            |  extend: white-material
+            |  value:
+            |    color: [0.537, 0.831, 0.914]
+            |
+            |- add: cube
+            |  material: blue-material
+        """.trimMargin()
+
+        val settings = LoadSettingsBuilder()
+                .build()
+        val load = Load(settings)
+        val loaded = load.loadFromString(yamlString)
+        val scene = Loader().loadScene(loaded)
+
+        assertThat(scene.world, hasSize(1))
+
+        assertThat(scene.world[0], instanceOf(Cube::class.java))
+
+        val plane = scene.world[0] as Cube
+
+        val expectedMaterial = Material(
+                color = color(0.537f, 0.831f, 0.914f),
+                ambient = 0.1f,
+                diffuse = 0.7f,
+                specular = 0f,
+                reflective = 0.1f
+        )
+
+        assertEquals(expectedMaterial, plane.material)
+        assertEquals(Matrix4.identity, plane.transform)
     }
 }

@@ -3,34 +3,34 @@ package raytracer.renderer
 import kotlin.math.pow
 
 data class Material(val pattern: Pattern,
-                    val ambient: Float = defaultAmbient,
-                    val diffuse: Float = defaultDiffuse,
-                    val specular: Float = defaultSpecular,
-                    val shininess: Float = defaultShininess,
-                    val reflective: Float = defaultReflective,
-                    val transparency: Float = defaultTransparency,
-                    val refractiveIndex: Float = defaultRefractiveIndex) {
+                    val ambient: Float = MaterialDefaults.ambient,
+                    val diffuse: Float = MaterialDefaults.diffuse,
+                    val specular: Float = MaterialDefaults.specular,
+                    val shininess: Float = MaterialDefaults.shininess,
+                    val reflective: Float = MaterialDefaults.reflective,
+                    val transparency: Float = MaterialDefaults.transparency,
+                    val refractiveIndex: Float = MaterialDefaults.refractiveIndex) {
 
     constructor(color: Color = color(1f, 1f, 1f),
-                ambient: Float = defaultAmbient,
-                diffuse: Float = defaultDiffuse,
-                specular: Float = defaultSpecular,
-                shininess: Float = defaultShininess,
-                reflective: Float = defaultReflective,
-                transparency: Float = defaultTransparency,
-                refractiveIndex: Float = defaultRefractiveIndex) : this(SolidPattern(color), ambient, diffuse, specular, shininess, reflective, transparency, refractiveIndex)
+                ambient: Float = MaterialDefaults.ambient,
+                diffuse: Float = MaterialDefaults.diffuse,
+                specular: Float = MaterialDefaults.specular,
+                shininess: Float = MaterialDefaults.shininess,
+                reflective: Float = MaterialDefaults.reflective,
+                transparency: Float = MaterialDefaults.transparency,
+                refractiveIndex: Float = MaterialDefaults.refractiveIndex) : this(SolidPattern(color), ambient, diffuse, specular, shininess, reflective, transparency, refractiveIndex)
 
     fun colorAt(shape: Shape, point: Point): Color = pattern.patternAtShape(shape, point)
+}
 
-    companion object {
-        const val defaultAmbient = 0.1f
-        const val defaultDiffuse = 0.9f
-        const val defaultSpecular = 0.9f
-        const val defaultShininess = 200f
-        const val defaultReflective = 0f
-        const val defaultTransparency = 0f
-        const val defaultRefractiveIndex = 1f
-    }
+object MaterialDefaults {
+    const val ambient = 0.1f
+    const val diffuse = 0.9f
+    const val specular = 0.9f
+    const val shininess = 200f
+    const val reflective = 0f
+    const val transparency = 0f
+    const val refractiveIndex = 1f
 }
 
 fun Material.lighting(shape: Shape,
