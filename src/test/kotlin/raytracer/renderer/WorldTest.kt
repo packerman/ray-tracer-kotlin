@@ -214,7 +214,7 @@ internal class WorldTest {
 
         val upper = Plane().apply {
             material = material.copy(reflective = 1f)
-            transform = translation(0f, 1f, 0f) * scaling(1f, -1f, 1f)
+            transform = translation(0f, 1f, 0f)
         }
         val world = World(
                 light = PointLight(position = point(-10f, 10f, -10f), intensity = color(1f, 1f, 1f)),

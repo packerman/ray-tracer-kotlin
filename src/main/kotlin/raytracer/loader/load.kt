@@ -15,10 +15,12 @@ class SceneBuilder {
             world = World(lights = lights, objects = shapes))
 }
 
+data class Definition(val value: Any, val extend: String?)
+
 @Suppress("UNCHECKED_CAST")
 class Loader {
 
-    private val defined = HashMap<String, Any>()
+    private val defined = HashMap<String, Definition>()
     private val materials = HashMap<String, Material>()
     private val builder = SceneBuilder()
 
@@ -75,14 +77,15 @@ class Loader {
     private fun defineElem(elem: Map<String, *>) {
         val name = elem["define"] as String
         val value = requireNotNull(elem["value"])
-        defined[name] = value
+        val extend = elem["extend"] as String?
+        defined[name] = Definition(value, extend)
     }
 
     private fun setObjectProperties(shape: Shape, elem: Map<String, *>) {
         when (elem["material"]) {
             is String -> {
                 val name = elem["material"] as String
-                shape.material = materials.getOrPut(name) { readMaterial(defined[name]) }
+                shape.material = resolveMaterial(name)
             }
             is Map<*, *> -> {
                 shape.material = readMaterial(elem["material"])
@@ -134,14 +137,36 @@ class Loader {
         return transform
     }
 
-    private fun readMaterial(elem: Any?): Material {
+    private val materialProperties = setOf("color", "ambient", "diffuse", "specular", "reflective", "shininess", "transparency", "refractive-index")
+
+    private fun readMaterial(elem: Any?, baseMaterial: Material? = null): Material {
         val material = elem as Map<String, *>
+        check(materialProperties.containsAll(material.keys))
         return Material(
-                color = material["color"]?.let(::readColor) ?: color(1f, 1f, 1f),
-                ambient = material["ambient"]?.let(::readFloat) ?: MaterialDefaults.ambient,
-                diffuse = material["diffuse"]?.let(::readFloat) ?: MaterialDefaults.diffuse,
-                specular = material["specular"]?.let(::readFloat) ?: MaterialDefaults.specular,
-                reflective = material["reflective"]?.let(::readFloat) ?: MaterialDefaults.reflective
+                pattern = material["color"]?.let { SolidPattern(readColor(it)) } ?: baseMaterial?.pattern
+                ?: SolidPattern(color(1f, 1f, 1f)),
+                ambient = material["ambient"]?.let(::readFloat) ?: baseMaterial?.ambient ?: MaterialDefaults.ambient,
+                diffuse = material["diffuse"]?.let(::readFloat) ?: baseMaterial?.diffuse ?: MaterialDefaults.diffuse,
+                specular = material["specular"]?.let(::readFloat) ?: baseMaterial?.specular
+                ?: MaterialDefaults.specular,
+                reflective = material["reflective"]?.let(::readFloat) ?: baseMaterial?.reflective
+                ?: MaterialDefaults.reflective,
+                shininess = material["shininess"]?.let(::readFloat) ?: baseMaterial?.shininess
+                ?: MaterialDefaults.shininess,
+                transparency = material["transparency"]?.let(::readFloat) ?: baseMaterial?.transparency
+                ?: MaterialDefaults.transparency,
+                refractiveIndex = material["refractive-index"]?.let(::readFloat) ?: baseMaterial?.refractiveIndex
+                ?: MaterialDefaults.refractiveIndex
         )
+    }
+
+    private fun resolveMaterial(name: String): Material {
+        val definedMaterial = materials[name]
+        if (definedMaterial != null) return definedMaterial
+        val definition = requireNotNull(defined[name]) { "Material '$name' not found" }
+        val baseMaterial = definition.extend?.let { extend -> requireNotNull(resolveMaterial(extend)) }
+        val createdMaterial = readMaterial(definition.value, baseMaterial)
+        materials[name] = createdMaterial
+        return createdMaterial
     }
 }
