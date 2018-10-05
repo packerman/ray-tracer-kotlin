@@ -286,4 +286,72 @@ internal class LoaderTest {
         assertEquals(expectedMaterial, plane.material)
         assertEquals(Matrix4.identity, plane.transform)
     }
+
+    @Test
+    fun canDefineTransform() {
+        val yamlString = """
+            |- define: standard-transform
+            |  value:
+            |    - [translate, 1, -1, 1]
+            |    - [scale, 0.5, 0.5, 0.5]
+            |
+            |- add: cube
+            |  transform:
+            |    - standard-transform
+        """.trimMargin()
+
+        val settings = LoadSettingsBuilder()
+                .build()
+        val load = Load(settings)
+        val loaded = load.loadFromString(yamlString)
+        val scene = Loader().loadScene(loaded)
+
+        assertThat(scene.world, hasSize(1))
+
+        assertThat(scene.world[0], instanceOf(Cube::class.java))
+
+        val plane = scene.world[0] as Cube
+
+        val expectedTransform = translation(1f, -1f, 1f)
+                .scale(0.5f, 0.5f, 0.5f)
+
+        assertEquals(expectedTransform, plane.transform)
+    }
+
+    @Test
+    fun canExtendTransform() {
+        val yamlString = """
+            |- define: standard-transform
+            |  value:
+            |    - [translate, 1, -1, 1]
+            |    - [scale, 0.5, 0.5, 0.5]
+            |
+            |- define: large-object
+            |  value:
+            |    - standard-transform
+            |    - [scale, 3.5, 3.5, 3.5]
+            |
+            |- add: cube
+            |  transform:
+            |    - large-object
+        """.trimMargin()
+
+        val settings = LoadSettingsBuilder()
+                .build()
+        val load = Load(settings)
+        val loaded = load.loadFromString(yamlString)
+        val scene = Loader().loadScene(loaded)
+
+        assertThat(scene.world, hasSize(1))
+
+        assertThat(scene.world[0], instanceOf(Cube::class.java))
+
+        val plane = scene.world[0] as Cube
+
+        val expectedTransform = translation(1f, -1f, 1f)
+                .scale(0.5f, 0.5f, 0.5f)
+                .scale(3.5f, 3.5f, 3.5f)
+
+        assertEquals(expectedTransform, plane.transform)
+    }
 }

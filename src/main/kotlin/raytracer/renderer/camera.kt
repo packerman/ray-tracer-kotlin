@@ -64,11 +64,11 @@ fun Camera.render(world: World): Canvas {
     return runBlocking(context = Dispatchers.Default) { render(world, n) }
 }
 
-data class RenderTask(val xOffset: Int, val yOffset: Int, val width: Int, val height: Int)
+internal data class RenderTask(val xOffset: Int, val yOffset: Int, val width: Int, val height: Int)
 
-data class RenderResult(val xOffset: Int, val yOffset: Int, val canvas: Canvas)
+internal data class RenderResult(val xOffset: Int, val yOffset: Int, val canvas: Canvas)
 
-fun Camera.render(world: World, renderTask: RenderTask): RenderResult {
+internal fun Camera.render(world: World, renderTask: RenderTask): RenderResult {
     val image = Canvas(renderTask.width, renderTask.height)
 
     for (y in 0 until renderTask.height) {
@@ -81,7 +81,7 @@ fun Camera.render(world: World, renderTask: RenderTask): RenderResult {
     return RenderResult(renderTask.xOffset, renderTask.yOffset, image)
 }
 
-fun Camera.renderTasks(n: Int): List<RenderTask> {
+internal fun Camera.renderTasks(n: Int): List<RenderTask> {
     require(n > 0)
     val height = vSize / n
     return buildSequence {
