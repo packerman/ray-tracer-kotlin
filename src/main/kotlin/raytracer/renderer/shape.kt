@@ -93,3 +93,35 @@ class Cube : Shape() {
         }
     }
 }
+
+class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY, val maximum: Float = Float.POSITIVE_INFINITY) : Shape() {
+    override fun localIntersect(ray: Ray): List<Intersection> {
+        val a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z
+        if (a < 0.0001) {
+            return emptyList()
+        }
+        val b = 2 * ray.origin.x * ray.direction.x + 2 * ray.origin.z * ray.direction.z
+        val c = ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z - 1
+        val discriminant = b * b - 4 * a * c
+        if (discriminant < 0) {
+            return emptyList()
+        }
+        val t0 = (-b - sqrt(discriminant)) / (2 * a)
+        val t1 = (-b + sqrt(discriminant)) / (2 * a)
+
+        val xs = mutableListOf<Intersection>()
+
+        val y0 = ray.origin.y + t0 * ray.direction.y
+        if (this.minimum < y0 && y0 < this.maximum) {
+            xs.add(Intersection(t0, this))
+        }
+        val y1 = ray.origin.y + t1 * ray.direction.y
+        if (this.minimum < y1 && y1 < this.maximum) {
+            xs.add(Intersection(t1, this))
+        }
+        return xs
+    }
+
+    override fun localNormalAt(point: Point) = vector(point.x, 0f, point.z)
+
+}

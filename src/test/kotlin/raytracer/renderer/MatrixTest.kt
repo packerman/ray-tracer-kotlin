@@ -1,5 +1,8 @@
 package raytracer.renderer
 
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.not
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -28,6 +31,40 @@ internal class MatrixTest {
             assertEquals(11f, m[2, 2])
             assertEquals(13.5f, m[3, 0])
             assertEquals(15.5f, m[3, 2])
+        }
+
+        @Test
+        fun matrixEqualityWithIdenticalMatrices() {
+            val a = Matrix4(
+                    1f, 2f, 3f, 4f,
+                    2f, 3f, 4f, 5f,
+                    3f, 4f, 5f, 6f,
+                    4f, 5f, 6f, 7f
+            )
+            val b = Matrix4(
+                    1f, 2f, 3f, 4f,
+                    2f, 3f, 4f, 5f,
+                    3f, 4f, 5f, 6f,
+                    4f, 5f, 6f, 7f
+            )
+            assertThat(a, equalTo(b))
+        }
+
+        @Test
+        internal fun matrixEqualityWithDifferentMatrices() {
+            val a = Matrix4(
+                    1f, 2f, 3f, 4f,
+                    2f, 3f, 4f, 5f,
+                    3f, 4f, 5f, 6f,
+                    4f, 5f, 6f, 7f
+            )
+            val b = Matrix4(
+                    0f, 2f, 3f, 4f,
+                    2f, 3f, 4f, 5f,
+                    3f, 4f, 5f, 6f,
+                    4f, 5f, 6f, 7f
+            )
+            assertThat(a, not(equalTo(b)))
         }
 
         @Test
