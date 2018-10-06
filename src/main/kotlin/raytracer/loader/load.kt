@@ -1,31 +1,23 @@
 package raytracer.loader
 
+import org.snakeyaml.engine.v1.api.Load
+import org.snakeyaml.engine.v1.api.LoadSettingsBuilder
 import raytracer.renderer.*
+import java.io.InputStream
+import java.io.Reader
 import java.lang.Math.toRadians
 
 data class Scene(val cameras: List<Camera>, val world: World)
 
-class SceneBuilder {
-    val cameras = ArrayList<Camera>()
-    val lights = ArrayList<PointLight>()
-    val shapes = ArrayList<Shape>()
-
-    fun build(): Scene = Scene(
-            cameras = cameras.toList(),
-            world = World(lights = lights, objects = shapes))
-}
-
-data class Definition(val value: Any, val extend: String?)
-
 @Suppress("UNCHECKED_CAST")
-class Loader {
+class SceneLoader {
 
     private val defined = HashMap<String, Definition>()
     private val materials = HashMap<String, Material>()
     private val transforms = HashMap<String, Matrix4>()
     private val builder = SceneBuilder()
 
-    fun loadScene(loaded: Any): Scene {
+    fun load(loaded: Any): Scene {
         loaded as List<Map<String, *>>
 
         for (elem in loaded) {
@@ -37,8 +29,8 @@ class Loader {
         return builder.build()
     }
 
-    private fun addElem(elem: Map<String, *>) = when {
-        elem["add"] == "camera" -> {
+    private fun addElem(elem: Map<String, *>) = when (elem["add"]) {
+        "camera" -> {
             val hSize = readInt(elem["width"])
             val vSize = (elem["height"] as Number).toInt()
             val fieldOfView = (elem["field-of-view"] as Number).toFloat()
@@ -52,22 +44,22 @@ class Loader {
 
             builder.cameras.add(camera)
         }
-        elem["add"] == "light" -> {
+        "light" -> {
             val position = readPoint(elem["at"])
             val intensity = readColor(elem["intensity"])
             builder.lights.add(PointLight(position, intensity))
         }
-        elem["add"] == "plane" -> {
+        "plane" -> {
             val shape = Plane()
             setObjectProperties(shape, elem)
             builder.shapes.add(shape)
         }
-        elem["add"] == "sphere" -> {
+        "sphere" -> {
             val shape = Sphere()
             setObjectProperties(shape, elem)
             builder.shapes.add(shape)
         }
-        elem["add"] == "cube" -> {
+        "cube" -> {
             val shape = Cube()
             setObjectProperties(shape, elem)
             builder.shapes.add(shape)
@@ -91,7 +83,7 @@ class Loader {
             is Map<*, *> -> {
                 shape.material = readMaterial(elem["material"])
             }
-            else -> error("Material")
+            else -> if (elem["material"] != null) error("Material")
         }
         shape.transform = readTransformList(elem["transform"])
     }
@@ -185,4 +177,38 @@ class Loader {
         require(list.size == 3)
         return color(readFloat(list[0]), readFloat(list[1]), readFloat(list[2]))
     }
+
+    companion object {
+        fun loadFromString(string: String): Scene {
+            val load = Load(settings)
+            val loaded = load.loadFromString(string)
+            return SceneLoader().load(loaded)
+        }
+
+        fun loadFromInputStream(inputStream: InputStream): Scene {
+            val load = Load(settings)
+            val loaded = load.loadFromInputStream(inputStream)
+            return SceneLoader().load(loaded)
+        }
+
+        fun loadFromReader(reader: Reader): Scene {
+            val load = Load(settings)
+            val loaded = load.loadFromReader(reader)
+            return SceneLoader().load(loaded)
+        }
+
+        private val settings = LoadSettingsBuilder().build()
+    }
 }
+
+private class SceneBuilder {
+    val cameras = ArrayList<Camera>()
+    val lights = ArrayList<PointLight>()
+    val shapes = ArrayList<Shape>()
+
+    fun build(): Scene = Scene(
+            cameras = cameras.toList(),
+            world = World(lights = lights, objects = shapes))
+}
+
+private data class Definition(val value: Any, val extend: String?)

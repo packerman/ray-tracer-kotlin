@@ -1,7 +1,5 @@
 package raytracer.loader
 
-import org.snakeyaml.engine.v1.api.Load
-import org.snakeyaml.engine.v1.api.LoadSettingsBuilder
 import raytracer.renderer.render
 import raytracer.renderer.saveToFile
 import java.io.File
@@ -13,12 +11,7 @@ fun main(args: Array<String>) {
 
     val fileContents = File(filePath).readText()
 
-    val settings = LoadSettingsBuilder()
-            .build()
-    val load = Load(settings)
-    val loaded = load.loadFromString(fileContents)
-
-    val scene = Loader().loadScene(loaded)
+    val scene = SceneLoader.loadFromString(fileContents)
 
     require(scene.cameras.isNotEmpty())
 

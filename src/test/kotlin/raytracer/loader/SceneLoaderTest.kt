@@ -10,7 +10,7 @@ import org.snakeyaml.engine.v1.api.LoadSettingsBuilder
 import raytracer.renderer.*
 import java.lang.Math.toRadians
 
-internal class LoaderTest {
+internal class SceneLoaderTest {
 
     @Test
     fun canAddCamera() {
@@ -30,7 +30,7 @@ internal class LoaderTest {
 
         val loaded = load.loadFromString(yamlString)
 
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.cameras, hasSize(1))
         val camera = scene.cameras[0]
@@ -64,7 +64,7 @@ internal class LoaderTest {
 
         val loaded = load.loadFromString(yamlString)
 
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world.lights, hasSize(2))
 
@@ -100,7 +100,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -141,7 +141,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -182,7 +182,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -223,7 +223,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -267,7 +267,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -304,7 +304,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -340,7 +340,7 @@ internal class LoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = Loader().loadScene(loaded)
+        val scene = SceneLoader().load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
