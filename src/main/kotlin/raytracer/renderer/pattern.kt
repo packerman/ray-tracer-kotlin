@@ -10,7 +10,7 @@ abstract class Pattern {
     abstract fun patternAt(point: Point): Color
 
     fun patternAtShape(obj: Shape, point: Point): Color {
-        val objectPoint = obj.transform.inverse * point
+        val objectPoint = obj.worldToObject(point)
         val patternPoint = this.transform.inverse * objectPoint
         return patternAt(patternPoint)
     }
