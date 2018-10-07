@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -82,7 +83,7 @@ internal class CylinderTest {
 
     @ParameterizedTest
     @ArgumentsSource(IntersectingConstrainedCylinder::class)
-    internal fun intersectingConstrainedCylinder(point: Point, normal: Vector, count: Int) {
+    fun intersectingConstrainedCylinder(point: Point, normal: Vector, count: Int) {
         val cyl = Cylinder(minimum = 1f, maximum = 2f)
         val dir = normal.normalize()
         val ray = Ray(point, dir)
@@ -100,6 +101,53 @@ internal class CylinderTest {
                 Arguments.of(point(0f, 2f, -5f), vector(0f, 0f, 1f), 0),
                 Arguments.of(point(0f, 1f, -5f), vector(0f, 0f, 1f), 0),
                 Arguments.of(point(0f, 1.5f, -2f), vector(0f, 0f, 1f), 2))
+    }
+
+    @Test
+    fun defaultClosedValueForCylinder() {
+        val cyl = Cylinder()
+        assertFalse(cyl.closed)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntersectingCapsOfClosedCylinder::class)
+    fun intersectingCapsOfClosedCylinder(point: Point, normal: Vector, count: Int) {
+        val cyl = Cylinder(minimum = 1f, maximum = 2f, closed = true)
+        val dir = normal.normalize()
+        val ray = Ray(point, dir)
+
+        val xs = cyl.intersect(ray)
+
+        assertThat(xs, hasSize(count))
+    }
+
+    private class IntersectingCapsOfClosedCylinder : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext): Stream<Arguments> = Stream.of(
+                Arguments.of(point(0f, 3f, 0f), vector(0f, -1f, 0f), 2),
+                Arguments.of(point(0f, 3f, -2f), vector(0f, -1f, 2f), 2),
+                Arguments.of(point(0f, 4f, -2f), vector(0f, -1f, 1f), 2),
+                Arguments.of(point(0f, 0f, -2f), vector(0f, 1f, 2f), 2),
+                Arguments.of(point(0f, -1f, -2f), vector(0f, 1f, 1f), 2))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(NormalOnCylinderEndCaps::class)
+    fun normalOnCylinderEndCaps(point: Point, normal: Vector) {
+        val cyl = Cylinder(minimum = 1f, maximum = 2f, closed = true)
+
+        val n = cyl.normalAt(point)
+
+        assertEquals(normal, n)
+    }
+
+    private class NormalOnCylinderEndCaps : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext): Stream<Arguments> = Stream.of(
+                Arguments.of(point(0f, 1f, 0f), vector(0f, -1f, 0f)),
+                Arguments.of(point(0.5f, 1f, 0f), vector(0f, -1f, 0f)),
+                Arguments.of(point(0f, 1f, 0.5f), vector(0f, -1f, 0f)),
+                Arguments.of(point(0f, 2f, 0f), vector(0f, 1f, 0f)),
+                Arguments.of(point(0.5f, 2f, 0f), vector(0f, 1f, 0f)),
+                Arguments.of(point(0f, 2f, 0.5f), vector(0f, 1f, 0f)))
     }
 
     companion object {
