@@ -102,6 +102,23 @@ internal class WorldTest {
     }
 
     @Test
+    fun colorWithIntersectionBehindRay() {
+        val world = defaultWorld()
+        val outer = world[0].apply {
+            material = material.copy(ambient = 1f)
+        }
+        val inner = world[1].apply {
+            material = material.copy(ambient = 1f)
+        }
+        val ray = Ray(point(0f, 0f, -0.75f), vector(0f, 0f, 1f))
+        val c = world.colorAt(ray)
+
+        val expectedColor = (inner.material.pattern as SolidPattern).color
+
+        assertEquals(expectedColor, c)
+    }
+
+    @Test
     fun noShadowWhenNothingIsCollinearWithPointAndLight() {
         val world = defaultWorld()
         val p = point(0f, 10f, 0f)

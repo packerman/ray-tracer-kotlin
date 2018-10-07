@@ -93,3 +93,63 @@ class Cube : Shape() {
         }
     }
 }
+
+class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY,
+               val maximum: Float = Float.POSITIVE_INFINITY,
+               val closed: Boolean = false) : Shape() {
+    override fun localIntersect(ray: Ray): List<Intersection> {
+        val xs = mutableListOf<Intersection>()
+
+        val a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z
+        if (a < epsilon) {
+            return intersectCaps(ray, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, xs)
+        }
+        val b = 2 * ray.origin.x * ray.direction.x + 2 * ray.origin.z * ray.direction.z
+        val c = ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z - 1
+        val discriminant = b * b - 4 * a * c
+        if (discriminant < 0) {
+            return emptyList()
+        }
+        val t0 = (-b - sqrt(discriminant)) / (2 * a)
+        val t1 = (-b + sqrt(discriminant)) / (2 * a)
+
+        val y0 = ray.origin.y + t0 * ray.direction.y
+        if (this.minimum < y0 && y0 < this.maximum) {
+            xs.add(Intersection(t0, this))
+        }
+        val y1 = ray.origin.y + t1 * ray.direction.y
+        if (this.minimum < y1 && y1 < this.maximum) {
+            xs.add(Intersection(t1, this))
+        }
+        return intersectCaps(ray, y0, y1, xs)
+    }
+
+    override fun localNormalAt(point: Point): Vector {
+        val dist = point.x * point.x + point.z * point.z
+        return when {
+            dist < 1f && point.y >= this.maximum - epsilon -> vector(0f, 1f, 0f)
+            dist < 1f && point.y <= this.minimum + epsilon -> vector(0f, -1f, 0f)
+            else -> vector(point.x, 0f, point.z)
+        }
+    }
+
+    private fun intersectCaps(ray: Ray, y0: Float, y1: Float, xs: MutableList<Intersection>): MutableList<Intersection> {
+        if (!this.closed || abs(ray.direction.y) < epsilon) {
+            return xs
+        }
+        val yRange = if (y0 <= y1) y0..y1 else y1..y0
+        if (this.minimum in yRange) {
+            val t = (this.minimum - ray.origin.y) / ray.direction.y
+            xs.add(Intersection(t, this))
+        }
+        if (this.maximum in yRange) {
+            val t = (this.maximum - ray.origin.y) / ray.direction.y
+            xs.add(Intersection(t, this))
+        }
+        return xs
+    }
+
+    private companion object {
+        const val epsilon = 0.0001f
+    }
+}

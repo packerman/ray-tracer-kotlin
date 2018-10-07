@@ -22,14 +22,14 @@ internal class CubeTest {
         assertEquals(t2, xs[1].t)
     }
 
-    class RayIntersectingCube : ArgumentsProvider {
+    private class RayIntersectingCube : ArgumentsProvider {
         override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> = Stream.of(
                 Arguments.of(point(5f, 0.5f, 0f), vector(-1f, 0f, 0f), 4f, 6f),
                 Arguments.of(point(-5f, 0.5f, 0f), vector(1f, 0f, 0f), 4f, 6f),
                 Arguments.of(point(0.5f, 5f, 0f), vector(0f, -1f, 0f), 4f, 6f),
                 Arguments.of(point(0.5f, -5f, 0f), vector(0f, 1f, 0f), 4f, 6f),
                 Arguments.of(point(0.5f, 0f, 5f), vector(0f, 0f, -1f), 4f, 6f),
-                Arguments.of(point(0.5f, -0f, -5f), vector(0f, 0f, 1f), 4f, 6f),
+                Arguments.of(point(0.5f, 0f, -5f), vector(0f, 0f, 1f), 4f, 6f),
                 Arguments.of(point(0f, 0.5f, 0f), vector(0f, 0f, 1f), -1f, 1f))
     }
 
@@ -43,11 +43,11 @@ internal class CubeTest {
         assertEquals(0, xs.size)
     }
 
-    class RayMissesCube : ArgumentsProvider {
+    private class RayMissesCube : ArgumentsProvider {
         override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> = Stream.of(
                 Arguments.of(point(-2f, 0f, 0f), vector(0.2673f, 0.5345f, 0.8018f)),
                 Arguments.of(point(0f, -2f, 0f), vector(0.8018f, 0.2673f, 0.5345f)),
-                Arguments.of(point(-0f, 0f, -2f), vector(0.5345f, 0.8018f, 0.2673f)),
+                Arguments.of(point(0f, 0f, -2f), vector(0.5345f, 0.8018f, 0.2673f)),
                 Arguments.of(point(2f, 0f, 2f), vector(0f, 0f, -1f)),
                 Arguments.of(point(0f, 2f, 2f), vector(0f, -1f, 0f)),
                 Arguments.of(point(2f, 2f, 0f), vector(-1f, 0f, 0f)))
@@ -62,7 +62,7 @@ internal class CubeTest {
         assertEquals(normal, normalAt)
     }
 
-    class NormalOnSurfaceOfCube : ArgumentsProvider {
+    private class NormalOnSurfaceOfCube : ArgumentsProvider {
         override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> = Stream.of(
                 Arguments.of(point(1f, 0.5f, -0.8f), vector(1f, 0f, 0f)),
                 Arguments.of(point(-1f, -0.2f, 0.9f), vector(-1f, 0f, 0f)),
