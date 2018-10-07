@@ -6,6 +6,7 @@ import kotlin.math.sqrt
 abstract class Shape {
     var transform: Matrix4 = Matrix4.identity
     var material: Material = Material()
+    var parent: Shape? = null
 
     fun intersect(ray: Ray): List<Intersection> {
         val localRay = ray.transform(transform.inverse)
@@ -14,14 +15,25 @@ abstract class Shape {
 
     protected abstract fun localIntersect(ray: Ray): List<Intersection>
 
-    fun normalAt(point: Point): Vector {
-        val localPoint = transform.inverse * point
+    fun normalAt(worldPoint: Point): Vector {
+        val localPoint = worldToObject(worldPoint)
         val localNormal = localNormalAt(localPoint)
-        val worldNormal = transform.inverse.transpose.times3x3(localNormal)
-        return worldNormal.normalize()
+        return normalToWorld(localNormal)
     }
 
     protected abstract fun localNormalAt(point: Point): Vector
+
+    fun worldToObject(point: Point): Point {
+        val parentPoint = this.parent?.worldToObject(point) ?: point
+        return this.transform.inverse * parentPoint
+    }
+
+    fun normalToWorld(normal: Vector): Vector {
+        val localNormal = this.transform.inverse.transpose
+                .times3x3(normal)
+                .normalize()
+        return this.parent?.normalToWorld(localNormal) ?: localNormal
+    }
 }
 
 class Sphere : Shape() {

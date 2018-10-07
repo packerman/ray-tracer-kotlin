@@ -1,8 +1,10 @@
 package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
+import kotlin.math.PI
 import kotlin.math.sqrt
 
 internal class ShapeTest {
@@ -85,6 +87,60 @@ internal class ShapeTest {
         assertTupleEquals(vector(0f, 0.97014f, -0.24254f), n, epsilon)
     }
 
+    @Test
+    fun shapeHasParentAttribute() {
+        val s = testShape()
+        assertNull(s.parent)
+    }
+
+    @Test
+    fun convertPointFromWorldToObjectSpace() {
+        val g1 = Group()
+        g1.transform = rotationY((PI / 2).toFloat())
+        val g2 = Group()
+        g2.transform = scaling(2f, 2f, 2f)
+        g1.addChild(g2)
+        val s = Sphere()
+        s.transform = translation(5f, 0f, 0f)
+        g2.addChild(s)
+
+        val p = s.worldToObject(point(-2f, 0f, -10f))
+
+        assertTupleEquals(point(0f, 0f, -1f), p, epsilon)
+    }
+
+    @Test
+    internal fun convertingNormalFromObjectToWorldSpace() {
+        val g1 = Group()
+        g1.transform = rotationY((PI / 2).toFloat())
+        val g2 = Group()
+        g2.transform = scaling(1f, 2f, 3f)
+        g1.addChild(g2)
+        val s = Sphere()
+        s.transform = translation(5f, 0f, 0f)
+        g2.addChild(s)
+
+        val n = s.normalToWorld(vector(sqrt(3f) / 3, sqrt(3f) / 3, sqrt(3f) / 3))
+
+        assertTupleEquals(vector(0.2857f, 0.4286f, -0.8571f), n, epsilon)
+    }
+
+    @Test
+    internal fun findingNormalOnChildObject() {
+        val g1 = Group()
+        g1.transform = rotationY((PI / 2).toFloat())
+        val g2 = Group()
+        g2.transform = scaling(1f, 2f, 3f)
+        g1.addChild(g2)
+        val s = Sphere()
+        s.transform = translation(5f, 0f, 0f)
+        g2.addChild(s)
+
+        val n = s.normalAt(point(1.7321f, 1.1547f, -5.5774f))
+
+        assertTupleEquals(vector(0.2857f, 0.4286f, -0.8571f), n, epsilon)
+    }
+
     private fun testShape() = object : Shape() {
 
         override fun localIntersect(ray: Ray): List<Intersection> {
@@ -98,6 +154,6 @@ internal class ShapeTest {
 
     private companion object {
 
-        const val epsilon = 0.00001f
+        const val epsilon = 0.0001f
     }
 }
