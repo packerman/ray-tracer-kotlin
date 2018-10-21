@@ -1,6 +1,7 @@
 package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -72,5 +73,16 @@ internal class CubeTest {
                 Arguments.of(point(0.4f, 0.4f, -1f), vector(0f, 0f, -1f)),
                 Arguments.of(point(1f, 1f, 1f), vector(1f, 0f, 0f)),
                 Arguments.of(point(-1f, -1f, -1f), vector(-1f, 0f, 0f)))
+    }
+
+    @Test
+    internal fun boundsForCube() {
+        val s = Cube()
+
+        val expectedBounds = Bounds(
+                point(-1f, -1f, -1f),
+                point(1f, 1f, 1f)
+        )
+        assertEquals(expectedBounds, s.bounds())
     }
 }

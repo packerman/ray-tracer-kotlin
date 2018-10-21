@@ -61,4 +61,15 @@ internal class PlaneTest {
         assertEquals(1f, xs[0].t)
         assertEquals(p, xs[0].shape)
     }
+
+    @Test
+    internal fun boundsForPlane() {
+        val s = Plane()
+
+        val expectedBounds = Bounds(
+                point(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY),
+                point(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+        )
+        assertEquals(expectedBounds, s.bounds())
+    }
 }

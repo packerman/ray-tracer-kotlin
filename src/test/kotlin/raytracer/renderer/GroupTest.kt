@@ -79,5 +79,7 @@ internal class GroupTest {
         override fun localIntersect(ray: Ray): List<Intersection> = emptyList()
 
         override fun localNormalAt(point: Point): Vector = point - point(0f, 0f, 0f)
+
+        override fun bounds() = Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
     }
 }

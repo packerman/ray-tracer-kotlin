@@ -13,4 +13,8 @@ class Group(private val shapes: MutableList<Shape> = mutableListOf()) : Shape(),
         shapes.add(shape)
         shape.parent = this
     }
+
+    override fun bounds(): Bounds {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

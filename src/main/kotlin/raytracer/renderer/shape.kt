@@ -3,6 +3,8 @@ package raytracer.renderer
 import kotlin.math.abs
 import kotlin.math.sqrt
 
+data class Bounds(val minimum: Point, val maximum: Point)
+
 abstract class Shape {
     var transform: Matrix4 = Matrix4.identity
     var material: Material = Material()
@@ -34,6 +36,8 @@ abstract class Shape {
                 .normalize()
         return this.parent?.normalToWorld(localNormal) ?: localNormal
     }
+
+    abstract fun bounds(): Bounds
 }
 
 class Sphere : Shape() {
@@ -52,12 +56,15 @@ class Sphere : Shape() {
         val i1 = Intersection((-b - sqrt(discriminant)) / (2f * a), this)
         val i2 = Intersection((-b + sqrt(discriminant)) / (2f * a), this)
 
-        return if (i1.t > i2.t) intersections(i2, i1) else intersections(i1, i2)
+        return intersections(i1, i2)
     }
 
     override fun localNormalAt(point: Point): Vector {
         return point - point(0f, 0f, 0f)
     }
+
+    override fun bounds(): Bounds =
+            Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
 }
 
 fun glassSphere(): Sphere =
@@ -75,6 +82,10 @@ class Plane : Shape() {
     }
 
     override fun localNormalAt(point: Point) = vector(0f, 1f, 0f)
+
+    override fun bounds(): Bounds =
+            Bounds(point(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY),
+                    point(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY))
 }
 
 class Cube : Shape() {
@@ -104,11 +115,16 @@ class Cube : Shape() {
             else -> vector(0f, 0f, point.z)
         }
     }
+
+    override fun bounds(): Bounds =
+            Bounds(point(-1f, -1f, -1f),
+                    point(1f, 1f, 1f))
 }
 
 class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY,
                val maximum: Float = Float.POSITIVE_INFINITY,
                val closed: Boolean = false) : Shape() {
+
     override fun localIntersect(ray: Ray): List<Intersection> {
         val xs = mutableListOf<Intersection>()
 
@@ -144,6 +160,11 @@ class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY,
             else -> vector(point.x, 0f, point.z)
         }
     }
+
+    override fun bounds(): Bounds = Bounds(
+            point(-1f, this.minimum, -1f),
+            point(1f, this.maximum, 1f)
+    )
 
     private fun intersectCaps(ray: Ray, y0: Float, y1: Float, xs: MutableList<Intersection>): MutableList<Intersection> {
         if (!this.closed || abs(ray.direction.y) < epsilon) {

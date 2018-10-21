@@ -150,6 +150,9 @@ internal class ShapeTest {
 
         override fun localNormalAt(point: Point): Vector =
                 point - point(0f, 0f, 0f)
+
+        override fun bounds(): Bounds =
+                Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
     }
 
     private companion object {

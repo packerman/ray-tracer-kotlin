@@ -150,6 +150,27 @@ internal class CylinderTest {
                 Arguments.of(point(0f, 2f, 0.5f), vector(0f, 1f, 0f)))
     }
 
+    @Test
+    fun boundsForCylinder() {
+        val cyl = Cylinder()
+
+        val expectedBounds = Bounds(
+                point(-1f, Float.NEGATIVE_INFINITY, -1f),
+                point(1f, Float.POSITIVE_INFINITY, 1f))
+
+        assertEquals(expectedBounds, cyl.bounds())
+    }
+
+    @Test
+    fun boundsForTruncatedCylinder() {
+        val cyl = Cylinder(1f, 2f)
+
+        val expectedBounds = Bounds(
+                point(-1f, 1f, -1f),
+                point(1f, 2f, 1f))
+        assertEquals(expectedBounds, cyl.bounds())
+    }
+
     companion object {
         private const val epsilon = 0.0001f
     }

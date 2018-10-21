@@ -113,6 +113,18 @@ internal class SphereTest {
         assertEquals(1.5f, s.material.refractiveIndex)
     }
 
+    @Test
+    fun boundsForSphere() {
+        val s = Sphere()
+
+        val expectedBounds = Bounds(
+                point(-1f, -1f, -1f),
+                point(1f, 1f, 1f)
+        )
+
+        assertEquals(expectedBounds, s.bounds())
+    }
+
     private companion object {
         const val epsilon = 0.00001f
     }
