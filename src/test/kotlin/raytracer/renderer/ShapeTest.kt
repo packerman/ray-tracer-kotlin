@@ -110,7 +110,7 @@ internal class ShapeTest {
     }
 
     @Test
-    internal fun convertingNormalFromObjectToWorldSpace() {
+    fun convertingNormalFromObjectToWorldSpace() {
         val g1 = Group()
         g1.transform = rotationY((PI / 2).toFloat())
         val g2 = Group()
@@ -126,7 +126,7 @@ internal class ShapeTest {
     }
 
     @Test
-    internal fun findingNormalOnChildObject() {
+    fun findingNormalOnChildObject() {
         val g1 = Group()
         g1.transform = rotationY((PI / 2).toFloat())
         val g2 = Group()
@@ -141,6 +141,19 @@ internal class ShapeTest {
         assertTupleEquals(vector(0.2857f, 0.4286f, -0.8571f), n, epsilon)
     }
 
+    @Test
+    fun boundsOfTransformedObjects() {
+        val s = Sphere().apply {
+            transform = translation(1f, 2f, 3f)
+        }
+
+        val expectedBounds = Bounds(
+                point(0f, 1f, 2f),
+                point(2f, 3f, 4f)
+        )
+        assertEquals(expectedBounds, s.bounds())
+    }
+
     private fun testShape() = object : Shape() {
 
         override fun localIntersect(ray: Ray): List<Intersection> {
@@ -151,7 +164,7 @@ internal class ShapeTest {
         override fun localNormalAt(point: Point): Vector =
                 point - point(0f, 0f, 0f)
 
-        override fun bounds(): Bounds =
+        override fun localBounds(): Bounds =
                 Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
     }
 

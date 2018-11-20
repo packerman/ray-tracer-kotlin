@@ -3,12 +3,10 @@ package raytracer.renderer
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-data class Bounds(val minimum: Point, val maximum: Point)
-
 abstract class Shape {
     var transform: Matrix4 = Matrix4.identity
     var material: Material = Material()
-    var parent: Shape? = null
+    internal var parent: Shape? = null
 
     fun intersect(ray: Ray): List<Intersection> {
         val localRay = ray.transform(transform.inverse)
@@ -37,7 +35,13 @@ abstract class Shape {
         return this.parent?.normalToWorld(localNormal) ?: localNormal
     }
 
-    abstract fun bounds(): Bounds
+    abstract fun localBounds(): Bounds
+
+    fun bounds(): Bounds =
+            localBounds().transform(effectiveTransform())
+
+    private fun effectiveTransform() =
+            parent?.transform?.let { it * this.transform } ?: this.transform
 }
 
 class Sphere : Shape() {
@@ -63,7 +67,7 @@ class Sphere : Shape() {
         return point - point(0f, 0f, 0f)
     }
 
-    override fun bounds(): Bounds =
+    override fun localBounds(): Bounds =
             Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
 }
 
@@ -83,9 +87,9 @@ class Plane : Shape() {
 
     override fun localNormalAt(point: Point) = vector(0f, 1f, 0f)
 
-    override fun bounds(): Bounds =
-            Bounds(point(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY),
-                    point(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY))
+    override fun localBounds(): Bounds =
+            Bounds(point(Float.NEGATIVE_INFINITY, 0f, Float.NEGATIVE_INFINITY),
+                    point(Float.POSITIVE_INFINITY, 0f, Float.POSITIVE_INFINITY))
 }
 
 class Cube : Shape() {
@@ -116,7 +120,7 @@ class Cube : Shape() {
         }
     }
 
-    override fun bounds(): Bounds =
+    override fun localBounds(): Bounds =
             Bounds(point(-1f, -1f, -1f),
                     point(1f, 1f, 1f))
 }
@@ -161,7 +165,7 @@ class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY,
         }
     }
 
-    override fun bounds(): Bounds = Bounds(
+    override fun localBounds(): Bounds = Bounds(
             point(-1f, this.minimum, -1f),
             point(1f, this.maximum, 1f)
     )

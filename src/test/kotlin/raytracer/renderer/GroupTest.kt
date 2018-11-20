@@ -74,12 +74,33 @@ internal class GroupTest {
         assertThat(xs, hasSize(2))
     }
 
+    @Test
+    internal fun boundsForGroup() {
+        val s1 = Sphere().apply {
+            transform = translation(-1f, 0f, 0f)
+        }
+        val s2 = Sphere().apply {
+            transform = translation(1f, 0f, 0f)
+        }
+        val g = Group().apply {
+            addChild(s1)
+            addChild(s2)
+        }
+
+        val expectedBounds = Bounds(
+                point(-2f, -1f, 1f),
+                point(2f, 1f, 1f)
+        )
+
+        assertEquals(expectedBounds, g.bounds())
+    }
+
     private fun testShape() = object : Shape() {
 
         override fun localIntersect(ray: Ray): List<Intersection> = emptyList()
 
         override fun localNormalAt(point: Point): Vector = point - point(0f, 0f, 0f)
 
-        override fun bounds() = Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
+        override fun localBounds() = Bounds(point(-1f, -1f, -1f), point(1f, 1f, 1f))
     }
 }

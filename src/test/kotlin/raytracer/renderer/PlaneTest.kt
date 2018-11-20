@@ -67,8 +67,8 @@ internal class PlaneTest {
         val s = Plane()
 
         val expectedBounds = Bounds(
-                point(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY),
-                point(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                point(Float.NEGATIVE_INFINITY, 0f, Float.NEGATIVE_INFINITY),
+                point(Float.POSITIVE_INFINITY, 0f, Float.POSITIVE_INFINITY)
         )
         assertEquals(expectedBounds, s.bounds())
     }

@@ -3,7 +3,6 @@ package raytracer.renderer
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.roundToInt
 
 class Canvas(val width: Int, val height: Int) {
@@ -12,13 +11,13 @@ class Canvas(val width: Int, val height: Int) {
         Array(width) { color(0f, 0f, 0f) }
     }
 
-    fun pixels(): Sequence<Color> = buildSequence {
+    fun pixels(): Sequence<Color> = sequence {
         for (row in pixels) {
             yieldAll(row.asSequence())
         }
     }
 
-    fun rows(): Sequence<Sequence<Color>> = buildSequence {
+    fun rows(): Sequence<Sequence<Color>> = sequence {
         for (row in pixels) {
             yield(row.asSequence())
         }

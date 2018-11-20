@@ -1,6 +1,7 @@
 package raytracer.renderer
 
 import java.util.*
+import kotlin.math.abs
 
 data class Matrix4 internal constructor(private val matrix: FloatArray) {
 
@@ -40,6 +41,15 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
             this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z + this.matrix[7] * tuple.w,
             this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z + this.matrix[11] * tuple.w,
             this.matrix[12] * tuple.x + this.matrix[13] * tuple.y + this.matrix[14] * tuple.z + this.matrix[15] * tuple.w)
+
+    fun timesSpecial(tuple: Tuple): Tuple {
+        fun mult(a: Float, b: Float) =
+                if (abs(a) < 0.000001f) 0f else a * b
+        return Tuple(mult(this.matrix[0], tuple.x) + mult(this.matrix[1], tuple.y) + mult(this.matrix[2], tuple.z) + mult(this.matrix[3], tuple.w),
+                mult(this.matrix[4], tuple.x) + mult(this.matrix[5], tuple.y) + mult(this.matrix[6], tuple.z) + mult(this.matrix[7], tuple.w),
+                mult(this.matrix[8], tuple.x) + mult(this.matrix[9], tuple.y) + mult(this.matrix[10], tuple.z) + mult(this.matrix[11], tuple.w),
+                mult(this.matrix[12], tuple.x) + mult(this.matrix[13], tuple.y) + mult(this.matrix[14], tuple.z) + mult(this.matrix[15], tuple.w))
+    }
 
     fun times3x3(tuple: Tuple) = Tuple(this.matrix[0] * tuple.x + this.matrix[1] * tuple.y + this.matrix[2] * tuple.z,
             this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z,
