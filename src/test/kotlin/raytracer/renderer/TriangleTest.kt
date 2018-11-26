@@ -1,6 +1,7 @@
 package raytracer.renderer
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import raytracer.utils.assertTupleEquals
 
@@ -22,16 +23,67 @@ internal class TriangleTest {
     }
 
     @Test
-    internal fun findNormalOnTriangle() {
+    fun findNormalOnTriangle() {
         val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
 
         val n1 = t.normalAt(point(0f, 0.5f, 0f))
         val n2 = t.normalAt(point(-0.5f, 0.75f, 0f))
         val n3 = t.normalAt(point(0.5f, 0.25f, 0f))
 
-        assertEquals(t.normal, n1)
-        assertEquals(t.normal, n2)
-        assertEquals(t.normal, n3)
+        assertTupleEquals(t.normal, n1, epsilon)
+        assertTupleEquals(t.normal, n2, epsilon)
+        assertTupleEquals(t.normal, n3, epsilon)
+    }
+
+    @Test
+    fun intersectRayParallelToTheTriangle() {
+        val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val r = Ray(point(0f, -1f, -2f), vector(0f, 1f, 0f))
+
+        val xs = t.intersect(r)
+
+        assertTrue(xs.isEmpty())
+    }
+
+    @Test
+    fun rayMissesP1P3Edge() {
+        val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val r = Ray(point(1f, 1f, -2f), vector(0f, 0f, 1f))
+
+        val xs = t.intersect(r)
+
+        assertTrue(xs.isEmpty())
+    }
+
+    @Test
+    fun rayMissesP1P2Edge() {
+        val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val r = Ray(point(-1f, 1f, -2f), vector(0f, 0f, 1f))
+
+        val xs = t.intersect(r)
+
+        assertTrue(xs.isEmpty())
+    }
+
+    @Test
+    fun rayMissesP2P3Edge() {
+        val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val r = Ray(point(0f, -1f, -2f), vector(0f, 0f, 1f))
+
+        val xs = t.intersect(r)
+
+        assertTrue(xs.isEmpty())
+    }
+
+    @Test
+    fun rayStrikesTriangle() {
+        val t = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val r = Ray(point(0f, 0.5f, -2f), vector(0f, 0f, 1f))
+
+        val xs = t.intersect(r)
+
+        assertEquals(1, xs.size)
+        assertEquals(2f, xs[0].t)
     }
 
     private companion object {
