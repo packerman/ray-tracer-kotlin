@@ -2,7 +2,7 @@ package raytracer.renderer
 
 import kotlin.math.abs
 
-class Triangle(val p1: Point, val p2: Point, val p3: Point) : Shape() {
+data class Triangle(val p1: Point, val p2: Point, val p3: Point) : Shape() {
 
     val e1 = p2 - p1
     val e2 = p3 - p1
