@@ -1,10 +1,9 @@
 package raytracer.renderer
 
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.runBlocking
-import kotlin.coroutines.experimental.buildSequence
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlin.math.max
 import kotlin.math.tan
 
@@ -84,7 +83,7 @@ internal fun Camera.render(world: World, renderTask: RenderTask): RenderResult {
 internal fun Camera.renderTasks(n: Int): List<RenderTask> {
     require(n > 0)
     val height = vSize / n
-    return buildSequence {
+    return sequence {
         for (i in 0..n - 2) {
             yield(RenderTask(0, i * height, hSize, height))
         }
