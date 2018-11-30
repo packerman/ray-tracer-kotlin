@@ -21,7 +21,6 @@ object Degrees : AngleUnit {
     override fun toRadians(a: Float): Float = toRadians(a.toDouble()).toFloat()
 }
 
-
 @Suppress("UNCHECKED_CAST")
 class SceneLoader(val angleUnit: AngleUnit = Degrees) {
 
