@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.instanceOf
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.snakeyaml.engine.v1.api.Load
 import org.snakeyaml.engine.v1.api.LoadSettingsBuilder
@@ -30,7 +31,7 @@ internal class SceneLoaderTest {
 
         val loaded = load.loadFromString(yamlString)
 
-        val scene = SceneLoader().load(loaded)
+        val scene = SceneLoader(Degrees).load(loaded)
 
         assertThat(scene.cameras, hasSize(1))
         val camera = scene.cameras[0]
@@ -100,7 +101,7 @@ internal class SceneLoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = SceneLoader().load(loaded)
+        val scene = SceneLoader(Degrees).load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -141,7 +142,7 @@ internal class SceneLoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = SceneLoader().load(loaded)
+        val scene = SceneLoader(Degrees).load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -182,7 +183,7 @@ internal class SceneLoaderTest {
                 .build()
         val load = Load(settings)
         val loaded = load.loadFromString(yamlString)
-        val scene = SceneLoader().load(loaded)
+        val scene = SceneLoader(Degrees).load(loaded)
 
         assertThat(scene.world, hasSize(1))
 
@@ -425,5 +426,32 @@ internal class SceneLoaderTest {
         val cube = scene.world[0] as Cube
 
         assertEquals(rotationY(0.4f), cube.transform)
+    }
+
+    @Test
+    fun canAddCylinder() {
+        val yamlString = """
+            |- add: cylinder
+            |  min: 0
+            |  max: 0.3
+            |  closed: false
+            |
+        """.trimMargin()
+
+        val settings = LoadSettingsBuilder()
+                .build()
+        val load = Load(settings)
+        val loaded = load.loadFromString(yamlString)
+        val scene = SceneLoader(Degrees).load(loaded)
+
+        assertThat(scene.world, hasSize(1))
+
+        assertThat(scene.world[0], instanceOf(Cylinder::class.java))
+
+        val cylinder = scene.world[0] as Cylinder
+
+        assertEquals(0f, cylinder.minimum)
+        assertEquals(0.3f, cylinder.maximum)
+        assertFalse(cylinder.closed)
     }
 }
