@@ -22,7 +22,7 @@ object Degrees : AngleUnit {
 }
 
 @Suppress("UNCHECKED_CAST")
-class SceneLoader(val angleUnit: AngleUnit = Degrees) {
+class SceneLoader(val angleUnit: AngleUnit = Radians) {
 
     private val defined = HashMap<String, Definition>()
     private val materials = HashMap<String, Material>()
@@ -45,7 +45,7 @@ class SceneLoader(val angleUnit: AngleUnit = Degrees) {
         "camera" -> {
             val hSize = readInt(elem["width"])
             val vSize = (elem["height"] as Number).toInt()
-            val fieldOfView = toRadians((elem["field-of-view"] as Number).toDouble()).toFloat()
+            val fieldOfView = angleUnit.toRadians((elem["field-of-view"] as Number).toFloat())
             val camera = Camera(hSize, vSize, fieldOfView)
 
             val from = readPoint(elem["from"])
@@ -73,6 +73,14 @@ class SceneLoader(val angleUnit: AngleUnit = Degrees) {
         }
         "cube" -> {
             val shape = Cube()
+            setObjectProperties(shape, elem)
+            builder.shapes.add(shape)
+        }
+        "cylinder" -> {
+            val minimum = elem["min"]?.let(::readFloat) ?: Float.NEGATIVE_INFINITY
+            val maximum = elem["max"]?.let(::readFloat) ?: Float.POSITIVE_INFINITY
+            val closed = elem["closed"]?.let(::readBoolean) ?: false
+            val shape = Cylinder(minimum, maximum, closed)
             setObjectProperties(shape, elem)
             builder.shapes.add(shape)
         }
@@ -195,6 +203,8 @@ class SceneLoader(val angleUnit: AngleUnit = Degrees) {
 
     private fun readFloat(elem: Any?) = (elem as Number).toFloat()
 
+    private fun readBoolean(elem: Any?) = elem as Boolean
+
     private fun readPoint(elem: Any?): Point {
         val list = elem as List<*>
         require(list.size == 3)
@@ -215,7 +225,7 @@ class SceneLoader(val angleUnit: AngleUnit = Degrees) {
 
     companion object {
         fun loadFromString(string: String,
-                           angleUnit: AngleUnit = Degrees): Scene {
+                           angleUnit: AngleUnit = Radians): Scene {
             val load = Load(settings)
             val loaded = load.loadFromString(string)
             return SceneLoader(angleUnit).load(loaded)
