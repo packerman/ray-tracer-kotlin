@@ -45,19 +45,16 @@ data class Matrix4 internal constructor(private val m: FloatArray) {
     fun times3x3(tuple: Tuple) = Tuple(this.m[0] * tuple.x + this.m[1] * tuple.y + this.m[2] * tuple.z,
             this.m[4] * tuple.x + this.m[5] * tuple.y + this.m[6] * tuple.z,
             this.m[8] * tuple.x + this.m[9] * tuple.y + this.m[10] * tuple.z,
+            0f)
+
     fun timesSpecial(tuple: Tuple): Tuple {
         fun mult(a: Float, b: Float) =
                 if (abs(a) < 0.000001f) 0f else a * b
-        return Tuple(mult(this.matrix[0], tuple.x) + mult(this.matrix[1], tuple.y) + mult(this.matrix[2], tuple.z) + mult(this.matrix[3], tuple.w),
-                mult(this.matrix[4], tuple.x) + mult(this.matrix[5], tuple.y) + mult(this.matrix[6], tuple.z) + mult(this.matrix[7], tuple.w),
-                mult(this.matrix[8], tuple.x) + mult(this.matrix[9], tuple.y) + mult(this.matrix[10], tuple.z) + mult(this.matrix[11], tuple.w),
-                mult(this.matrix[12], tuple.x) + mult(this.matrix[13], tuple.y) + mult(this.matrix[14], tuple.z) + mult(this.matrix[15], tuple.w))
+        return Tuple(mult(this.m[0], tuple.x) + mult(this.m[1], tuple.y) + mult(this.m[2], tuple.z) + mult(this.m[3], tuple.w),
+                mult(this.m[4], tuple.x) + mult(this.m[5], tuple.y) + mult(this.m[6], tuple.z) + mult(this.m[7], tuple.w),
+                mult(this.m[8], tuple.x) + mult(this.m[9], tuple.y) + mult(this.m[10], tuple.z) + mult(this.m[11], tuple.w),
+                mult(this.m[12], tuple.x) + mult(this.m[13], tuple.y) + mult(this.m[14], tuple.z) + mult(this.m[15], tuple.w))
     }
-
-    fun times3x3(tuple: Tuple) = Tuple(this.matrix[0] * tuple.x + this.matrix[1] * tuple.y + this.matrix[2] * tuple.z,
-            this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z,
-            this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z,
-            0f)
 
     val determinant: Float
         get() = m[3] * m[6] * m[9] * m[12] - m[2] * m[7] * m[9] * m[12] - m[3] * m[5] * m[10] * m[12] + m[1] * m[7] * m[10] * m[12] +

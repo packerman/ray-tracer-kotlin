@@ -31,6 +31,10 @@ data class Triangle(val p1: Point, val p2: Point, val p3: Point) : Shape() {
 
     override fun localNormalAt(point: Point): Vector = normal
 
+    override fun localBounds(): Bounds {
+        TODO("not implemented")
+    }
+
     private companion object {
         const val epsilon = 0.00001f
     }
