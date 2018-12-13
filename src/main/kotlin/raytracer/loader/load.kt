@@ -9,8 +9,20 @@ import java.lang.Math.toRadians
 
 data class Scene(val cameras: List<Camera>, val world: World)
 
+interface AngleUnit {
+    fun toRadians(a: Float): Float
+}
+
+object Radians : AngleUnit {
+    override fun toRadians(a: Float): Float = a
+}
+
+object Degrees : AngleUnit {
+    override fun toRadians(a: Float): Float = toRadians(a.toDouble()).toFloat()
+}
+
 @Suppress("UNCHECKED_CAST")
-class SceneLoader {
+class SceneLoader(val angleUnit: AngleUnit = Radians) {
 
     private val defined = HashMap<String, Definition>()
     private val materials = HashMap<String, Material>()
@@ -33,7 +45,7 @@ class SceneLoader {
         "camera" -> {
             val hSize = readInt(elem["width"])
             val vSize = (elem["height"] as Number).toInt()
-            val fieldOfView = (elem["field-of-view"] as Number).toFloat()
+            val fieldOfView = angleUnit.toRadians((elem["field-of-view"] as Number).toFloat())
             val camera = Camera(hSize, vSize, fieldOfView)
 
             val from = readPoint(elem["from"])
@@ -64,6 +76,14 @@ class SceneLoader {
             setObjectProperties(shape, elem)
             builder.shapes.add(shape)
         }
+        "cylinder" -> {
+            val minimum = elem["min"]?.let(::readFloat) ?: Float.NEGATIVE_INFINITY
+            val maximum = elem["max"]?.let(::readFloat) ?: Float.POSITIVE_INFINITY
+            val closed = elem["closed"]?.let(::readBoolean) ?: false
+            val shape = Cylinder(minimum, maximum, closed)
+            setObjectProperties(shape, elem)
+            builder.shapes.add(shape)
+        }
         else -> error("Unknown element: ${elem["add"]}")
     }
 
@@ -88,14 +108,13 @@ class SceneLoader {
         shape.transform = readTransformList(elem["transform"])
     }
 
-    private val materialProperties = setOf("color", "ambient", "diffuse", "specular", "reflective", "shininess", "transparency", "refractive-index")
+    private val materialProperties = setOf("color", "pattern", "ambient", "diffuse", "specular", "reflective", "shininess", "transparency", "refractive-index")
 
     private fun readMaterial(elem: Any?, baseMaterial: Material? = null): Material {
         val material = elem as Map<String, *>
         check(materialProperties.containsAll(material.keys))
         return Material(
-                pattern = material["color"]?.let { SolidPattern(readColor(it)) } ?: baseMaterial?.pattern
-                ?: SolidPattern(color(1f, 1f, 1f)),
+                pattern = readColorOrPattern(material, baseMaterial),
                 ambient = material["ambient"]?.let(::readFloat) ?: baseMaterial?.ambient ?: MaterialDefaults.ambient,
                 diffuse = material["diffuse"]?.let(::readFloat) ?: baseMaterial?.diffuse ?: MaterialDefaults.diffuse,
                 specular = material["specular"]?.let(::readFloat) ?: baseMaterial?.specular
@@ -109,6 +128,30 @@ class SceneLoader {
                 refractiveIndex = material["refractive-index"]?.let(::readFloat) ?: baseMaterial?.refractiveIndex
                 ?: MaterialDefaults.refractiveIndex
         )
+    }
+
+    private fun readColorOrPattern(material: Map<String, *>, baseMaterial: Material?): Pattern =
+            material["color"]?.let { SolidPattern(readColor(it)) }
+                    ?: material["pattern"]?.let { readPattern(it) }
+                    ?: baseMaterial?.pattern
+                    ?: SolidPattern(color(1f, 1f, 1f))
+
+    private fun readPattern(elem: Any): Pattern {
+        val map = elem as Map<String, *>
+        val type = map["type"] as String
+        val pattern = when (type) {
+            "stripes" -> {
+                val colors = map["colors"] as List<*>
+                StripePattern(readColor(colors[0]), readColor(colors[1]))
+            }
+            "checkers" -> {
+                val colors = map["colors"] as List<*>
+                CheckerPattern(readColor(colors[0]), readColor(colors[1]))
+            }
+            else -> error("Unknown pattern type: $type")
+        }
+        pattern.transform = readTransformList(map["transform"])
+        return pattern
     }
 
     private fun resolveMaterial(name: String): Material {
@@ -147,9 +190,9 @@ class SceneLoader {
         val list = elem as List<*>
         val name = list[0] as String
         return when (name) {
-            "rotate-x" -> rotationX(toRadians(readFloat(list[1]).toDouble()).toFloat())
-            "rotate-y" -> rotationY(toRadians(readFloat(list[1]).toDouble()).toFloat())
-            "rotate-z" -> rotationZ(toRadians(readFloat(list[1]).toDouble()).toFloat())
+            "rotate-x" -> rotationX(angleUnit.toRadians(readFloat(list[1])))
+            "rotate-y" -> rotationY(angleUnit.toRadians(readFloat(list[1])))
+            "rotate-z" -> rotationZ(angleUnit.toRadians(readFloat(list[1])))
             "translate" -> translation(readFloat(list[1]), readFloat(list[2]), readFloat(list[3]))
             "scale" -> scaling(readFloat(list[1]), readFloat(list[2]), readFloat(list[3]))
             else -> error("Unknown transform")
@@ -159,6 +202,8 @@ class SceneLoader {
     private fun readInt(elem: Any?) = (elem as Number).toInt()
 
     private fun readFloat(elem: Any?) = (elem as Number).toFloat()
+
+    private fun readBoolean(elem: Any?) = elem as Boolean
 
     private fun readPoint(elem: Any?): Point {
         val list = elem as List<*>
@@ -179,10 +224,11 @@ class SceneLoader {
     }
 
     companion object {
-        fun loadFromString(string: String): Scene {
+        fun loadFromString(string: String,
+                           angleUnit: AngleUnit = Radians): Scene {
             val load = Load(settings)
             val loaded = load.loadFromString(string)
-            return SceneLoader().load(loaded)
+            return SceneLoader(angleUnit).load(loaded)
         }
 
         fun loadFromInputStream(inputStream: InputStream): Scene {

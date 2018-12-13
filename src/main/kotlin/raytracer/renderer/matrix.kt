@@ -3,7 +3,7 @@ package raytracer.renderer
 import java.util.*
 import kotlin.math.abs
 
-data class Matrix4 internal constructor(private val matrix: FloatArray) {
+data class Matrix4 internal constructor(private val m: FloatArray) {
 
     constructor(m00: Float, m01: Float, m02: Float, m03: Float,
                 m10: Float, m11: Float, m12: Float, m13: Float,
@@ -17,31 +17,34 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
     constructor() : this(FloatArray(16))
 
     operator fun get(i: Int, j: Int): Float =
-            matrix[4 * i + j]
+            m[4 * i + j]
 
     operator fun times(other: Matrix4) =
-            Matrix4(this.matrix[0] * other.matrix[0] + this.matrix[1] * other.matrix[4] + this.matrix[2] * other.matrix[8] + this.matrix[3] * other.matrix[12],
-                    this.matrix[0] * other.matrix[1] + this.matrix[1] * other.matrix[5] + this.matrix[2] * other.matrix[9] + this.matrix[3] * other.matrix[13],
-                    this.matrix[0] * other.matrix[2] + this.matrix[1] * other.matrix[6] + this.matrix[2] * other.matrix[10] + this.matrix[3] * other.matrix[14],
-                    this.matrix[0] * other.matrix[3] + this.matrix[1] * other.matrix[7] + this.matrix[2] * other.matrix[11] + this.matrix[3] * other.matrix[15],
-                    this.matrix[4] * other.matrix[0] + this.matrix[5] * other.matrix[4] + this.matrix[6] * other.matrix[8] + this.matrix[7] * other.matrix[12],
-                    this.matrix[4] * other.matrix[1] + this.matrix[5] * other.matrix[5] + this.matrix[6] * other.matrix[9] + this.matrix[7] * other.matrix[13],
-                    this.matrix[4] * other.matrix[2] + this.matrix[5] * other.matrix[6] + this.matrix[6] * other.matrix[10] + this.matrix[7] * other.matrix[14],
-                    this.matrix[4] * other.matrix[3] + this.matrix[5] * other.matrix[7] + this.matrix[6] * other.matrix[11] + this.matrix[7] * other.matrix[15],
-                    this.matrix[8] * other.matrix[0] + this.matrix[9] * other.matrix[4] + this.matrix[10] * other.matrix[8] + this.matrix[11] * other.matrix[12],
-                    this.matrix[8] * other.matrix[1] + this.matrix[9] * other.matrix[5] + this.matrix[10] * other.matrix[9] + this.matrix[11] * other.matrix[13],
-                    this.matrix[8] * other.matrix[2] + this.matrix[9] * other.matrix[6] + this.matrix[10] * other.matrix[10] + this.matrix[11] * other.matrix[14],
-                    this.matrix[8] * other.matrix[3] + this.matrix[9] * other.matrix[7] + this.matrix[10] * other.matrix[11] + this.matrix[11] * other.matrix[15],
-                    this.matrix[12] * other.matrix[0] + this.matrix[13] * other.matrix[4] + this.matrix[14] * other.matrix[8] + this.matrix[15] * other.matrix[12],
-                    this.matrix[12] * other.matrix[1] + this.matrix[13] * other.matrix[5] + this.matrix[14] * other.matrix[9] + this.matrix[15] * other.matrix[13],
-                    this.matrix[12] * other.matrix[2] + this.matrix[13] * other.matrix[6] + this.matrix[14] * other.matrix[10] + this.matrix[15] * other.matrix[14],
-                    this.matrix[12] * other.matrix[3] + this.matrix[13] * other.matrix[7] + this.matrix[14] * other.matrix[11] + this.matrix[15] * other.matrix[15])
+            Matrix4(this.m[0] * other.m[0] + this.m[1] * other.m[4] + this.m[2] * other.m[8] + this.m[3] * other.m[12],
+                    this.m[0] * other.m[1] + this.m[1] * other.m[5] + this.m[2] * other.m[9] + this.m[3] * other.m[13],
+                    this.m[0] * other.m[2] + this.m[1] * other.m[6] + this.m[2] * other.m[10] + this.m[3] * other.m[14],
+                    this.m[0] * other.m[3] + this.m[1] * other.m[7] + this.m[2] * other.m[11] + this.m[3] * other.m[15],
+                    this.m[4] * other.m[0] + this.m[5] * other.m[4] + this.m[6] * other.m[8] + this.m[7] * other.m[12],
+                    this.m[4] * other.m[1] + this.m[5] * other.m[5] + this.m[6] * other.m[9] + this.m[7] * other.m[13],
+                    this.m[4] * other.m[2] + this.m[5] * other.m[6] + this.m[6] * other.m[10] + this.m[7] * other.m[14],
+                    this.m[4] * other.m[3] + this.m[5] * other.m[7] + this.m[6] * other.m[11] + this.m[7] * other.m[15],
+                    this.m[8] * other.m[0] + this.m[9] * other.m[4] + this.m[10] * other.m[8] + this.m[11] * other.m[12],
+                    this.m[8] * other.m[1] + this.m[9] * other.m[5] + this.m[10] * other.m[9] + this.m[11] * other.m[13],
+                    this.m[8] * other.m[2] + this.m[9] * other.m[6] + this.m[10] * other.m[10] + this.m[11] * other.m[14],
+                    this.m[8] * other.m[3] + this.m[9] * other.m[7] + this.m[10] * other.m[11] + this.m[11] * other.m[15],
+                    this.m[12] * other.m[0] + this.m[13] * other.m[4] + this.m[14] * other.m[8] + this.m[15] * other.m[12],
+                    this.m[12] * other.m[1] + this.m[13] * other.m[5] + this.m[14] * other.m[9] + this.m[15] * other.m[13],
+                    this.m[12] * other.m[2] + this.m[13] * other.m[6] + this.m[14] * other.m[10] + this.m[15] * other.m[14],
+                    this.m[12] * other.m[3] + this.m[13] * other.m[7] + this.m[14] * other.m[11] + this.m[15] * other.m[15])
 
-    operator fun times(tuple: Tuple) = Tuple(this.matrix[0] * tuple.x + this.matrix[1] * tuple.y + this.matrix[2] * tuple.z + this.matrix[3] * tuple.w,
-            this.matrix[4] * tuple.x + this.matrix[5] * tuple.y + this.matrix[6] * tuple.z + this.matrix[7] * tuple.w,
-            this.matrix[8] * tuple.x + this.matrix[9] * tuple.y + this.matrix[10] * tuple.z + this.matrix[11] * tuple.w,
-            this.matrix[12] * tuple.x + this.matrix[13] * tuple.y + this.matrix[14] * tuple.z + this.matrix[15] * tuple.w)
+    operator fun times(tuple: Tuple) = Tuple(this.m[0] * tuple.x + this.m[1] * tuple.y + this.m[2] * tuple.z + this.m[3] * tuple.w,
+            this.m[4] * tuple.x + this.m[5] * tuple.y + this.m[6] * tuple.z + this.m[7] * tuple.w,
+            this.m[8] * tuple.x + this.m[9] * tuple.y + this.m[10] * tuple.z + this.m[11] * tuple.w,
+            this.m[12] * tuple.x + this.m[13] * tuple.y + this.m[14] * tuple.z + this.m[15] * tuple.w)
 
+    fun times3x3(tuple: Tuple) = Tuple(this.m[0] * tuple.x + this.m[1] * tuple.y + this.m[2] * tuple.z,
+            this.m[4] * tuple.x + this.m[5] * tuple.y + this.m[6] * tuple.z,
+            this.m[8] * tuple.x + this.m[9] * tuple.y + this.m[10] * tuple.z,
     fun timesSpecial(tuple: Tuple): Tuple {
         fun mult(a: Float, b: Float) =
                 if (abs(a) < 0.000001f) 0f else a * b
@@ -57,40 +60,40 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
             0f)
 
     val determinant: Float
-        get() = matrix[3] * matrix[6] * matrix[9] * matrix[12] - matrix[2] * matrix[7] * matrix[9] * matrix[12] - matrix[3] * matrix[5] * matrix[10] * matrix[12] + matrix[1] * matrix[7] * matrix[10] * matrix[12] +
-                matrix[2] * matrix[5] * matrix[11] * matrix[12] - matrix[1] * matrix[6] * matrix[11] * matrix[12] - matrix[3] * matrix[6] * matrix[8] * matrix[13] + matrix[2] * matrix[7] * matrix[8] * matrix[13] +
-                matrix[3] * matrix[4] * matrix[10] * matrix[13] - matrix[0] * matrix[7] * matrix[10] * matrix[13] - matrix[2] * matrix[4] * matrix[11] * matrix[13] + matrix[0] * matrix[6] * matrix[11] * matrix[13] +
-                matrix[3] * matrix[5] * matrix[8] * matrix[14] - matrix[1] * matrix[7] * matrix[8] * matrix[14] - matrix[3] * matrix[4] * matrix[9] * matrix[14] + matrix[0] * matrix[7] * matrix[9] * matrix[14] +
-                matrix[1] * matrix[4] * matrix[11] * matrix[14] - matrix[0] * matrix[5] * matrix[11] * matrix[14] - matrix[2] * matrix[5] * matrix[8] * matrix[15] + matrix[1] * matrix[6] * matrix[8] * matrix[15] +
-                matrix[2] * matrix[4] * matrix[9] * matrix[15] - matrix[0] * matrix[6] * matrix[9] * matrix[15] - matrix[1] * matrix[4] * matrix[10] * matrix[15] + matrix[0] * matrix[5] * matrix[10] * matrix[15]
+        get() = m[3] * m[6] * m[9] * m[12] - m[2] * m[7] * m[9] * m[12] - m[3] * m[5] * m[10] * m[12] + m[1] * m[7] * m[10] * m[12] +
+                m[2] * m[5] * m[11] * m[12] - m[1] * m[6] * m[11] * m[12] - m[3] * m[6] * m[8] * m[13] + m[2] * m[7] * m[8] * m[13] +
+                m[3] * m[4] * m[10] * m[13] - m[0] * m[7] * m[10] * m[13] - m[2] * m[4] * m[11] * m[13] + m[0] * m[6] * m[11] * m[13] +
+                m[3] * m[5] * m[8] * m[14] - m[1] * m[7] * m[8] * m[14] - m[3] * m[4] * m[9] * m[14] + m[0] * m[7] * m[9] * m[14] +
+                m[1] * m[4] * m[11] * m[14] - m[0] * m[5] * m[11] * m[14] - m[2] * m[5] * m[8] * m[15] + m[1] * m[6] * m[8] * m[15] +
+                m[2] * m[4] * m[9] * m[15] - m[0] * m[6] * m[9] * m[15] - m[1] * m[4] * m[10] * m[15] + m[0] * m[5] * m[10] * m[15]
 
     val inverse: Matrix4
         get() {
             val detInv = 1f / determinant
-            return Matrix4((matrix[6] * matrix[11] * matrix[13] - matrix[7] * matrix[10] * matrix[13] + matrix[7] * matrix[9] * matrix[14] - matrix[5] * matrix[11] * matrix[14] - matrix[6] * matrix[9] * matrix[15] + matrix[5] * matrix[10] * matrix[15]) * detInv,
-                    (matrix[3] * matrix[10] * matrix[13] - matrix[2] * matrix[11] * matrix[13] - matrix[3] * matrix[9] * matrix[14] + matrix[1] * matrix[11] * matrix[14] + matrix[2] * matrix[9] * matrix[15] - matrix[1] * matrix[10] * matrix[15]) * detInv,
-                    (matrix[2] * matrix[7] * matrix[13] - matrix[3] * matrix[6] * matrix[13] + matrix[3] * matrix[5] * matrix[14] - matrix[1] * matrix[7] * matrix[14] - matrix[2] * matrix[5] * matrix[15] + matrix[1] * matrix[6] * matrix[15]) * detInv,
-                    (matrix[3] * matrix[6] * matrix[9] - matrix[2] * matrix[7] * matrix[9] - matrix[3] * matrix[5] * matrix[10] + matrix[1] * matrix[7] * matrix[10] + matrix[2] * matrix[5] * matrix[11] - matrix[1] * matrix[6] * matrix[11]) * detInv,
-                    (matrix[7] * matrix[10] * matrix[12] - matrix[6] * matrix[11] * matrix[12] - matrix[7] * matrix[8] * matrix[14] + matrix[4] * matrix[11] * matrix[14] + matrix[6] * matrix[8] * matrix[15] - matrix[4] * matrix[10] * matrix[15]) * detInv,
-                    (matrix[2] * matrix[11] * matrix[12] - matrix[3] * matrix[10] * matrix[12] + matrix[3] * matrix[8] * matrix[14] - matrix[0] * matrix[11] * matrix[14] - matrix[2] * matrix[8] * matrix[15] + matrix[0] * matrix[10] * matrix[15]) * detInv,
-                    (matrix[3] * matrix[6] * matrix[12] - matrix[2] * matrix[7] * matrix[12] - matrix[3] * matrix[4] * matrix[14] + matrix[0] * matrix[7] * matrix[14] + matrix[2] * matrix[4] * matrix[15] - matrix[0] * matrix[6] * matrix[15]) * detInv,
-                    (matrix[2] * matrix[7] * matrix[8] - matrix[3] * matrix[6] * matrix[8] + matrix[3] * matrix[4] * matrix[10] - matrix[0] * matrix[7] * matrix[10] - matrix[2] * matrix[4] * matrix[11] + matrix[0] * matrix[6] * matrix[11]) * detInv,
-                    (matrix[5] * matrix[11] * matrix[12] - matrix[7] * matrix[9] * matrix[12] + matrix[7] * matrix[8] * matrix[13] - matrix[4] * matrix[11] * matrix[13] - matrix[5] * matrix[8] * matrix[15] + matrix[4] * matrix[9] * matrix[15]) * detInv,
-                    (matrix[3] * matrix[9] * matrix[12] - matrix[1] * matrix[11] * matrix[12] - matrix[3] * matrix[8] * matrix[13] + matrix[0] * matrix[11] * matrix[13] + matrix[1] * matrix[8] * matrix[15] - matrix[0] * matrix[9] * matrix[15]) * detInv,
-                    (matrix[1] * matrix[7] * matrix[12] - matrix[3] * matrix[5] * matrix[12] + matrix[3] * matrix[4] * matrix[13] - matrix[0] * matrix[7] * matrix[13] - matrix[1] * matrix[4] * matrix[15] + matrix[0] * matrix[5] * matrix[15]) * detInv,
-                    (matrix[3] * matrix[5] * matrix[8] - matrix[1] * matrix[7] * matrix[8] - matrix[3] * matrix[4] * matrix[9] + matrix[0] * matrix[7] * matrix[9] + matrix[1] * matrix[4] * matrix[11] - matrix[0] * matrix[5] * matrix[11]) * detInv,
-                    (matrix[6] * matrix[9] * matrix[12] - matrix[5] * matrix[10] * matrix[12] - matrix[6] * matrix[8] * matrix[13] + matrix[4] * matrix[10] * matrix[13] + matrix[5] * matrix[8] * matrix[14] - matrix[4] * matrix[9] * matrix[14]) * detInv,
-                    (matrix[1] * matrix[10] * matrix[12] - matrix[2] * matrix[9] * matrix[12] + matrix[2] * matrix[8] * matrix[13] - matrix[0] * matrix[10] * matrix[13] - matrix[1] * matrix[8] * matrix[14] + matrix[0] * matrix[9] * matrix[14]) * detInv,
-                    (matrix[2] * matrix[5] * matrix[12] - matrix[1] * matrix[6] * matrix[12] - matrix[2] * matrix[4] * matrix[13] + matrix[0] * matrix[6] * matrix[13] + matrix[1] * matrix[4] * matrix[14] - matrix[0] * matrix[5] * matrix[14]) * detInv,
-                    (matrix[1] * matrix[6] * matrix[8] - matrix[2] * matrix[5] * matrix[8] + matrix[2] * matrix[4] * matrix[9] - matrix[0] * matrix[6] * matrix[9] - matrix[1] * matrix[4] * matrix[10] + matrix[0] * matrix[5] * matrix[10]) * detInv)
+            return Matrix4((m[6] * m[11] * m[13] - m[7] * m[10] * m[13] + m[7] * m[9] * m[14] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] + m[5] * m[10] * m[15]) * detInv,
+                    (m[3] * m[10] * m[13] - m[2] * m[11] * m[13] - m[3] * m[9] * m[14] + m[1] * m[11] * m[14] + m[2] * m[9] * m[15] - m[1] * m[10] * m[15]) * detInv,
+                    (m[2] * m[7] * m[13] - m[3] * m[6] * m[13] + m[3] * m[5] * m[14] - m[1] * m[7] * m[14] - m[2] * m[5] * m[15] + m[1] * m[6] * m[15]) * detInv,
+                    (m[3] * m[6] * m[9] - m[2] * m[7] * m[9] - m[3] * m[5] * m[10] + m[1] * m[7] * m[10] + m[2] * m[5] * m[11] - m[1] * m[6] * m[11]) * detInv,
+                    (m[7] * m[10] * m[12] - m[6] * m[11] * m[12] - m[7] * m[8] * m[14] + m[4] * m[11] * m[14] + m[6] * m[8] * m[15] - m[4] * m[10] * m[15]) * detInv,
+                    (m[2] * m[11] * m[12] - m[3] * m[10] * m[12] + m[3] * m[8] * m[14] - m[0] * m[11] * m[14] - m[2] * m[8] * m[15] + m[0] * m[10] * m[15]) * detInv,
+                    (m[3] * m[6] * m[12] - m[2] * m[7] * m[12] - m[3] * m[4] * m[14] + m[0] * m[7] * m[14] + m[2] * m[4] * m[15] - m[0] * m[6] * m[15]) * detInv,
+                    (m[2] * m[7] * m[8] - m[3] * m[6] * m[8] + m[3] * m[4] * m[10] - m[0] * m[7] * m[10] - m[2] * m[4] * m[11] + m[0] * m[6] * m[11]) * detInv,
+                    (m[5] * m[11] * m[12] - m[7] * m[9] * m[12] + m[7] * m[8] * m[13] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] + m[4] * m[9] * m[15]) * detInv,
+                    (m[3] * m[9] * m[12] - m[1] * m[11] * m[12] - m[3] * m[8] * m[13] + m[0] * m[11] * m[13] + m[1] * m[8] * m[15] - m[0] * m[9] * m[15]) * detInv,
+                    (m[1] * m[7] * m[12] - m[3] * m[5] * m[12] + m[3] * m[4] * m[13] - m[0] * m[7] * m[13] - m[1] * m[4] * m[15] + m[0] * m[5] * m[15]) * detInv,
+                    (m[3] * m[5] * m[8] - m[1] * m[7] * m[8] - m[3] * m[4] * m[9] + m[0] * m[7] * m[9] + m[1] * m[4] * m[11] - m[0] * m[5] * m[11]) * detInv,
+                    (m[6] * m[9] * m[12] - m[5] * m[10] * m[12] - m[6] * m[8] * m[13] + m[4] * m[10] * m[13] + m[5] * m[8] * m[14] - m[4] * m[9] * m[14]) * detInv,
+                    (m[1] * m[10] * m[12] - m[2] * m[9] * m[12] + m[2] * m[8] * m[13] - m[0] * m[10] * m[13] - m[1] * m[8] * m[14] + m[0] * m[9] * m[14]) * detInv,
+                    (m[2] * m[5] * m[12] - m[1] * m[6] * m[12] - m[2] * m[4] * m[13] + m[0] * m[6] * m[13] + m[1] * m[4] * m[14] - m[0] * m[5] * m[14]) * detInv,
+                    (m[1] * m[6] * m[8] - m[2] * m[5] * m[8] + m[2] * m[4] * m[9] - m[0] * m[6] * m[9] - m[1] * m[4] * m[10] + m[0] * m[5] * m[10]) * detInv)
         }
 
     val transpose: Matrix4
         get() =
-            Matrix4(this.matrix[0], this.matrix[4], this.matrix[8], this.matrix[12],
-                    this.matrix[1], this.matrix[5], this.matrix[9], this.matrix[13],
-                    this.matrix[2], this.matrix[6], this.matrix[10], this.matrix[14],
-                    this.matrix[3], this.matrix[7], this.matrix[11], this.matrix[15])
+            Matrix4(this.m[0], this.m[4], this.m[8], this.m[12],
+                    this.m[1], this.m[5], this.m[9], this.m[13],
+                    this.m[2], this.m[6], this.m[10], this.m[14],
+                    this.m[3], this.m[7], this.m[11], this.m[15])
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -98,10 +101,10 @@ data class Matrix4 internal constructor(private val matrix: FloatArray) {
 
         other as Matrix4
 
-        return Arrays.equals(matrix, other.matrix)
+        return Arrays.equals(m, other.m)
     }
 
-    override fun hashCode(): Int = Arrays.hashCode(matrix)
+    override fun hashCode(): Int = Arrays.hashCode(m)
 
     companion object {
         val identity = Matrix4(
