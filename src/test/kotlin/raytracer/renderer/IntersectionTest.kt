@@ -246,6 +246,14 @@ internal class IntersectionTest {
         assertEquals(0.48873f, reflectance, epsilon)
     }
 
+    @Test
+    fun intersectionWithUAndV() {
+        val shape = Triangle(point(0f, 1f, 0f), point(-1f, 0f, 0f), point(1f, 0f, 0f))
+        val i = Intersection(3.5f, shape, 0.2f, 0.4f)
+        assertEquals(0.2f, i.u)
+        assertEquals(0.4f, i.v)
+    }
+
     private companion object {
         val epsilon = 0.001f
     }

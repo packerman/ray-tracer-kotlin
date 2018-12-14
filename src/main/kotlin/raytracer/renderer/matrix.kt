@@ -13,8 +13,6 @@ data class Matrix4 internal constructor(private val m: FloatArray) {
             m20, m21, m22, m23,
             m30, m31, m32, m33))
 
-    constructor() : this(FloatArray(16))
-
     operator fun get(i: Int, j: Int): Float =
             m[4 * i + j]
 
@@ -54,8 +52,9 @@ data class Matrix4 internal constructor(private val m: FloatArray) {
                 m[1] * m[4] * m[11] * m[14] - m[0] * m[5] * m[11] * m[14] - m[2] * m[5] * m[8] * m[15] + m[1] * m[6] * m[8] * m[15] +
                 m[2] * m[4] * m[9] * m[15] - m[0] * m[6] * m[9] * m[15] - m[1] * m[4] * m[10] * m[15] + m[0] * m[5] * m[10] * m[15]
 
-    val inverse: Matrix4
-        get() {
+    val inverse: Matrix4 by lazy { inverse() }
+
+    private fun inverse(): Matrix4 {
             val detInv = 1f / determinant
             return Matrix4((m[6] * m[11] * m[13] - m[7] * m[10] * m[13] + m[7] * m[9] * m[14] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] + m[5] * m[10] * m[15]) * detInv,
                     (m[3] * m[10] * m[13] - m[2] * m[11] * m[13] - m[3] * m[9] * m[14] + m[1] * m[11] * m[14] + m[2] * m[9] * m[15] - m[1] * m[10] * m[15]) * detInv,

@@ -10,7 +10,8 @@ data class Ray(val origin: Point, val direction: Vector) {
 
 fun Ray.transform(m: Matrix4): Ray = Ray(m * origin, m * direction)
 
-data class Intersection(val t: Float, val shape: Shape)
+data class Intersection(val t: Float, val shape: Shape,
+                        val u: Float? = null, val v: Float? = null)
 
 fun intersections(vararg i: Intersection) = listOf(*i)
 
