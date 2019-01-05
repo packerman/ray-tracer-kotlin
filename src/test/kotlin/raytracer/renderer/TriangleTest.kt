@@ -97,7 +97,7 @@ internal class TriangleTest {
         private val p1 = point(0f, 1f, 0f)
         private val p2 = point(-1f, 0f, 0f)
         private val p3 = point(1f, 0f, 0f)
-        private val n1 = vector(1f, 0f, 0f)
+        private val n1 = vector(0f, 1f, 0f)
         private val n2 = vector(-1f, 0f, 0f)
         private val n3 = vector(1f, 0f, 0f)
         private val triangle = SmoothTriangle(p1, p2, p3, n1, n2, n3)
@@ -118,6 +118,24 @@ internal class TriangleTest {
             val xs = triangle.intersect(r)
             assertEquals(0.45f, xs[0].u)
             assertEquals(0.25f, xs[0].v)
+        }
+
+        @Test
+        fun interpolateNormal() {
+            val i = Intersection(1f, triangle, 0.45f, 0.25f)
+            val n = triangle.normalAt(point(0f, 0f, 0f), i)
+
+            assertTupleEquals(vector(-0.5547f, 0.83205f, 0f), n, epsilon)
+        }
+
+        @Test
+        internal fun prepareNormal() {
+            val i = Intersection(1f, triangle, 0.45f, 0.25f)
+            val r = Ray(point(-0.2f, 0.3f, -2f), vector(0f, 0f, 1f))
+            val xs = listOf(i)
+            val comps = i.prepareHit(r, xs)
+
+            assertTupleEquals(vector(-0.5547f, 0.83205f, 0f), comps.normal, epsilon)
         }
     }
 

@@ -12,7 +12,7 @@ data class Triangle(val p1: Point, val p2: Point, val p3: Point) : Shape() {
         return intersection(this, ray, p1, e1, e2)
     }
 
-    override fun localNormalAt(point: Point): Vector = normal
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector = normal
 
     companion object {
         private const val epsilon = 0.00001f
@@ -50,7 +50,12 @@ data class SmoothTriangle(val p1: Point, val p2: Point, val p3: Point,
         return Triangle.intersection(this, ray, p1, e1, e2)
     }
 
-    override fun localNormalAt(point: Point): Vector {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector {
+        checkNotNull(hit)
+        checkNotNull(hit.u)
+        checkNotNull(hit.v)
+        return this.n2 * hit.u +
+                this.n3 * hit.v +
+                this.n1 * (1f - hit.u - hit.v)
     }
 }

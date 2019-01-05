@@ -30,7 +30,7 @@ data class Hit(val t: Float, val shape: Shape,
 
 fun Intersection.prepareHit(ray: Ray, xs: List<Intersection> = listOf(this)): Hit {
     val point = ray.position(t)
-    val normalAtPoint = shape.normalAt(point)
+    val normalAtPoint = shape.normalAt(point, this)
     val eye = -ray.direction
     val inside = normalAtPoint.dot(eye) < 0f
     val normal = if (inside) -normalAtPoint else normalAtPoint

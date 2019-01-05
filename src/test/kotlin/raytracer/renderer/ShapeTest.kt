@@ -148,7 +148,7 @@ internal class ShapeTest {
             return emptyList()
         }
 
-        override fun localNormalAt(point: Point): Vector =
+        override fun localNormalAt(point: Point, hit: Intersection?): Vector =
                 point - point(0f, 0f, 0f)
     }
 
