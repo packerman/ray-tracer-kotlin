@@ -149,4 +149,50 @@ class ObjFileTest {
 
         assertEquals(expectedTriangles, actualTriangles)
     }
+
+    @Test
+    fun vertexNormalRecords() {
+        val file = StringReader("""
+            vn 0 0 1
+            vn 0.707 0 -0.707
+            vn 1 2 3
+        """.trimIndent())
+
+        val parser = parseObjFile(file)
+
+        assertEquals(vector(0f, 0f, 1f), parser.normals[0])
+        assertEquals(vector(0.707f, 0f, -0.707f), parser.normals[1])
+        assertEquals(vector(1f, 2f, 3f), parser.normals[2])
+    }
+
+    @Test
+    fun facesWithNormals() {
+        val file = StringReader("""
+            v 0 1 0
+            v -1 0 0
+            v 1 0 0
+
+            vn -1 0 0
+            vn 1 0 0
+            vn 0 1 0
+
+            f 1//3 2//1 3//2
+            f 1/0/3 2/102/1 3/14/2
+        """.trimIndent())
+
+        val parser = parseObjFile(file)
+        val g = parser.defaultGroup
+        val t1 = g.children[0] as SmoothTriangle
+        val t2 = g.children[1] as SmoothTriangle
+
+        assertEquals(parser.vertices[0], t1.p1)
+        assertEquals(parser.vertices[1], t1.p2)
+        assertEquals(parser.vertices[2], t1.p3)
+
+        assertEquals(parser.normals[2], t1.n1)
+        assertEquals(parser.normals[0], t1.n2)
+        assertEquals(parser.normals[1], t1.n3)
+
+        assertEquals(t1, t2)
+    }
 }

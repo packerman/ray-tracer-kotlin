@@ -7,7 +7,7 @@ class Group(private val shapes: MutableList<Shape> = mutableListOf()) : Shape(),
     override fun localIntersect(ray: Ray): List<Intersection> =
             shapes.flatMap { it.intersect(ray) }.sortedBy(Intersection::t)
 
-    override fun localNormalAt(point: Point): Vector {
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector {
         error("Not implemented")
     }
 

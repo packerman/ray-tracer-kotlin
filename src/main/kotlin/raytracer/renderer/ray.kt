@@ -10,7 +10,8 @@ data class Ray(val origin: Point, val direction: Vector) {
 
 fun Ray.transform(m: Matrix4): Ray = Ray(m * origin, m * direction)
 
-data class Intersection(val t: Float, val shape: Shape)
+data class Intersection(val t: Float, val shape: Shape,
+                        val u: Float? = null, val v: Float? = null)
 
 fun intersections(vararg i: Intersection) = listOf(*i)
 
@@ -29,7 +30,7 @@ data class Hit(val t: Float, val shape: Shape,
 
 fun Intersection.prepareHit(ray: Ray, xs: List<Intersection> = listOf(this)): Hit {
     val point = ray.position(t)
-    val normalAtPoint = shape.normalAt(point)
+    val normalAtPoint = shape.normalAt(point, this)
     val eye = -ray.direction
     val inside = normalAtPoint.dot(eye) < 0f
     val normal = if (inside) -normalAtPoint else normalAtPoint

@@ -15,13 +15,13 @@ abstract class Shape {
 
     protected abstract fun localIntersect(ray: Ray): List<Intersection>
 
-    fun normalAt(worldPoint: Point): Vector {
+    fun normalAt(worldPoint: Point, hit: Intersection? = null): Vector {
         val localPoint = worldToObject(worldPoint)
-        val localNormal = localNormalAt(localPoint)
+        val localNormal = localNormalAt(localPoint, hit)
         return normalToWorld(localNormal)
     }
 
-    protected abstract fun localNormalAt(point: Point): Vector
+    protected abstract fun localNormalAt(point: Point, hit: Intersection?): Vector
 
     fun worldToObject(point: Point): Point {
         val parentPoint = this.parent?.worldToObject(point) ?: point
@@ -55,7 +55,7 @@ class Sphere : Shape() {
         return if (i1.t > i2.t) intersections(i2, i1) else intersections(i1, i2)
     }
 
-    override fun localNormalAt(point: Point): Vector {
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector {
         return point - point(0f, 0f, 0f)
     }
 }
@@ -74,7 +74,7 @@ class Plane : Shape() {
         return listOf(Intersection(t, this))
     }
 
-    override fun localNormalAt(point: Point) = vector(0f, 1f, 0f)
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector = vector(0f, 1f, 0f)
 }
 
 class Cube : Shape() {
@@ -96,7 +96,7 @@ class Cube : Shape() {
         return if (tMin > tMax) Pair(tMax, tMin) else Pair(tMin, tMax)
     }
 
-    override fun localNormalAt(point: Point): Vector {
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector {
         val maxC = maxOf(abs(point.x), abs(point.y), abs(point.z))
         return when (maxC) {
             abs(point.x) -> vector(point.x, 0f, 0f)
@@ -136,7 +136,7 @@ class Cylinder(val minimum: Float = Float.NEGATIVE_INFINITY,
         return intersectCaps(ray, y0, y1, xs)
     }
 
-    override fun localNormalAt(point: Point): Vector {
+    override fun localNormalAt(point: Point, hit: Intersection?): Vector {
         val dist = point.x * point.x + point.z * point.z
         return when {
             dist < 1f && point.y >= this.maximum - epsilon -> vector(0f, 1f, 0f)
